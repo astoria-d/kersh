@@ -20,4 +20,3 @@ Utility:
  - load vmlinux  
  - show type  
 
-
