@@ -1,0 +1,8 @@
+-I./arch/arm/include
+-I./arch/arm/mach-omap2/include
+-I./arch/arm/include/generated
+-I./include
+-I./arch/arm/include/uapi
+-I./arch/arm/include/generated/uapi
+-I./include/uapi
+-I./include/generated/uapi
