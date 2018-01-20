@@ -1,4 +1,5 @@
 # Prerequisites
+*.bk
 *.d
 
 # Object files
