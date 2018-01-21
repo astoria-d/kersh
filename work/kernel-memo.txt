@@ -10,6 +10,7 @@ make V=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- modules > make_modules.log 2>
 
 make V=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- INSTALL_MOD_PATH=$(pwd)/_install modules_install  > make_modules_install.log 2>&1
 
+make V=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- tags > make_tags.log 2>&1
 
 
 arm-linux-gnueabi-gcc
