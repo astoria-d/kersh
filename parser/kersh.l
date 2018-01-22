@@ -1,4 +1,5 @@
 %{
+#include "kersh.h"
 #include "kersh.tab.h"
 %}
 

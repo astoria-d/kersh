@@ -1,3 +1,15 @@
+%{
+
+/*kersh.tab.c*/
+
+#include <stdio.h>
+#include "kersh.h"
+#include "kersh.tab.h"
+
+%}
+
+
+
 %token LF
 %token NUMBER
 %left ADD SUB
@@ -12,8 +24,14 @@ expr : expr ADD expr { $$ = $1 + $3; }
      | expr DIV expr { $$ = $1 / $3; }
      | NUMBER
      ;
+
+
 %%
-#include "kersh.tab.h"
-main(){
- yyparse();
+
+
+/*main func...*/
+
+
+int main(int argc, char* argv[]) {
+    return yyparse();
 }

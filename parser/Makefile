@@ -3,6 +3,7 @@ SOURCES =	lex.yy.c kersh.tab.c util.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 
+BIN	=	cpars
 
 all : flexbison
 
@@ -16,7 +17,7 @@ kersh.tab.c: kersh.y
 
 
 flexbison: $(OBJECTS)
-	gcc -o ktype $^
+	gcc -o $(BIN) $^
 
 .c.o:
 	gcc -c $*.c
@@ -25,7 +26,7 @@ flexbison: $(OBJECTS)
 clean :
 	-rm *.o
 	-rm *.output
-	-rm ktype
+	-rm ${BIN}
 	-rm *.yy.c
 	-rm *.tab.c
 	-rm *.tab.h
