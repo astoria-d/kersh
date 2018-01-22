@@ -5,7 +5,10 @@ OBJECTS	=	$(SOURCES:.c=.o)
 
 BIN	=	cpars
 
-all : flexbison
+CFLAGS = -g -DYYERROR_VERBOSE -DYYDEBUG
+
+
+all : $(BIN)
 
 lex.yy.c: kersh.l
 	flex  kersh.l
@@ -16,11 +19,17 @@ kersh.tab.c: kersh.y
 	bison -d kersh.y
 
 
-flexbison: $(OBJECTS)
+$(BIN): $(OBJECTS)
 	gcc -o $(BIN) $^
 
+tags: FORCE
+	ctags *.c *.h
+
+FORCE:
+
+
 .c.o:
-	gcc -c $*.c
+	gcc $(CFLAGS) -c $*.c
 
 
 clean :

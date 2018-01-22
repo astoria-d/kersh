@@ -33,5 +33,6 @@ expr : expr ADD expr { $$ = $1 + $3; }
 
 
 int main(int argc, char* argv[]) {
+    /*yydebug = 1;*/
     return yyparse();
 }
