@@ -4,6 +4,7 @@
 #include "kersh.tab.h"
 #include "kersh.h"
 
+int line_num;
 
 void yyerror (char const *s) {
    fprintf (stderr, "%s\n", s);

@@ -1,5 +1,8 @@
 #!/bin/bash
 
-cat test-input.txt
+echo "input text (test-input-c.txt):"
+cat test-input-c.txt
 
-./cpars < test-input.txt
+echo "--------------------"
+echo "parse..."
+./cpars < test-input-c.txt
