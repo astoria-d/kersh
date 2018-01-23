@@ -2,6 +2,5 @@ entry-preproc-short.c
 *.tab.c
 *.tab.h
 *.yy.c
-test*.sh
 test*.txt
 

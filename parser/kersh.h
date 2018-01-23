@@ -3,9 +3,11 @@
 #define __kersh_h__
 
 int yylex (void);
-int yyparse (void);
 void yyerror (char const *s);
 
+void init_values(void);
+
+int line_num;
 
 #endif
 

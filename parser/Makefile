@@ -34,9 +34,9 @@ FORCE:
 
 clean :
 	-rm *.o
-	-rm *.output
 	-rm ${BIN}
 	-rm *.yy.c
 	-rm *.tab.c
 	-rm *.tab.h
+#	-rm *.output
 
