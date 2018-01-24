@@ -16,7 +16,7 @@ lex.yy.c: kersh.l
 lex.yy.o: kersh.tab.c
 
 kersh.tab.c: kersh.y
-	bison -d kersh.y
+	bison -v -d kersh.y
 
 
 $(BIN): $(OBJECTS)
@@ -38,5 +38,5 @@ clean :
 	-rm *.yy.c
 	-rm *.tab.c
 	-rm *.tab.h
-#	-rm *.output
+	-rm *.output
 
