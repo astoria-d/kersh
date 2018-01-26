@@ -14,10 +14,10 @@
 }
 
 %token 
-DECL_INT OPE_2 OPE_INC OPE_ASIGN
-OPE_ARROW DOT QUESTION COLON SEMI_COLON
+OPE_2 OPE_INC OPE_ASIGN
+OPE_ARROW DOT COMMA QUESTION COLON SEMI_COLON
 LPAR RPAR
-INT VAR
+INT CHAR SHORT LONG SIGNED UNSIGNED VAR
 
 %left OPE_2
 
@@ -32,7 +32,7 @@ expr        : decl_exp      SEMI_COLON
             | null_exp      SEMI_COLON
             ;
 
-decl_exp    : DECL_INT VAR
+decl_exp    :   all_type var_list
             ;
 
 asign_exp   : lval OPE_ASIGN     rval
@@ -46,14 +46,42 @@ lval        : VAR
 
 rval        : VAR
             | INT
-            | func
+            | func_call
             | VAR OPE_INC
             | OPE_INC VAR
             | LPAR rval RPAR
             | rval OPE_2 rval
             ;
 
-func        : VAR  LPAR rval RPAR
+func_call   : VAR  LPAR rval RPAR
+
+
+var_list    :   VAR
+            |   var_list COMMA VAR
+            ;
+
+/*variable definition rules...*/
+all_type        :   signed_type
+                |   derived_type
+                ;
+
+signed_type     :   base_type
+                |   SIGNED      base_type
+                |   UNSIGNED    base_type
+                ;
+
+base_type       :   CHAR
+                |   SHORT
+                |   LONG
+                |   INT
+                |   SHORT INT
+                |   LONG INT
+                |   LONG LONG
+                |   LONG LONG INT
+                ;
+
+derived_type    :   VAR
+                ;
 
 %%
 
