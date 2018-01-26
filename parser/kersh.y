@@ -19,6 +19,9 @@ OPE_ARROW DOT QUESTION COLON SEMI_COLON
 LPAR RPAR
 INT VAR
 
+%left OPE_2
+
+
 %%
 code        : /* empty */
             |  code expr        { printf("...ok\n"); }
@@ -46,14 +49,8 @@ rval        : VAR
             | func
             | VAR OPE_INC
             | OPE_INC VAR
-            | retval
-            ;
-
-retval      : rval OPE_2 VAR
-            | rval OPE_2 INT
-            | rval OPE_2 func
-            | rval OPE_2 OPE_INC VAR
-            | rval OPE_2 VAR OPE_INC
+            | LPAR rval RPAR
+            | rval OPE_2 rval
             ;
 
 func        : VAR  LPAR rval RPAR
