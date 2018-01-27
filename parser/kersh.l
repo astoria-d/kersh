@@ -9,6 +9,7 @@
 [ \t\r]+      ; /*ignore white spaces...*/
 \n          {   line_num++;     }
 
+ /*keywords*/
 
 "typedef"   {   printf("%s ", yytext);     return(TYPEDEF);     }
 "sizeof"    {   printf("%s ", yytext);     return(SIZEOF);      }
@@ -45,39 +46,40 @@
 "char"      {   printf("%s ", yytext);     return(CHAR);        }
 "short"     {   printf("%s ", yytext);     return(SHORT);       }
 "long"      {   printf("%s ", yytext);     return(LONG);        }
-"signed"    {   printf("%s ", yytext);     return(SIGN);        }
-"unsigned"  {   printf("%s ", yytext);     return(SIGN);        }
+"signed"    {   printf("%s ", yytext);     return(SIGNED);      }
+"unsigned"  {   printf("%s ", yytext);     return(UNSIGNED);    }
 
-"+"         {   printf("%s ", yytext);     return(OPE_2);   }
-"-"         {   printf("%s ", yytext);     return(OPE_2);   }
-"*"         {   printf("%s ", yytext);     return(ASTR);    }
-"/"         {   printf("%s ", yytext);     return(OPE_2);   }
-"%"         {   printf("%s ", yytext);     return(OPE_2);   }
-"&"         {   printf("%s ", yytext);     return(OPE_2);   }
-"|"         {   printf("%s ", yytext);     return(OPE_2);   }
-"~"         {   printf("%s ", yytext);     return(OPE_2);   }
-"^"         {   printf("%s ", yytext);     return(OPE_2);   }
-"<<"        {   printf("%s ", yytext);     return(OPE_2);   }
-">>"        {   printf("%s ", yytext);     return(OPE_2);   }
-"=="        {   printf("%s ", yytext);     return(OPE_2);   }
-"!="        {   printf("%s ", yytext);     return(OPE_2);   }
-">"         {   printf("%s ", yytext);     return(OPE_2);   }
-">+"        {   printf("%s ", yytext);     return(OPE_2);   }
-"<"         {   printf("%s ", yytext);     return(OPE_2);   }
+ /*
+"+"         |
+"-"         |
+"*"         |
+"/"         |
+"%"         |
+"&"         |
+"|"         |
+"~"         |
+"^"         |
+"<<"        |
+">>"        |
+"=="        |
+"!="        |
+">"         |
+">+"        |
+"<"         |
 "<="        {   printf("%s ", yytext);     return(OPE_2);   }
 
-"++"        {   printf("%s ", yytext);     return(OPE_INC);   }
+"++"        |
 "--"        {   printf("%s ", yytext);     return(OPE_INC);   }
 
-"="         {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"+="        {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"-="        {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"*="        {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"/="        {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"&="        {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"|="        {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"^="        {   printf("%s ", yytext);     return(OPE_ASIGN);   }
-"<<="       {   printf("%s ", yytext);     return(OPE_ASIGN);   }
+"="         |
+"+="        |
+"-="        |
+"*="        |
+"/="        |
+"&="        |
+"|="        |
+"^="        |
+"<<="       |
 ">>="       {   printf("%s ", yytext);     return(OPE_ASIGN);   }
 
 "->"        {   printf("%s ", yytext);     return(OPE_ARROW);   }
@@ -95,12 +97,21 @@
 "?"         {   printf("%s ", yytext);     return(QUESTION);   }
 ":"         {   printf("%s ", yytext);     return(COLON);   }
 ";"         {   printf("%s ", yytext);     return(SEMI_COLON);   }
+ */
 
-[1-9][0-9]*      {   printf("%s ", yytext);     /*yylval.ival = atoi(yytext);*/     return(INT); }
-"0"         {   printf("%s ", yytext);     return(INT); }
+[_a-zA-Z]+[0-9]?    {   printf("%s", yytext);       return(IDENTIFIER); }
+ /*
+ universal character name
+ \u0011 \uxxxx etc. not supported...
+ */
 
-[a-zA-Z_]([a-zA-Z_]|[0-9])*      {   printf("%s ", yytext);     /*yylval = atoi(yytext);*/     return(VAR); }
+[1-9][0-9]*(u|U)?(l|L|ll|LL)?       {   printf("%s", yytext);       return(DECIMAL_CONSTANT); }
+[1-9][0-9]*(l|L|ll|LL)?(u|U)?       {   printf("%s", yytext);       return(DECIMAL_CONSTANT); }
 
+0[0-7]*                             {   printf("%s", yytext);       return(OCTAL_CONSTANT); }
+
+
+.                   {   printf("%c\n", yytext[0]);       return(INVALID); }
 %%
 
 

@@ -55,3 +55,7 @@ dkms.conf
 tags
 aaa
 tmp/*
+GPATH
+GTAGS
+GRTAGS
+NppGtags.cfg
