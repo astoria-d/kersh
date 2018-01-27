@@ -16,8 +16,14 @@
 %token 
 OPE_2 OPE_INC OPE_ASIGN
 OPE_ARROW DOT COMMA QUESTION COLON SEMI_COLON
-LPAR RPAR
-INT CHAR SHORT LONG SIGNED UNSIGNED VAR
+LPAR RPAR LBRACE RBRACE LBRACKET RBRACKET
+TYPEDEF SIZEOF ENUM STRUCT UNION
+CONST STATIC EXTERN VOLATILE INLINE
+DO WHILE FOR CONTINUE BREAK
+GOTO RETURN
+SWITCH CASE DEFAULT
+IF ELSE
+VOID INT CHAR SHORT LONG SIGN VAR
 
 %left OPE_2
 
@@ -61,16 +67,15 @@ var_list    :   VAR
             ;
 
 /*variable definition rules...*/
-all_type        :   signed_type
+all_type        :   base_type
                 |   derived_type
                 ;
 
-signed_type     :   base_type
-                |   SIGNED      base_type
-                |   UNSIGNED    base_type
+base_type       :   unit_type
+                |   SIGN  unit_type
                 ;
 
-base_type       :   CHAR
+unit_type       :   CHAR
                 |   SHORT
                 |   LONG
                 |   INT
