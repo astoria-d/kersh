@@ -14,7 +14,7 @@
 }
 
 %token 
-OPE_2 OPE_INC OPE_ASIGN
+OPE_2 ASTR OPE_INC OPE_ASIGN
 OPE_ARROW DOT COMMA QUESTION COLON SEMI_COLON
 LPAR RPAR LBRACE RBRACE LBRACKET RBRACKET
 TYPEDEF SIZEOF ENUM STRUCT UNION
@@ -26,6 +26,7 @@ IF ELSE
 VOID INT CHAR SHORT LONG SIGN VAR
 
 %left OPE_2
+%left ASTR
 
 
 %%
@@ -57,6 +58,7 @@ rval        : VAR
             | OPE_INC VAR
             | LPAR rval RPAR
             | rval OPE_2 rval
+            | rval ASTR rval
             ;
 
 func_call   : VAR  LPAR rval RPAR

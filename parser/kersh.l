@@ -50,7 +50,7 @@
 
 "+"         {   printf("%s ", yytext);     return(OPE_2);   }
 "-"         {   printf("%s ", yytext);     return(OPE_2);   }
-"*"         {   printf("%s ", yytext);     return(OPE_2);   }
+"*"         {   printf("%s ", yytext);     return(ASTR);    }
 "/"         {   printf("%s ", yytext);     return(OPE_2);   }
 "%"         {   printf("%s ", yytext);     return(OPE_2);   }
 "&"         {   printf("%s ", yytext);     return(OPE_2);   }
