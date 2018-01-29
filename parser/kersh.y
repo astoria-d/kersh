@@ -9,7 +9,7 @@
 %}
 
 %token
-IDENTIFIER DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT
+IDENTIFIER DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT
 TYPEDEF SIZEOF ENUM STRUCT UNION
 CONST STATIC EXTERN VOLATILE INLINE
 DO WHILE FOR CONTINUE BREAK
@@ -18,6 +18,7 @@ SWITCH CASE DEFAULT
 IF ELSE
 VOID INT CHAR SHORT LONG SIGNED UNSIGNED
 INVALID
+C_CHAR ESCAPE_SEQ
 
  /*OPE_2 ASTR OPE_INC OPE_ASIGN
 OPE_ARROW DOT COMMA QUESTION COLON SEMI_COLON
@@ -30,7 +31,7 @@ LPAR RPAR LBRACE RBRACE LBRACKET RBRACKET
 %%
 code        :   /*empty*/
             |   code IDENTIFIER     {   printf("  << identifier...\n");   }
-            |   code constant       {   printf("  << constant..\n");   }
+            |   code constant
             |   code keyword        {   printf("  << keyword...\n");   }
             ;
  /*
@@ -39,12 +40,24 @@ code        :   /*empty*/
  */
 
 constant    :   integer_constant
+            |   emumeration_constant
+            |   character_constant
             ;
 
-integer_constant    :   DECIMAL_CONSTANT
-                    |   OCTAL_CONSTANT
-                    |   HEX_CONSTANT
+integer_constant    :   DECIMAL_CONSTANT    {   printf("  << decimal constant..\n");   }
+                    |   OCTAL_CONSTANT      {   printf("  << octal constant..\n");   }
+                    |   HEX_CONSTANT        {   printf("  << hex constant..\n");   }
                     ;
+
+emumeration_constant    :   ENUM_CONSTANT      {   printf("  << enum constant..\n");   }
+                        ;
+
+character_constant      :   cchar       {   printf("  << char constant..\n");   }
+                        ;
+
+cchar                   :   C_CHAR
+                        |   ESCAPE_SEQ
+                        ;
 
 keyword     :   BREAK
             |   CASE

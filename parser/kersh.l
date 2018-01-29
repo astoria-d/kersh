@@ -56,6 +56,7 @@ hexdigit            [a-fA-F0-9]
 "signed"    pret(SIGNED)
 "unsigned"  pret(UNSIGNED)
 
+
  /*
 "+"         |
 "-"         |
@@ -106,7 +107,11 @@ hexdigit            [a-fA-F0-9]
 ";"         pret(SEMI_COLON)
  */
 
-{nondigit}({nondigit}|{digit})*    pret(IDENTIFIER)
+{nondigit}({nondigit}|{digit})*     {
+                                        if (1) pret(IDENTIFIER)
+                                        else pret(ENUM_CONSTANT) /*TODO!!! must work to check if identifier is enum or not.*/
+                                    }
+
  /*
  universal character name
  \u0011 \uxxxx etc. not supported...
@@ -117,11 +122,23 @@ hexdigit            [a-fA-F0-9]
 
 0{octaldigit}*              pret(OCTAL_CONSTANT)
 
-0{octaldigit}*              pret(OCTAL_CONSTANT)
 0[xX]{hexdigit}*            pret(HEX_CONSTANT)
+
+\'[^\'\\\n]\'                    pret(C_CHAR)
+
+\'\\['"\\abfnrtv]\'   pret(ESCAPE_SEQ)
+
+ /*octal escape seq*/
+\'\\{octaldigit}{octaldigit}?{octaldigit}?\'    pret(ESCAPE_SEQ)
+
+ /*hex escape seq*/
+\'\\x{hexdigit}*\'                             pret(ESCAPE_SEQ)
+
+
  /*error case...*/
-{digit}{nondigit}*          pret(INVALID)
-09{digit}*                  pret(INVALID)
+
+{digit}*{nondigit}*          pret(INVALID)
+.                           pret(INVALID)
 
 %%
 

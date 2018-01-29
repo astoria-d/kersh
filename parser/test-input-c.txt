@@ -1,0 +1,13 @@
+
+int a1;
+int a2;
+int a3;
+
+a1 = 10 + 20;
+a2 = 30 + a1;
+a3 = a1 * 2 + a2++;
+
+print (a1);
+print (a2);
+print (a3);
+
