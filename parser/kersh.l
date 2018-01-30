@@ -11,6 +11,11 @@ digit               [0-9]
 nonzerodigit        [1-9]
 octaldigit          [0-7]
 hexdigit            [a-fA-F0-9]
+cchar               [^\'\\\n]
+schar               [^\"\\\n]
+simple_escape       \\['"\\abfnrtv]
+octal_escape        \\{octaldigit}{octaldigit}?{octaldigit}?
+hex_escape          \\x{hexdigit}*
 
 %%
 [ \t\r]+      ; /*ignore white spaces...*/
@@ -57,65 +62,10 @@ hexdigit            [a-fA-F0-9]
 "unsigned"  pret(UNSIGNED)
 
 
- /*
-"+"         |
-"-"         |
-"*"         |
-"/"         |
-"%"         |
-"&"         |
-"|"         |
-"~"         |
-"^"         |
-"<<"        |
-">>"        |
-"=="        |
-"!="        |
-">"         |
-">+"        |
-"<"         |
-"<="        pret(OPE_2)
-
-"++"        |
-"--"        pret(OPE_INC)
-
-"="         |
-"+="        |
-"-="        |
-"*="        |
-"/="        |
-"&="        |
-"|="        |
-"^="        |
-"<<="       |
-">>="       pret(OPE_ASIGN)
-
-"->"        pret(OPE_ARROW)
-
-"("         pret(LPAR)
-")"         pret(RPAR)
-"{"         pret(LBRACE)
-"}"         pret(RBRACE)
-"["         pret(LBRACKET)
-"]"         pret(RBRACKET)
-
-
-"."         pret(DOT)
-","         pret(COMMA)
-"?"         pret(QUESTION)
-":"         pret(COLON)
-";"         pret(SEMI_COLON)
- */
-
 {nondigit}({nondigit}|{digit})*     {
-                                        if (1) pret(IDENTIFIER)
+                                        if (1) pret(IDEN)
                                         else pret(ENUM_CONSTANT) /*TODO!!! must work to check if identifier is enum or not.*/
                                     }
-
- /*
- universal character name
- \u0011 \uxxxx etc. not supported...
- */
 
 {nonzerodigit}{digit}*(u|U)?(l|L|ll|LL)?       pret(DECIMAL_CONSTANT)
 {nonzerodigit}{digit}*(l|L|ll|LL)?(u|U)?       pret(DECIMAL_CONSTANT)
@@ -124,15 +74,79 @@ hexdigit            [a-fA-F0-9]
 
 0[xX]{hexdigit}*            pret(HEX_CONSTANT)
 
-\'[^\'\\\n]\'                    pret(C_CHAR)
+\'{cchar}\'                 pret(C_CHAR)
 
-\'\\['"\\abfnrtv]\'   pret(ESCAPE_SEQ)
+\'{simple_escape}\'         pret(C_CHAR)
 
  /*octal escape seq*/
-\'\\{octaldigit}{octaldigit}?{octaldigit}?\'    pret(ESCAPE_SEQ)
+\'{octal_escape}\'          pret(C_CHAR)
 
  /*hex escape seq*/
-\'\\x{hexdigit}*\'                             pret(ESCAPE_SEQ)
+\'{hex_escape}\'            pret(C_CHAR)
+
+
+
+\"({schar}|{simple_escape}|{octal_escape}|{hex_escape})*\"          pret(S_CHAR)
+
+
+
+
+"["         pret(LBRACKET)
+"]"         pret(RBRACKET)
+"("         pret(LPAR)
+")"         pret(RPAR)
+"{"         pret(LBRACE)
+"}"         pret(RBRACE)
+"."         pret(DOT)
+"->"        pret(ARROW)
+
+
+"++"        pret(INC)
+"--"        pret(DEC)
+"&"         pret(AMP)
+"*"         pret(ASTR)
+"+"         pret(PLUS)
+"-"         pret(MINUS)
+"~"         pret(TILDA)
+"!"         pret(EXQL)
+
+
+"/"         pret(DASH)
+"%"         pret(PERCENT)
+"<<"        pret(LSHIFT)
+">>"        pret(RSHIFT)
+"<"         pret(LT)
+">"         pret(GT)
+"<="        pret(LE)
+">="        pret(GE)
+"=="        pret(EQEQ)
+"!="        pret(NE)
+"^"         pret(HAT)
+"|"         pret(OR)
+"&&"        pret(L_AND)
+"||"        pret(L_OR)
+
+
+"?"         pret(QUESTION)
+":"         pret(COLON)
+";"         pret(SEMI_COLON)
+"..."       pret(DOT3)
+
+
+"="         pret(EQ)
+"*="        pret(ASTR_EQ)
+"/="        pret(DASH_EQ)
+"%="        pret(PERC_EQ)
+"+="        pret(PLUS_EQ)
+"-="        pret(MINUS_EQ)
+"<<="       pret(LSHIFT_EQ)
+">>="       pret(RSHIFT_EQ)
+"&="        pret(AMP_EQ)
+"^="        pret(HAT_EQ)
+"|="        pret(OR_EQ)
+
+
+","         pret(COMMA)
 
 
  /*error case...*/

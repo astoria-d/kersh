@@ -3,5 +3,82 @@ ax 23 x ccc
 0x23 0333 
 true false TRUE FALSE JUMP_LABEL_NOP JUMP_LABEL_JMP
 'a' '\n' '\xaae01' '\0' 'c' 's' 'D' '\003'
-03
+03 "this is a test!!!!"
+"this is a test!!!!\n"
+"\t vvvv shitssi \\ss"
+[ ] ( ) { } . ->
+++ -- & * + - ~ !
+/ % << >> < > <= >= == != ^ | && ||
+? : ; ...
+= *= /= %= += -= <<= >>= &= ^= |=
+,
+
+
+
+static int load_addr_mode(int *done) {
+    BUS_READY_CHECK()
+
+    switch (current_inst->addr_mode) {
+        case ADDR_MODE_ACC:
+        case ADDR_MODE_IMP:
+            return FALSE;
+
+        case ADDR_MODE_IMM:
+        case ADDR_MODE_REL:
+            if (current_exec_index == 0) {
+                load_memory(cpu_reg.pc);
+                cpu_reg.pc++;
+                goto addr_mode_done;
+            }
+            break;
+
+        case ADDR_MODE_ZP:
+            if (current_exec_index == 0) {
+                load_memory(cpu_reg.pc);
+                cpu_reg.pc++;
+                return TRUE;
+            }
+            else if (current_exec_index == 1) {
+                unsigned short zp = get_cpu_data_buf();
+                load_memory(zp);
+                goto addr_mode_done;
+            }
+            break;
+
+        case ADDR_MODE_ZP_X:
+            if (current_exec_index == 0) {
+                load_memory(cpu_reg.pc);
+                cpu_reg.pc++;
+                return TRUE;
+            }
+            else if (current_exec_index == 1) {
+                unsigned char imm = get_cpu_data_buf();
+                set_cpu_data_buf(imm + cpu_reg.x);
+                return TRUE;
+            }
+            else if (current_exec_index == 2) {
+                unsigned char zp = get_cpu_data_buf();
+                load_memory(zp);
+                goto addr_mode_done;
+            }
+            break;
+
+        case ADDR_MODE_ZP_Y:
+
+            break;
+
+        default:
+            return FALSE;
+    }
+    return FALSE;
+
+addr_mode_done:
+    *done = TRUE;
+    return TRUE;
+}
+
+
+
 50x
+"test1
+test2"
