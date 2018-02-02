@@ -2,7 +2,7 @@
 #include "kersh.h"
 #include "kersh.tab.h"
 
-#define     pret(name)    {   printf("%s ", yytext);     return(name);     }
+#define     pret(name)    {   printf("%s	", yytext);   return(name);  }
 
 %}
 
@@ -74,16 +74,7 @@ hex_escape          \\x{hexdigit}*
 
 0[xX]{hexdigit}*            pret(HEX_CONSTANT)
 
-\'{cchar}\'                 pret(C_CHAR)
-
-\'{simple_escape}\'         pret(C_CHAR)
-
- /*octal escape seq*/
-\'{octal_escape}\'          pret(C_CHAR)
-
- /*hex escape seq*/
-\'{hex_escape}\'            pret(C_CHAR)
-
+\'({cchar}|{simple_escape}|{octal_escape}|{hex_escape})*\'          pret(C_CHAR)
 
 
 \"({schar}|{simple_escape}|{octal_escape}|{hex_escape})*\"          pret(S_CHAR)
