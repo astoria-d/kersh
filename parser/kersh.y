@@ -74,12 +74,12 @@ COMMA ','
 
 
 %%
-code        :   /*empty*/
-            |   code keyword            {dprint("keyword");}
-            |   code identifier         {dprint("identifier");}
-            |   code constant
-            |   code string_literal
-            |   code punctuator         {dprint("punctuator");}
+lexer        :   /*empty*/
+            |   lexer keyword            {dprint("keyword");}
+            |   lexer identifier         {dprint("identifier");}
+            |   lexer constant
+            |   lexer string_literal
+            |   lexer punctuator         {dprint("punctuator");}
             ;
 
  /*A.1.2*/
