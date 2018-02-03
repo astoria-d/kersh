@@ -74,15 +74,151 @@ COMMA ','
 
 
 %%
-lexer        :   /*empty*/
+
+code        :   /*empty*/
+            |   code expression             {dprint("keyword");}
+            ;
+
+
+primary_expression  :   identifier
+                    |   constant
+                    |   string_literal
+                    |   '(' expression ')'
+                    ;
+
+
+ /*temporarily....*/
+type_name       :   identifier
+                ;
+initializer_list    :   constant
+                    ;
+
+postfix_expression  :   primary_expression
+                    |   postfix_expression '[' expression ']'
+                    |   postfix_expression '(' argument_expression_list ')'
+                    |   postfix_expression '(' ')'
+                    |   postfix_expression '.' identifier
+                    |   postfix_expression ARROW identifier
+                    |   postfix_expression INC
+                    |   postfix_expression DEC
+                    |   '(' type_name ')' '{' initializer_list '}'
+                    |   '(' type_name ')' '{' initializer_list ',' '}'
+                    ;
+
+argument_expression_list    :   assignment_expression
+                            |   argument_expression_list ',' assignment_expression
+                            ;
+
+unary_expression    :   postfix_expression
+                    |   INC unary_expression
+                    |   DEC unary_expression
+                    |   unary_operator cast_expression
+                    |   SIZEOF unary_expression
+                    |   SIZEOF '(' type_name ')'
+                    ;
+
+unary_operator      :   '&'
+                    |   '*'
+                    |   '+'
+                    |   '-'
+                    |   '~'
+                    |   '!'
+                    ;
+
+cast_expression     :   unary_expression
+                    |   '(' type_name ')'
+                    ;
+
+multipricative_expression   :   cast_expression
+                            |   multipricative_expression '*' cast_expression
+                            |   multipricative_expression '/' cast_expression
+                            |   multipricative_expression '%' cast_expression
+                            ;
+
+additive_expression     :   multipricative_expression
+                        |   additive_expression '+' multipricative_expression
+                        |   additive_expression '-' multipricative_expression
+                        ;
+
+shift_expression        :   additive_expression
+                        |   shift_expression LSHIFT additive_expression
+                        |   shift_expression RSHIFT additive_expression
+                        ;
+
+retional_expression     :   shift_expression
+                        |   retional_expression '<' shift_expression
+                        |   retional_expression '>' shift_expression
+                        |   retional_expression LE shift_expression
+                        |   retional_expression GE shift_expression
+                        ;
+
+equality_expression     :   retional_expression
+                        |   equality_expression EQEQ retional_expression
+                        |   equality_expression NE retional_expression
+                        ;
+
+AND_expression          :   equality_expression
+                        |   AND_expression '&' equality_expression
+                        ;
+
+exclusive_OR_expression     :   AND_expression
+                            |   exclusive_OR_expression '^' AND_expression
+                            ;
+
+inclusive_OR_expression     :   exclusive_OR_expression
+                            |   inclusive_OR_expression '|' exclusive_OR_expression
+                            ;
+
+logical_AND_expression      :   inclusive_OR_expression
+                            |   logical_AND_expression L_AND inclusive_OR_expression
+                            ;
+
+logical_OR_expression       :   logical_AND_expression
+                            |   logical_OR_expression L_OR logical_AND_expression
+                            ;
+
+conditional_expression      :   logical_OR_expression
+                            |   logical_OR_expression '?' expression ':' conditional_expression
+                            ;
+
+assignment_expression       :   conditional_expression
+                            |   unary_expression assignment_operator assignment_expression
+                            ;
+
+assignment_operator         :   '='
+                            |   ASTR_EQ
+                            |   DASH_EQ
+                            |   PERC_EQ
+                            |   PLUS_EQ
+                            |   MINUS_EQ
+                            |   LSHIFT_EQ
+                            |   RSHIFT_EQ
+                            |   AMP_EQ
+                            |   HAT_EQ
+                            |   OR_EQ
+                            ;
+
+expression      :   assignment_expression
+                |   expression ',' assignment_expression
+                ;
+
+ /*
+constant_expression :   conditional_expression
+                    ;
+ */
+
+
+ /*
+lexer       :   {}
             |   lexer keyword            {dprint("keyword");}
             |   lexer identifier         {dprint("identifier");}
             |   lexer constant
             |   lexer string_literal
             |   lexer punctuator         {dprint("punctuator");}
             ;
+ */
 
- /*A.1.2*/
+ /*A.1.2
 keyword     :   BREAK
             |   CASE
             |   CHAR
@@ -114,7 +250,7 @@ keyword     :   BREAK
             |   VOLATILE
             |   WHILE
             ;
-
+ */
 
  /*A.1.3*/
 identifier  :   IDEN
@@ -149,7 +285,7 @@ string_literal          :   S_CHAR      {dprint("string literal");}
                         ;
 
 
- /*A.1.7*/
+ /*A.1.7
 punctuator  :   LBRACKET
             |   RBRACKET
             |   LPAR
@@ -197,6 +333,7 @@ punctuator  :   LBRACKET
             |   OR_EQ
             |   COMMA
             ;
+ */
 
 /*comment...*/
 

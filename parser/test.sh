@@ -5,4 +5,4 @@ cat test-input.txt
 
 echo "--------------------"
 echo "parse..."
-./cpars < test-input.txt
+./cpars < test-input-c.txt
