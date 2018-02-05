@@ -1,8 +1,10 @@
 #!/bin/bash
 
-echo "input text (test-input.txt):"
-cat test-input.txt
+input_file=test-input-c.txt
+
+    echo "input text (${input_file}):"
+cat ${input_file}
 
 echo "--------------------"
 echo "parse..."
-./cpars < test-input-c.txt
+./cpars < ${input_file}

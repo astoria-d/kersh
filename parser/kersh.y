@@ -17,6 +17,7 @@ SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE
 IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT
 INVALID
 C_CHAR S_CHAR
+TYPE_NAME
 
 
 %token
@@ -88,7 +89,7 @@ primary_expression  :   identifier
 
 
  /*temporarily....*/
-type_name       :   identifier
+type_name       :   TYPE_NAME
                 ;
 initializer_list    :   constant
                     ;
