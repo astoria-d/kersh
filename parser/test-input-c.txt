@@ -1,13 +1,7 @@
 
-int a1;
-int a2;
-int a3;
 
-a1 = 10 + 20;
-a2 = 30 + a1;
-a3 = a1 * 2 + a2++;
+20 - 10 + aaaa
 
-print (a1);
-print (a2);
-print (a3);
+sls + cccc - 10023 - 100 all2
 
+ccc % sos

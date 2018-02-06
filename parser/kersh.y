@@ -7,7 +7,7 @@
 #include "kersh.tab.h"
 
 #define     dprint(msg)    printf("  << %s...\n", msg)
-    
+
 %}
 
 %token
@@ -21,41 +21,18 @@ TYPE_NAME
 
 
 %token
-LBRACKET '['
-RBRACKET ']'
-LPAR '('
-RPAR ')'
-LBRACE '{'
-RBRACE '}'
-DOT '.'
 ARROW
 INC
 DEC
-AMP '&'
-ASTR '*'
-PLUS '+'
-MINUS '-'
-TILDA '~'
-EXQL '!'
-DASH '/'
-PERCENT '%'
 LSHIFT
 RSHIFT
-LT '<'
-GT '>'
 LE
 GE
 EQEQ
 NE
-HAT '^'
-OR '|'
 L_AND
 L_OR
-QUESTION '?'
-COLON ':'
-SEMI_COLON ';'
 DOT3
-EQ '='
 ASTR_EQ
 DASH_EQ
 PERC_EQ
@@ -66,18 +43,18 @@ RSHIFT_EQ
 AMP_EQ
 HAT_EQ
 OR_EQ
-COMMA ','
 
  /*
 %left OPE_2
 %left ASTR
  */
 
+%left '&' '*' '+' '-' '~' '!'
 
 %%
 
 code        :   /*empty*/
-            |   code expression             {dprint("keyword");}
+            |   code expression             {printf("code expression\n");}
             ;
 
 
@@ -269,20 +246,20 @@ constant    :   integer_constant
             |   character_constant
             ;
 
-integer_constant    :   DECIMAL_CONSTANT    {dprint("decimal constant");}
-                    |   OCTAL_CONSTANT      {dprint("octal constant");}
-                    |   HEX_CONSTANT        {dprint("hex constant");}
+integer_constant    :   DECIMAL_CONSTANT    {/*dprint("decimal constant");*/}
+                    |   OCTAL_CONSTANT      {/*dprint("octal constant");*/}
+                    |   HEX_CONSTANT        {/*dprint("hex constant");*/}
                     ;
 
-emumeration_constant    :   ENUM_CONSTANT      {dprint("enum constant");}
+emumeration_constant    :   ENUM_CONSTANT      {/*dprint("enum constant");*/}
                         ;
 
-character_constant      :   C_CHAR      {dprint("char constant");}
+character_constant      :   C_CHAR      {/*dprint("char constant");*/}
                         ;
 
 
  /*A.1.6*/
-string_literal          :   S_CHAR      {dprint("string literal");}
+string_literal          :   S_CHAR      {/*dprint("string literal");*/}
                         ;
 
 

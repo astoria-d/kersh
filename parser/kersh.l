@@ -2,7 +2,7 @@
 #include "kersh.h"
 #include "kersh.tab.h"
 
-#define     pret(name)    {   printf("%s	", yytext);   return(name);  }
+#define     pret(name)    {   printf( "lex: " #name " %s	\n", yytext);   return(name);  }
 
 %}
 
@@ -142,8 +142,8 @@ hex_escape          \\x{hexdigit}*
 
  /*error case...*/
 
-{digit}*{nondigit}*          pret(INVALID)
-.                           pret(INVALID)
+{digit}*{nondigit}*     {   printf(" invalid token [%s]\n", yytext);   return INVALID;  }
+.                       {   printf(" invalid token [%s]\n", yytext);   return INVALID;  }
 
 %%
 
