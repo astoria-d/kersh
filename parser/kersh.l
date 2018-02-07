@@ -2,7 +2,11 @@
 #include "kersh.h"
 #include "kersh.tab.h"
 
+#if 0
 #define     pret(name)    {   printf( "lex: " #name " %s	\n", yytext);   return(name);  }
+#else
+#define     pret(name)    {   put_lex_buf(yytext);   return(name);  }
+#endif
 
 %}
 

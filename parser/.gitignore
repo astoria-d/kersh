@@ -3,4 +3,4 @@ entry-preproc-short.c
 *.tab.h
 *.yy.c
 *.output
-
+*.stackdump

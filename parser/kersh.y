@@ -54,7 +54,7 @@ OR_EQ
 %%
 
 code        :   /*empty*/
-            |   code expression             {printf("code expression\n");}
+            |   code expression             {print_lexbuf(); reset_lex_buf();}
             ;
 
 
