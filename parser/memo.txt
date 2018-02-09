@@ -1,0 +1,10 @@
+memo
+
+https://stackoverflow.com/questions/17114634/yacc-shift-reduce-conflict-when-parse-c-template-arguments?rq=1
+https://stackoverflow.com/questions/243383/why-cant-c-be-parsed-with-a-lr1-parser/1004737#1004737
+https://en.wikipedia.org/wiki/GLR_parser
+https://en.wikipedia.org/wiki/LR_parser
+https://www.lysator.liu.se/c/ANSI-C-grammar-y.html
+https://gist.github.com/codebrainz/2933703
+http://www.quut.com/c/ANSI-C-grammar-y.html
+https://cs.wmich.edu/~gupta/teaching/cs4850/sumII06/The%20syntax%20of%20C%20in%20Backus-Naur%20form.htm

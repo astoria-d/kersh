@@ -44,19 +44,14 @@ AMP_EQ
 HAT_EQ
 OR_EQ
 
- /*
-%left OPE_2
-%left ASTR
- */
-
-%left '&' '*' '+' '-' '~' '!'
-
 %%
 
 code        :   /*empty*/
-            |   code expression             {print_lexbuf(); reset_lex_buf();}
+            |   code statement
             ;
 
+statement   :   expression ';'      {printf("\n");}
+            ;
 
 primary_expression  :   identifier
                     |   constant

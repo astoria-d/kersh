@@ -41,9 +41,5 @@ struct symtab {
 #define     COMMA       ','
 
 
-void put_lex_buf(const char* token);
-void reset_lex_buf(void);
-void print_lexbuf(void);
-
 #endif
 
