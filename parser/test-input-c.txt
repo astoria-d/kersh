@@ -1,9 +1,8 @@
 20 - 10 + aaaa;
 sls + cccc - 10023 - 100 ;
-all2= aa * 2 (ccc % sos + 20);
+all2= aa * 2 (ccc % ++sos + 20);
 a = 20 * a2 %3;
-a++;
-bbb++;
+a++ + (- bbb)++;
 ++ ccc;
-aaaa cccc;
-aaa % % ddd;
+aaaa , cccc;
+aaa % 2 % ddd;
