@@ -375,7 +375,7 @@ struct_declarator_list      :   struct_declarator
 
 struct_declarator   :   declarator
                     |   ':' constant_expression
-                    |   declarator ':' expression
+                    |   declarator ':' constant_expression
                     ;
 
 enum_specifier      :   ENUM '{' emumerator_list '}'
