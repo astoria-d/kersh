@@ -11,7 +11,7 @@
 %}
 
 %token
-BREAK CASE CHAR CONST CONTINUE DEFAULT DO ELSE ENUM EXTERN
+AUTO BREAK CASE CHAR CONST CONTINUE DEFAULT DO ELSE ENUM EXTERN
 FOR GOTO IF INLINE INT LONG REGISTER RETURN SHORT SIGNED SIZEOF STATIC STRUCT
 SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE
 IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT
@@ -47,10 +47,7 @@ OR_EQ
 %%
 
 code        :   /*empty*/
-            |   code statement
-            ;
-
-statement   :   expression ';'      {printf("\n");}
+            |   code declaration        {printf("\n");}
             ;
 
  /*
@@ -188,13 +185,6 @@ primary_expression  :   identifier
                     |   '(' expression ')'
                     ;
 
-
- /*temporarily....*/
-type_name       :   TYPE_NAME
-                ;
-initializer_list    :   constant
-                    ;
-
  /*A2.1*/
 postfix_expression  :   primary_expression
                     |   postfix_expression '[' expression ']'
@@ -309,7 +299,209 @@ constant_expression :   conditional_expression
                     ;
 
 
-/*comment...*/
+ /*A2.2*/
+declaration     :   declaration_specifiers ';'
+                |   declaration_specifiers init_declarator_list ';'
+                ;
+
+declaration_specifiers  :   storage_class_specifier
+                        |   storage_class_specifier declaration_specifiers
+                        |   type_specifier
+                        |   type_specifier declaration_specifiers
+                        |   type_qualifier
+                        |   type_qualifier declaration_specifiers
+                        |   function_speficier
+                        |   function_speficier declaration_specifiers
+                        ;
+
+ /* not supported...
+                        |   alignment_specifier declaration_specifiers
+                        |   alignment_specifier
+ */
+
+init_declarator_list    :   init_declarator
+                        |   init_declarator_list ',' init_declarator
+                        ;
+
+init_declarator         :   declarator
+                        |   declarator '=' initializer
+                        ;
+
+storage_class_specifier     :   TYPEDEF
+                            |   EXTERN
+                            |   STATIC
+                            |   AUTO
+                            |   REGISTER
+                            ;
+
+type_specifier  :   VOID
+                |   CHAR
+                |   SHORT
+                |   INT
+                |   LONG
+                |   SIGNED
+                |   UNSIGNED
+                |   struct_or_union_specifier
+                |   enum_specifier
+                |   typedef_name
+                ;
+
+struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}'
+                            |   struct_or_union identifier '{' struct_declaration_list '}'
+                            |   struct_or_union identifier
+                            ;
+
+struct_or_union     :   STRUCT
+                    |   UNION
+                    ;
+
+struct_declaration_list     :   struct_declaration
+                            |   struct_declaration_list struct_declaration
+                            ;
+
+struct_declaration      :   specifier_qualifier_list ';'
+                        |   specifier_qualifier_list struct_declarator_list ';'
+                        ;
+
+specifier_qualifier_list    :   type_specifier
+                            |   type_specifier specifier_qualifier_list
+                            |   type_qualifier
+                            |   type_qualifier specifier_qualifier_list
+                            ;
+
+struct_declarator_list      :   struct_declarator
+                            |   struct_declarator_list ',' struct_declarator
+                            ;
+
+struct_declarator   :   declarator
+                    |   ':' constant_expression
+                    |   declarator ':' expression
+                    ;
+
+enum_specifier      :   ENUM '{' emumerator_list '}'
+                    |   ENUM identifier '{' emumerator_list '}'
+                    |   ENUM '{' emumerator_list ',' '}'
+                    |   ENUM identifier '{' emumerator_list ',' '}'
+                    |   ENUM identifier
+                    ;
+
+emumerator_list     :   emumerator
+                    |   emumerator_list ',' emumerator
+                    ;
+
+emumerator      :   emumeration_constant
+                |   emumeration_constant '=' constant_expression
+                ;
+
+type_qualifier      :   CONST
+                    |   VOLATILE
+                    ;
+
+function_speficier  :   INLINE
+                    ;
+
+declarator      :   direct_declarator
+                |   pointer direct_declarator
+                ;
+
+direct_declarator   :   identifier
+                    |   '(' declarator ')'
+                    |   direct_declarator '[' ']'
+                    |   direct_declarator '[' assignment_expression ']'
+                    |   direct_declarator '[' type_qualifier ']'
+                    |   direct_declarator '[' type_qualifier assignment_expression ']'
+                    |   direct_declarator '[' STATIC assignment_expression ']'
+                    |   direct_declarator '[' STATIC type_qualifier assignment_expression ']'
+                    |   direct_declarator '[' type_qualifier STATIC assignment_expression ']'
+                    |   direct_declarator '[' '*' ']'
+                    |   direct_declarator '[' type_qualifier '*' ']'
+                    |   direct_declarator '(' parameter_type_list ')'
+                    |   direct_declarator '(' ')'
+                    |   direct_declarator '(' identifier_list ')'
+                    ;
+
+pointer     :   '*'
+            |   '*' type_qualifier_list
+            |   '*' pointer
+            |   '*' type_qualifier_list pointer
+            ;
+
+type_qualifier_list     :   type_qualifier
+                        |   type_qualifier_list type_qualifier
+                        ;
+
+parameter_type_list     :   parameter_list
+                        |   parameter_list ',' DOT3
+                        ;
+
+parameter_list      :   parameter_declaration
+                    |   parameter_list ',' parameter_declaration
+                    ;
+
+parameter_declaration   :   declaration_specifiers declarator
+                        |   declaration_specifiers
+                        |   declaration_specifiers abstract_declarator
+                        ;
+
+identifier_list     :   identifier
+                    |   identifier_list ',' identifier
+                    ;
+
+type_name       :   specifier_qualifier_list
+                |   specifier_qualifier_list abstract_declarator
+                ;
+
+abstract_declarator :   pointer
+                    |   direct_abstract_declarator
+                    |   pointer direct_abstract_declarator
+                    ;
+
+direct_abstract_declarator      :   '(' abstract_declarator ')'
+                                |   '[' ']'
+                                |   '[' assignment_expression ']'
+                                |   '[' type_qualifier_list ']'
+                                |   '[' type_qualifier_list assignment_expression ']'
+                                |   direct_abstract_declarator '[' ']'
+                                |   direct_abstract_declarator '[' assignment_expression ']'
+                                |   direct_abstract_declarator '[' type_qualifier_list ']'
+                                |   direct_abstract_declarator '[' type_qualifier_list assignment_expression ']'
+                                |   '[' STATIC assignment_expression ']'
+                                |   '[' STATIC type_qualifier_list assignment_expression ']'
+                                |   direct_abstract_declarator '[' STATIC assignment_expression ']'
+                                |   direct_abstract_declarator '[' STATIC type_qualifier_list assignment_expression ']'
+                                |   '[' type_qualifier_list STATIC assignment_expression ']'
+                                |   direct_abstract_declarator '[' type_qualifier_list STATIC assignment_expression ']'
+                                |   '[' '*' ']'
+                                |   direct_abstract_declarator '[' '*' ']'
+                                |   '(' ')'
+                                |   '(' parameter_type_list ')'
+                                |   direct_abstract_declarator '(' ')'
+                                |   direct_abstract_declarator '(' parameter_type_list ')'
+                                ;
+
+typedef_name    :   identifier
+                ;
+
+initializer     :   assignment_expression
+                |   '{' initializer_list '}'
+                |   '{' initializer_list ',' '}'
+                ;
+
+initializer_list    :   initializer
+                    |   designation initializer
+                    |   initializer_list ',' initializer
+                    |   initializer_list ',' designation initializer
+                    ;
+
+designation     :   designator_list '='
+
+designator_list :   designator
+                |   designator_list designator
+                ;
+
+designator      :   '[' constant_expression ']'
+                |   '.' identifier
+                ;
 
 %%
 

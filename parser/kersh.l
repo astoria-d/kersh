@@ -33,6 +33,7 @@ hex_escape          \\x{hexdigit}*
 "struct"    pret(STRUCT)
 "union"     pret(UNION)
 
+"auto"      pret(AUTO)
 "const"     pret(CONST)
 "static"    pret(STATIC)
 "extern"    pret(EXTERN)
