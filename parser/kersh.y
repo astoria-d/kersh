@@ -17,7 +17,7 @@ SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE
 IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT
 INVALID
 C_CHAR S_CHAR
-TYPE_NAME
+TYPEDEF_NAME
 
 
 %token
@@ -115,6 +115,7 @@ integer_constant    :   DECIMAL_CONSTANT
                     |   HEX_CONSTANT
                     ;
 
+ /*kersh original. can't solve the conflicts.*/
 emumeration_constant    :   ENUM_CONSTANT
                         ;
 
@@ -346,6 +347,7 @@ type_specifier  :   VOID
                 |   typedef_name
                 ;
 
+
 struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}'
                             |   struct_or_union identifier '{' struct_declaration_list '}'
                             |   struct_or_union identifier
@@ -479,7 +481,8 @@ direct_abstract_declarator      :   '(' abstract_declarator ')'
                                 |   direct_abstract_declarator '(' parameter_type_list ')'
                                 ;
 
-typedef_name    :   identifier
+ /*kersh original. can't solve the conflicts.*/
+typedef_name    :   TYPEDEF_NAME
                 ;
 
 initializer     :   assignment_expression

@@ -69,7 +69,8 @@ hex_escape          \\x{hexdigit}*
 
 {nondigit}({nondigit}|{digit})*     {
                                         if (1) pret(IDEN)
-                                        else pret(ENUM_CONSTANT) /*TODO!!! must work to check if identifier is enum or not.*/
+                                        pret(ENUM_CONSTANT) /*TODO!!! must work to check if identifier is enum or not.*/
+                                        pret(TYPEDEF_NAME) /*TODO!!! must work to check if identifier is typedef name.*/
                                     }
 
 {nonzerodigit}{digit}*(u|U)?(l|L|ll|LL)?       pret(DECIMAL_CONSTANT)
