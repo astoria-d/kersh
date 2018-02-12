@@ -48,6 +48,7 @@ OR_EQ
 
 code        :   /*empty*/
             |   code declaration        {printf("\n");}
+            |   code statement        {printf("\n");}
             ;
 
  /*
@@ -94,7 +95,7 @@ keyword     :   BREAK
             ;
  */
 
- /*A.1.3*/
+ /*A.1.3 Identifiers*/
 identifier  :   IDEN
             ;
  /*
@@ -104,7 +105,7 @@ identifier  :   IDEN
  */
 
 
- /*A.1.5*/
+ /*A.1.5 Constants*/
 constant    :   integer_constant
             |   emumeration_constant
             |   character_constant
@@ -123,12 +124,12 @@ character_constant      :   C_CHAR
                         ;
 
 
- /*A.1.6*/
+ /*A.1.6 String literals*/
 string_literal          :   S_CHAR
                         ;
 
 
- /*A.1.7
+ /*A.1.7 Punctuators
 punctuator  :   LBRACKET
             |   RBRACKET
             |   LPAR
@@ -180,13 +181,13 @@ punctuator  :   LBRACKET
 
 
 
+ /*A2.1 Expressions*/
 primary_expression  :   identifier
                     |   constant
                     |   string_literal
                     |   '(' expression ')'
                     ;
 
- /*A2.1*/
 postfix_expression  :   primary_expression
                     |   postfix_expression '[' expression ']'
                     |   postfix_expression '(' argument_expression_list ')'
@@ -300,7 +301,7 @@ constant_expression :   conditional_expression
                     ;
 
 
- /*A2.2*/
+ /*A2.2 Declarations*/
 declaration     :   declaration_specifiers ';'
                 |   declaration_specifiers init_declarator_list ';'
                 ;
@@ -505,6 +506,66 @@ designator_list :   designator
 designator      :   '[' constant_expression ']'
                 |   '.' identifier
                 ;
+
+ /*A2.3 Statements*/
+statement   :   labeled_statement
+            |   compound_statement
+            |   expression-statement
+            |   selection_statement
+            |   iteration_statement
+            |   jump_statement
+            ;
+
+labeled_statement   :   identifier ':' statement
+                    |   CASE constant_expression ':' statement
+                    |   DEFAULT ':' statement
+                    ;
+
+compound_statement  :   '{' '}'
+                    |   '{' block_item_list '}'
+                    ;
+
+block_item_list     :   block_item
+                    |   block_item_list block_item
+                    ;
+
+block_item      :   declaration
+                |   statement
+                ;
+
+expression-statement    :   /*empty*/
+                        |   expression
+                        ;
+
+selection_statement     :   IF '(' expression ')' statement
+                        |   IF '(' expression ')' statement ELSE statement
+                        |   SWITCH '(' expression ')' statement
+                        ;
+
+iteration_statement     :   WHILE '(' expression ')' statement
+                        |   DO statement WHILE '(' expression ')' ';'
+                        |   FOR '(' ';' ';' ')' statement
+                        |   FOR '(' ';' ';' expression ')' statement
+                        |   FOR '(' ';' expression ';' ')' statement
+                        |   FOR '(' ';' expression ';' expression ')' statement
+                        |   FOR '(' expression ';' ';' ')' statement
+                        |   FOR '(' expression ';' ';' expression ')' statement
+                        |   FOR '(' expression ';' expression ';' ')' statement
+                        |   FOR '(' expression ';' expression ';' expression ')' statement
+                        |   FOR '(' declaration ';' ')' statement
+                        |   FOR '(' declaration ';' expression ')' statement
+                        |   FOR '(' declaration expression ';' ')' statement
+                        |   FOR '(' declaration expression ';' expression ')' statement
+                        ;
+
+jump_statement      :   GOTO identifier ';'
+                    |   CONTINUE ';'
+                    |   BREAK ';'
+                    |   RETURN ';'
+                    |   RETURN expression ';'
+                    ;
+
+
 
 %%
 
