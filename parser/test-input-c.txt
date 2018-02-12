@@ -1,0 +1,17 @@
+int aaaa;
+int dddd = 0;
+int;
+char buf[ BUFSIZE ];
+int char* pt = buf;
+typedef int INT32 ;
+struct point ct = {5,32};
+typedef struct point {
+    int x;
+    int y;
+} T_POINT ;
+
+T_POINT pt = {0,0};
+enum BOOL {FALSE = 0, TRUE};
+INT32 i;
+
+
