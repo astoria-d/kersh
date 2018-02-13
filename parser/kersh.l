@@ -76,9 +76,11 @@ hex_escape          \\x{hexdigit}*
 {nonzerodigit}{digit}*(u|U)?(l|L|ll|LL)?       pret(DECIMAL_CONSTANT)
 {nonzerodigit}{digit}*(l|L|ll|LL)?(u|U)?       pret(DECIMAL_CONSTANT)
 
-0{octaldigit}*              pret(OCTAL_CONSTANT)
+0{octaldigit}*(u|U)?(l|L|ll|LL)?              pret(OCTAL_CONSTANT)
+0{octaldigit}*(l|L|ll|LL)?(u|U)?              pret(OCTAL_CONSTANT)
 
-0[xX]{hexdigit}*            pret(HEX_CONSTANT)
+0[xX]{hexdigit}*(u|U)?(l|L|ll|LL)?            pret(HEX_CONSTANT)
+0[xX]{hexdigit}*(l|L|ll|LL)?(u|U)?            pret(HEX_CONSTANT)
 
 \'({cchar}|{simple_escape}|{octal_escape}|{hex_escape})*\'          pret(C_CHAR)
 
