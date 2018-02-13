@@ -19,6 +19,8 @@ INVALID
 C_CHAR S_CHAR
 TYPEDEF_NAME
 
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
 
 %token
 ARROW
@@ -533,11 +535,11 @@ block_item      :   declaration
                 |   statement
                 ;
 
-expression-statement    :   /*empty*/
-                        |   expression
+expression-statement    :   ';'
+                        |   expression ';'
                         ;
 
-selection_statement     :   IF '(' expression ')' statement
+selection_statement     :   IF '(' expression ')' statement %prec LOWER_THAN_ELSE   {/*conflict workaround*/}
                         |   IF '(' expression ')' statement ELSE statement
                         |   SWITCH '(' expression ')' statement
                         ;
