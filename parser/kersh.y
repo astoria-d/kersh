@@ -8,6 +8,8 @@
 
 #define     dprint(msg)    printf("  << %s...\n", msg)
 
+#define     line_break()    printf("\n")
+
 %}
 
 %token
@@ -46,12 +48,9 @@ AMP_EQ
 HAT_EQ
 OR_EQ
 
-%%
+%start translation_unit
 
-code        :   /*empty*/
-            |   code declaration        {printf("\n");}
-            |   code statement        {printf("\n");}
-            ;
+%%
 
  /*
 lexer       :   {}
@@ -304,8 +303,8 @@ constant_expression :   conditional_expression
 
 
  /*A2.2 Declarations*/
-declaration     :   declaration_specifiers ';'
-                |   declaration_specifiers init_declarator_list ';'
+declaration     :   declaration_specifiers ';'                          {line_break();}
+                |   declaration_specifiers init_declarator_list ';'     {line_break();}
                 ;
 
 declaration_specifiers  :   storage_class_specifier
@@ -351,8 +350,10 @@ type_specifier  :   VOID
                 ;
 
 
-struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}'
-                            |   struct_or_union identifier '{' struct_declaration_list '}'
+struct_or_union_specifier   :   struct_or_union '{'                                 {line_break();}
+                                struct_declaration_list '}'
+                            |   struct_or_union identifier '{'                      {line_break();}
+                                struct_declaration_list '}'
                             |   struct_or_union identifier
                             ;
 
@@ -364,8 +365,8 @@ struct_declaration_list     :   struct_declaration
                             |   struct_declaration_list struct_declaration
                             ;
 
-struct_declaration      :   specifier_qualifier_list ';'
-                        |   specifier_qualifier_list struct_declarator_list ';'
+struct_declaration      :   specifier_qualifier_list ';'                            {line_break();}
+                        |   specifier_qualifier_list struct_declarator_list ';'     {line_break();}
                         ;
 
 specifier_qualifier_list    :   type_specifier
@@ -524,7 +525,8 @@ labeled_statement   :   identifier ':' statement
                     ;
 
 compound_statement  :   '{' '}'
-                    |   '{' block_item_list '}'
+                    |   '{'                                 {line_break();}
+                        block_item_list '}'                 {line_break();}
                     ;
 
 block_item_list     :   block_item
@@ -536,7 +538,7 @@ block_item      :   declaration
                 ;
 
 expression-statement    :   ';'
-                        |   expression ';'
+                        |   expression ';'                  {line_break();}
                         ;
 
 selection_statement     :   IF '(' expression ')' statement %prec LOWER_THAN_ELSE   {/*conflict workaround*/}
@@ -545,7 +547,7 @@ selection_statement     :   IF '(' expression ')' statement %prec LOWER_THAN_ELS
                         ;
 
 iteration_statement     :   WHILE '(' expression ')' statement
-                        |   DO statement WHILE '(' expression ')' ';'
+                        |   DO statement WHILE '(' expression ')' ';'                   {line_break();}
                         |   FOR '(' ';' ';' ')' statement
                         |   FOR '(' ';' ';' expression ')' statement
                         |   FOR '(' ';' expression ';' ')' statement
@@ -560,13 +562,30 @@ iteration_statement     :   WHILE '(' expression ')' statement
                         |   FOR '(' declaration expression ';' expression ')' statement
                         ;
 
-jump_statement      :   GOTO identifier ';'
-                    |   CONTINUE ';'
-                    |   BREAK ';'
-                    |   RETURN ';'
-                    |   RETURN expression ';'
+jump_statement      :   GOTO identifier ';'                         {line_break();}
+                    |   CONTINUE ';'                                {line_break();}
+                    |   BREAK ';'                                   {line_break();}
+                    |   RETURN ';'                                  {line_break();}
+                    |   RETURN expression ';'                       {line_break();}
                     ;
 
+
+ /*A2.4 External definitions*/
+translation_unit    :   external_declaration
+                    |   translation_unit external_declaration
+                    ;
+
+external_declaration    :   function_definition
+                        |   declaration
+                        ;
+
+function_definition     :   declaration_specifiers declarator compound_statement
+                        |   declaration_specifiers declarator declaration_list compound_statement
+                        ;
+
+declaration_list        :   declaration
+                        |   declaration_list declaration
+                        ;
 
 
 %%
