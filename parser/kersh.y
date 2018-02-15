@@ -222,7 +222,7 @@ unary_operator      :   '&'
                     ;
 
 cast_expression     :   unary_expression
-                    |   '(' type_name ')'
+                    |   '(' type_name ')' cast_expression
                     ;
 
 multipricative_expression   :   cast_expression

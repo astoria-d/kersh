@@ -104,6 +104,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+char *p = *(char *)res; 
 
 static inline void __write_once_size(volatile void *p, void *res, int size)
 {
@@ -113,3 +114,14 @@ static inline void __write_once_size(volatile void *p, void *res, int size)
  }
 }
 
+static inline void __write_once_size(volatile void *p, void *res, int size)
+{
+ switch (size) {
+ case 1: *(volatile unsigned char *)p = *(unsigned char *)res; break;
+ case 2: *(volatile unsigned short *)p = *(unsigned short *)res; break;
+ case 4: *(volatile unsigned int *)p = *(unsigned int *)res; break;
+ case 8: *(volatile unsigned long *)p = *(unsigned long *)res; break;
+ default:
+  __builtin_memcpy((void *)p, (const void *)res, size);
+ }
+}
