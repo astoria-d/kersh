@@ -9,7 +9,7 @@
 int line_num;
 
 void yyerror (char const *s) {
-    fprintf (stderr, "%s\n", s);
+    fprintf (stderr, "line: %d,\n   %s\n", line_num, s);
 }
 
 

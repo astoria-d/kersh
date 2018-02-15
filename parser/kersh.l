@@ -21,9 +21,15 @@ simple_escape       \\['"\\abfnrtv]
 octal_escape        \\{octaldigit}{octaldigit}?{octaldigit}?
 hex_escape          \\x{hexdigit}*
 
+gcc_line_num        ^'#' *[^\n]*
+
 %%
 [ \t\r]+      ; /*ignore white spaces...*/
 \n          {   line_num++;     }
+
+ /* gcc preprocessor outputs line number. skip it.*/
+#[^\n]*          {   /*printf("gcc line num [%s]..\n", yytext);*/}
+
 
  /*keywords*/
 
