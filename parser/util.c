@@ -18,9 +18,3 @@ int yywrap (void )
     return 1;
 }
 
-void init_values(void) {
-    yydebug = 0;
-    line_num = 1;
-}
-
-

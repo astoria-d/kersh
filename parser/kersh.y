@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "kersh.h"
 #include "kersh.tab.h"
+#include "symbols.h"
 
 #define     dprint(msg)    printf("  << %s...\n", msg)
 
@@ -52,50 +53,6 @@ OR_EQ
 
 %%
 
- /*
-lexer       :   {}
-            |   lexer keyword
-            |   lexer identifier
-            |   lexer constant
-            |   lexer string_literal
-            |   lexer punctuator
-            ;
- */
-
- /*A.1.2
-keyword     :   BREAK
-            |   CASE
-            |   CHAR
-            |   CONST
-            |   CONTINUE
-            |   DEFAULT
-            |   DO
-            |   ELSE
-            |   ENUM
-            |   EXTERN
-            |   FOR
-            |   GOTO
-            |   IF
-            |   INLINE
-            |   INT
-            |   LONG
-            |   REGISTER
-            |   RETURN
-            |   SHORT
-            |   SIGNED
-            |   SIZEOF
-            |   STATIC
-            |   STRUCT
-            |   SWITCH
-            |   TYPEDEF
-            |   UNION
-            |   UNSIGNED
-            |   VOID
-            |   VOLATILE
-            |   WHILE
-            ;
- */
-
  /*A.1.3 Identifiers*/
 identifier  :   IDEN
             ;
@@ -108,7 +65,7 @@ identifier  :   IDEN
 
  /*A.1.5 Constants*/
 constant    :   integer_constant
-            |   emumeration_constant
+            |   emumeration_constant        { printf("enum constant rule..\n"); }
             |   character_constant
             ;
 
@@ -345,7 +302,7 @@ type_specifier  :   VOID
                 |   SIGNED
                 |   UNSIGNED
                 |   struct_or_union_specifier
-                |   enum_specifier
+                |   enum_specifier          {exit_parse_stage();}
                 |   typedef_name
                 ;
 
@@ -595,6 +552,11 @@ declaration_list        :   declaration
 
 
 int main(int argc, char* argv[]) {
-    init_values();
-    return yyparse();
+    int ret;
+
+    init_parser();
+    init_symtable();
+    ret = yyparse();
+    clear_symtable();
+    return ret;
 }

@@ -1,11 +1,11 @@
 
-SOURCES =	lex.yy.c kersh.tab.c util.c
+SOURCES =	lex.yy.c kersh.tab.c util.c parse.c symbols.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 
 BIN	=	cpars
 
-CFLAGS = -g -DYYERROR_VERBOSE -DYYDEBUG
+CFLAGS = -g -DYYERROR_VERBOSE -DYYDEBUG -I../include
 
 
 all : $(BIN)
@@ -16,7 +16,8 @@ lex.yy.c: kersh.l
 lex.yy.o: kersh.tab.c
 
 kersh.tab.c: kersh.y
-	bison -v -d kersh.y
+#	bison -v -d kersh.y
+	bison -d kersh.y
 
 
 $(BIN): $(OBJECTS)

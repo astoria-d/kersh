@@ -2,12 +2,10 @@
 #include "kersh.h"
 #include "kersh.tab.h"
 
-#if 0
-#define     pret(name)    {   printf( "lex: " #name " %s	\n", yytext);   return(name);  }
-#else
-#define     pret(name)    {   printf( "%s ", yytext);   return(name);  }
-#endif
-
+#define     rtoken(name)    return return_token(yytext, name)
+/*
+#define     rtoken(name)    printf( "lex: " #name " %s	\n", yytext);   return(name)
+*/
 %}
 
 nondigit            [_a-zA-Z]
@@ -33,125 +31,124 @@ gcc_line_num        ^'#' *[^\n]*
 
  /*keywords*/
 
-"typedef"   pret(TYPEDEF)
-"sizeof"    pret(SIZEOF)
-"enum"      pret(ENUM)
-"struct"    pret(STRUCT)
-"union"     pret(UNION)
+"typedef"   { rtoken(TYPEDEF); }
+"sizeof"    { rtoken(SIZEOF); }
+"enum"      { enter_parse_stage(ENUM); rtoken(ENUM);   }
+"struct"    { rtoken(STRUCT); }
+"union"     { rtoken(UNION); }
 
-"auto"      pret(AUTO)
-"const"     pret(CONST)
-"static"    pret(STATIC)
-"extern"    pret(EXTERN)
-"volatile"  pret(VOLATILE)
+"auto"      { rtoken(AUTO); }
+"const"     { rtoken(CONST); }
+"static"    { rtoken(STATIC); }
+"extern"    { rtoken(EXTERN); }
+"volatile"  { rtoken(VOLATILE); }
 
-"inline"    pret(INLINE)
+"inline"    { rtoken(INLINE); }
 
-"do"        pret(DO)
-"while"     pret(WHILE)
-"for"       pret(FOR)
-"continue"  pret(CONTINUE)
-"break"     pret(BREAK)
+"do"        { rtoken(DO); }
+"while"     { rtoken(WHILE); }
+"for"       { rtoken(FOR); }
+"continue"  { rtoken(CONTINUE); }
+"break"     { rtoken(BREAK); }
 
-"goto"      pret(GOTO)
-"return"    pret(RETURN)
+"goto"      { rtoken(GOTO); }
+"return"    { rtoken(RETURN); }
 
-"switch"    pret(SWITCH)
-"case"      pret(CASE)
-"default"   pret(DEFAULT)
+"switch"    { rtoken(SWITCH); }
+"case"      { rtoken(CASE); }
+"default"   { rtoken(DEFAULT); }
 
-"if"        pret(IF)
-"else"      pret(ELSE)
+"if"        { rtoken(IF); }
+"else"      { rtoken(ELSE); }
 
 
-"void"      pret(VOID)
-"int"       pret(INT)
-"char"      pret(CHAR)
-"short"     pret(SHORT)
-"long"      pret(LONG)
-"signed"    pret(SIGNED)
-"unsigned"  pret(UNSIGNED)
+"void"      { rtoken(VOID); }
+"int"       { rtoken(INT); }
+"char"      { rtoken(CHAR); }
+"short"     { rtoken(SHORT); }
+"long"      { rtoken(LONG); }
+"signed"    { rtoken(SIGNED); }
+"unsigned"  { rtoken(UNSIGNED); }
 
 
 {nondigit}({nondigit}|{digit})*     {
-                                        if (1) pret(IDEN)
-                                        pret(ENUM_CONSTANT) /*TODO!!! must work to check if identifier is enum or not.*/
-                                        pret(TYPEDEF_NAME) /*TODO!!! must work to check if identifier is typedef name.*/
+                                        int token = check_symbol_type();
+                                        rtoken(token);
                                     }
 
-{nonzerodigit}{digit}*(u|U)?(l|L|ll|LL)?       pret(DECIMAL_CONSTANT)
-{nonzerodigit}{digit}*(l|L|ll|LL)?(u|U)?       pret(DECIMAL_CONSTANT)
+{nonzerodigit}{digit}*(u|U)?(l|L|ll|LL)?       { rtoken(DECIMAL_CONSTANT); }
+{nonzerodigit}{digit}*(l|L|ll|LL)?(u|U)?       { rtoken(DECIMAL_CONSTANT); }
 
-0{octaldigit}*(u|U)?(l|L|ll|LL)?              pret(OCTAL_CONSTANT)
-0{octaldigit}*(l|L|ll|LL)?(u|U)?              pret(OCTAL_CONSTANT)
+0{octaldigit}*(u|U)?(l|L|ll|LL)?              { rtoken(OCTAL_CONSTANT); }
+0{octaldigit}*(l|L|ll|LL)?(u|U)?              { rtoken(OCTAL_CONSTANT); }
 
-0[xX]{hexdigit}*(u|U)?(l|L|ll|LL)?            pret(HEX_CONSTANT)
-0[xX]{hexdigit}*(l|L|ll|LL)?(u|U)?            pret(HEX_CONSTANT)
+0[xX]{hexdigit}*(u|U)?(l|L|ll|LL)?            { rtoken(HEX_CONSTANT); }
+0[xX]{hexdigit}*(l|L|ll|LL)?(u|U)?            { rtoken(HEX_CONSTANT); }
 
-\'({cchar}|{simple_escape}|{octal_escape}|{hex_escape})*\'          pret(C_CHAR)
-
-
-\"({schar}|{simple_escape}|{octal_escape}|{hex_escape})*\"          pret(S_CHAR)
+\'({cchar}|{simple_escape}|{octal_escape}|{hex_escape})*\'          { rtoken(C_CHAR); }
 
 
+\"({schar}|{simple_escape}|{octal_escape}|{hex_escape})*\"          { rtoken(S_CHAR); }
 
 
-"["         pret(LBRACKET)
-"]"         pret(RBRACKET)
-"("         pret(LPAR)
-")"         pret(RPAR)
-"{"         pret(LBRACE)
-"}"         pret(RBRACE)
-"."         pret(DOT)
-"->"        pret(ARROW)
 
 
-"++"        pret(INC)
-"--"        pret(DEC)
-"&"         pret(AMP)
-"*"         pret(ASTR)
-"+"         pret(PLUS)
-"-"         pret(MINUS)
-"~"         pret(TILDA)
-"!"         pret(EXQL)
+"["         { rtoken(LBRACKET); }
+"]"         { rtoken(RBRACKET); }
+"("         { rtoken(LPAR); }
+")"         { rtoken(RPAR); }
+"{"         { rtoken(LBRACE); }
+"}"         { rtoken(RBRACE); }
+"."         { rtoken(DOT); }
+"->"        { rtoken(ARROW); }
 
 
-"/"         pret(DASH)
-"%"         pret(PERCENT)
-"<<"        pret(LSHIFT)
-">>"        pret(RSHIFT)
-"<"         pret(LT)
-">"         pret(GT)
-"<="        pret(LE)
-">="        pret(GE)
-"=="        pret(EQEQ)
-"!="        pret(NE)
-"^"         pret(HAT)
-"|"         pret(OR)
-"&&"        pret(L_AND)
-"||"        pret(L_OR)
+"++"        { rtoken(INC); }
+"--"        { rtoken(DEC); }
+"&"         { rtoken(AMP); }
+"*"         { rtoken(ASTR); }
+"+"         { rtoken(PLUS); }
+"-"         { rtoken(MINUS); }
+"~"         { rtoken(TILDA); }
+"!"         { rtoken(EXQL); }
 
 
-"?"         pret(QUESTION)
-":"         pret(COLON)
-";"         pret(SEMI_COLON)
-"..."       pret(DOT3)
+"/"         { rtoken(DASH); }
+"%"         { rtoken(PERCENT); }
+"<<"        { rtoken(LSHIFT); }
+">>"        { rtoken(RSHIFT); }
+"<"         { rtoken(LT); }
+">"         { rtoken(GT); }
+"<="        { rtoken(LE); }
+">="        { rtoken(GE); }
+"=="        { rtoken(EQEQ); }
+"!="        { rtoken(NE); }
+"^"         { rtoken(HAT); }
+"|"         { rtoken(OR); }
+"&&"        { rtoken(L_AND); }
+"||"        { rtoken(L_OR); }
 
 
-"="         pret(EQ)
-"*="        pret(ASTR_EQ)
-"/="        pret(DASH_EQ)
-"%="        pret(PERC_EQ)
-"+="        pret(PLUS_EQ)
-"-="        pret(MINUS_EQ)
-"<<="       pret(LSHIFT_EQ)
-">>="       pret(RSHIFT_EQ)
-"&="        pret(AMP_EQ)
-"^="        pret(HAT_EQ)
-"|="        pret(OR_EQ)
+"?"         { rtoken(QUESTION); }
+":"         { rtoken(COLON); }
+";"         { rtoken(SEMI_COLON); }
+"..."       { rtoken(DOT3); }
 
 
-","         pret(COMMA)
+"="         { rtoken(EQ); }
+"*="        { rtoken(ASTR_EQ); }
+"/="        { rtoken(DASH_EQ); }
+"%="        { rtoken(PERC_EQ); }
+"+="        { rtoken(PLUS_EQ); }
+"-="        { rtoken(MINUS_EQ); }
+"<<="       { rtoken(LSHIFT_EQ); }
+">>="       { rtoken(RSHIFT_EQ); }
+"&="        { rtoken(AMP_EQ); }
+"^="        { rtoken(HAT_EQ); }
+"|="        { rtoken(OR_EQ); }
+
+
+","         { rtoken(COMMA); }
 
 
  /*error case...*/
