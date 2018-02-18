@@ -36,5 +36,6 @@ void enter_parse_stage(int stage) {
 }
 
 void exit_parse_stage(void) {
+    if (ps_stage != 0) printf("\nstage %d exited", ps_stage);
     ps_stage = 0;
 }

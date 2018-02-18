@@ -31,7 +31,7 @@ gcc_line_num        ^'#' *[^\n]*
 
  /*keywords*/
 
-"typedef"   { rtoken(TYPEDEF); }
+"typedef"   { enter_parse_stage(TYPEDEF); rtoken(TYPEDEF); }
 "sizeof"    { rtoken(SIZEOF); }
 "enum"      { enter_parse_stage(ENUM); rtoken(ENUM);   }
 "struct"    { rtoken(STRUCT); }

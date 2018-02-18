@@ -260,8 +260,8 @@ constant_expression :   conditional_expression
 
 
  /*A2.2 Declarations*/
-declaration     :   declaration_specifiers ';'                          {line_break();}
-                |   declaration_specifiers init_declarator_list ';'     {line_break();}
+declaration     :   declaration_specifiers ';'                          {exit_parse_stage(); line_break();}
+                |   declaration_specifiers init_declarator_list ';'     {exit_parse_stage(); line_break();}
                 ;
 
 declaration_specifiers  :   storage_class_specifier
@@ -302,15 +302,15 @@ type_specifier  :   VOID
                 |   SIGNED
                 |   UNSIGNED
                 |   struct_or_union_specifier
-                |   enum_specifier          {exit_parse_stage();}
+                |   enum_specifier
                 |   typedef_name
                 ;
 
 
 struct_or_union_specifier   :   struct_or_union '{'                                 {line_break();}
-                                struct_declaration_list '}'
+                                    struct_declaration_list '}'
                             |   struct_or_union identifier '{'                      {line_break();}
-                                struct_declaration_list '}'
+                                    struct_declaration_list '}'
                             |   struct_or_union identifier
                             ;
 
