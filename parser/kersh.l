@@ -71,7 +71,7 @@ gcc_line_num        ^'#' *[^\n]*
 "unsigned"  { rtoken(UNSIGNED); }
 
 
-{nondigit}({nondigit}|{digit})*     {
+{nondigit}({nondigit}|{digit})*     {   /*identifier or enum or typename*/
                                         int token = check_symbol_type();
                                         rtoken(token);
                                     }

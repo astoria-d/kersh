@@ -9,8 +9,6 @@
 
 #define     dprint(msg)    printf("  << %s...\n", msg)
 
-#define     line_break()    printf("\n")
-
 %}
 
 %token
@@ -307,10 +305,10 @@ type_specifier  :   VOID
                 ;
 
 
-struct_or_union_specifier   :   struct_or_union '{'                                 {line_break();}
-                                    struct_declaration_list '}'
-                            |   struct_or_union identifier '{'                      {line_break();}
-                                    struct_declaration_list '}'
+struct_or_union_specifier   :   struct_or_union                         {enter_parse_stage(STRUCT); line_break();  }
+                                    '{' struct_declaration_list '}'     {exit_parse_stage();    }
+                            |   struct_or_union identifier              {enter_parse_stage(STRUCT); add_symbol();  line_break();  }
+                                    '{' struct_declaration_list '}'     {exit_parse_stage();    }
                             |   struct_or_union identifier
                             ;
 
@@ -352,8 +350,8 @@ emumerator_list     :   emumerator
                     |   emumerator_list ',' emumerator
                     ;
 
-emumerator      :   emumeration_constant
-                |   emumeration_constant '=' constant_expression
+emumerator      :   emumeration_constant                                {add_symbol(); }
+                |   emumeration_constant '=' constant_expression        {add_symbol(); }
                 ;
 
 type_qualifier      :   CONST

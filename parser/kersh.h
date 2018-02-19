@@ -13,7 +13,8 @@ extern int line_num;
 
 void enter_parse_stage(int stage);
 void exit_parse_stage(void);
-
+void add_symbol(void);
+void line_break(void);
 
 
 #define     LBRACKET    '['
