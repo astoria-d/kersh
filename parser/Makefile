@@ -7,7 +7,6 @@ BIN	=	cpars
 
 CFLAGS = -g -DYYERROR_VERBOSE -DYYDEBUG -I../include
 
-
 all : $(BIN)
 
 lex.yy.c: kersh.l
@@ -40,4 +39,13 @@ clean :
 	-rm *.tab.c
 	-rm *.tab.h
 	-rm *.output
+	-rm *.d
+
+depend: lex.yy.c kersh.tab.c
+
+%.d: %.c
+	$(CC) $(CFLAGS) -M $<  >  $@
+
+
+include $(SOURCES:.c=.d)
 

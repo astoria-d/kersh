@@ -350,8 +350,8 @@ emumerator_list     :   emumerator
                     |   emumerator_list ',' emumerator
                     ;
 
-emumerator      :   emumeration_constant                                {add_symbol(); }
-                |   emumeration_constant '=' constant_expression        {add_symbol(); }
+emumerator      :   emumeration_constant
+                |   emumeration_constant '=' constant_expression
                 ;
 
 type_qualifier      :   CONST
