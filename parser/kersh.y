@@ -552,9 +552,11 @@ declaration_list        :   declaration
 int main(int argc, char* argv[]) {
     int ret;
 
+    printf("%s start parser...\n", argv[0]);
     init_parser();
     init_symtable();
     ret = yyparse();
     clear_symtable();
+    printf("parser done.\n");
     return ret;
 }

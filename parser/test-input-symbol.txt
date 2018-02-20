@@ -1,6 +1,9 @@
 enum {
  false = 0,
- true = 1
+ true = 1,
+ enum2,
+ enum3,
+ enum4
 };
 
 

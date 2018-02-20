@@ -1,5 +1,5 @@
 
-SOURCES =	lex.yy.c kersh.tab.c util.c parse.c symbols.c
+SOURCES =	lex.yy.c kersh.tab.c util.c parse.c symbols.c types.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 
@@ -41,7 +41,7 @@ clean :
 	-rm *.output
 	-rm *.d
 
-depend: lex.yy.c kersh.tab.c
+depend: $(SOURCES)
 
 %.d: %.c
 	$(CC) $(CFLAGS) -M $<  >  $@

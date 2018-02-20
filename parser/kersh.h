@@ -42,5 +42,5 @@ void line_break(void);
 #define     COMMA       ','
 
 
-#endif
+#endif /*__kersh_h__*/
 

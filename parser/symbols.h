@@ -1,6 +1,6 @@
 
-#ifndef __hashtable_h__
-#define __hashtable_h__
+#ifndef __symbols_h__
+#define __symbols_h__
 
 #include "uthash.h"
 
@@ -20,19 +20,18 @@ void add_symbol(void);
 void add_enum_symbol(const char* enum_name, int val);
 
 
-/*this struct size is dynamically allocated. cannot use inc/dec operator!!!*/
 struct symbol {
     unsigned char   symbol_type;
     unsigned int    data_size;
     unsigned int    symbol_value;
+    int             id;
 
     /*hash table handle.*/
     UT_hash_handle  hh;
 
-    /*symbol_name field is dymaniccaly allocated.*/
-    char *          symbol_name[1];
+    char *          symbol_name;
 };
 
 
-#endif
+#endif /*__symbols_h__*/
 
