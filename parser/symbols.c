@@ -3,11 +3,13 @@
 #include <string.h>
 
 #include "symbols.h"
+#include "parser.h"
 
 /*symbol unique id. (application specific id.)*/
 static unsigned int sym_cnt;
 static struct symbol * symbols;
 
+static struct symbol *work_symbol;
 static char *tmp_symbol_buf;
 
 static int get_new_sym_id(void) {
@@ -40,8 +42,15 @@ void add_enum_symbol(const char* enum_name, int val) {
     sym->symbol_name = strdup(enum_name);
     sym->symbol_value = val;
 
+    work_symbol = sym;
     HASH_ADD_STR(symbols, symbol_name, sym);
     /*printf(">>add sym [%s:%d]", enum_name, val);*/
+}
+
+void update_enum_val(int val) {
+    /*printf("update:%d\n", val);*/
+    work_symbol->symbol_value = val;
+    set_enum_index(val + 1);
 }
 
 void init_symtable(void) {

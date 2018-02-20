@@ -18,7 +18,7 @@ void init_symtable(void);
 void clear_symtable(void);
 void add_symbol(void);
 void add_enum_symbol(const char* enum_name, int val);
-
+void update_enum_val(int val);
 
 struct symbol {
     unsigned char   symbol_type;

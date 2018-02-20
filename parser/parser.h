@@ -12,7 +12,8 @@ extern int line_num;
 void enter_parse_stage(int stage);
 void exit_parse_stage(void);
 void line_break(void);
-
+void set_enum_index(int next_index);
+int get_const_val(void);
 
 #endif /*__parser_h__*/
 

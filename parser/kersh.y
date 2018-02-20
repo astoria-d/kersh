@@ -352,7 +352,7 @@ emumerator_list     :   emumerator
                     ;
 
 emumerator      :   emumeration_constant
-                |   emumeration_constant '=' constant_expression
+                |   emumeration_constant '=' constant_expression        { update_enum_val(get_const_val());}
                 ;
 
 type_qualifier      :   CONST
