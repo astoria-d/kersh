@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "kersh.h"
 #include "kersh.tab.h"
+#include "parser.h"
 #include "symbols.h"
 
 #define     dprint(msg)    printf("  << %s...\n", msg)

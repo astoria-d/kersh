@@ -1,6 +1,7 @@
 %{
 #include "kersh.h"
 #include "kersh.tab.h"
+#include "parser.h"
 
 #define     rtoken(name)    return return_token(yytext, name)
 /*

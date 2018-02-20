@@ -4,15 +4,29 @@
 #include "kersh.h"
 #include "symbols.h"
 
+int line_num;
+
 static unsigned int ps_stage;
 static unsigned int ps_stage_level;
 static unsigned int old_token;
 
 static unsigned int enum_index;
 
+
+/*bison required functions...*/
+void yyerror (char const *s) {
+    fprintf (stderr, "line: %d,\n   %s\n", line_num, s);
+}
+
+int yywrap (void )
+{
+    return 1;
+}
+
+/*kersh implementations...*/
+
 void init_parser(void) {
     extern int yydebug;
-    extern int line_num;
     yydebug = 0;
     line_num = 1;
     ps_stage = 0;

@@ -2,7 +2,7 @@ enum {
  false = 0,
  true = 1,
  enum2,
- enum3,
+ enum3 = 5,
  enum4
 };
 
