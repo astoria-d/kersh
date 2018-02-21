@@ -1,7 +1,7 @@
 
-
+file cpars.exe
 
 b main
 
-run < test-input-c.txt
+run test-input-symbol.txt
 
