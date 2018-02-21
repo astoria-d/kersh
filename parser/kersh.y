@@ -64,7 +64,7 @@ identifier  :   IDEN
 
  /*A.1.5 Constants*/
 constant    :   integer_constant
-            |   emumeration_constant        { printf("enum constant rule..\n"); }
+            |   emumeration_constant
             |   character_constant
             ;
 
@@ -259,8 +259,8 @@ constant_expression :   conditional_expression
 
 
  /*A2.2 Declarations*/
-declaration     :   declaration_specifiers ';'                          {exit_parse_stage(); line_break();}
-                |   declaration_specifiers init_declarator_list ';'     {exit_parse_stage(); line_break();}
+declaration     :   declaration_specifiers ';'
+                |   declaration_specifiers init_declarator_list ';'
                 ;
 
 declaration_specifiers  :   storage_class_specifier
@@ -306,11 +306,9 @@ type_specifier  :   VOID
                 ;
 
 
-struct_or_union_specifier   :   struct_or_union                         {enter_parse_stage(STRUCT); line_break();  }
-                                    '{' struct_declaration_list '}'     {exit_parse_stage();    }
-                            |   struct_or_union identifier              {enter_parse_stage(STRUCT); add_symbol();  line_break();  }
-                                    '{' struct_declaration_list '}'     {exit_parse_stage();    }
-                            |   struct_or_union identifier
+struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}'                     {exit_parse_stage(); }
+                            |   struct_or_union identifier '{' struct_declaration_list '}'          {sym_add_struct_def(); exit_parse_stage(); }
+                            |   struct_or_union identifier                                          {exit_parse_stage(); }
                             ;
 
 struct_or_union     :   STRUCT
@@ -321,8 +319,8 @@ struct_declaration_list     :   struct_declaration
                             |   struct_declaration_list struct_declaration
                             ;
 
-struct_declaration      :   specifier_qualifier_list ';'                            {line_break();}
-                        |   specifier_qualifier_list struct_declarator_list ';'     {line_break();}
+struct_declaration      :   specifier_qualifier_list ';'
+                        |   specifier_qualifier_list struct_declarator_list ';'
                         ;
 
 specifier_qualifier_list    :   type_specifier
@@ -340,10 +338,10 @@ struct_declarator   :   declarator
                     |   declarator ':' constant_expression
                     ;
 
-enum_specifier      :   ENUM '{' emumerator_list '}'
-                    |   ENUM identifier '{' emumerator_list '}'
-                    |   ENUM '{' emumerator_list ',' '}'
-                    |   ENUM identifier '{' emumerator_list ',' '}'
+enum_specifier      :   ENUM '{' emumerator_list '}'                        {exit_parse_stage(); }
+                    |   ENUM identifier '{' emumerator_list '}'             {exit_parse_stage(); }
+                    |   ENUM '{' emumerator_list ',' '}'                    {exit_parse_stage(); }
+                    |   ENUM identifier '{' emumerator_list ',' '}'         {exit_parse_stage(); }
                     |   ENUM identifier
                     ;
 
@@ -352,7 +350,7 @@ emumerator_list     :   emumerator
                     ;
 
 emumerator      :   emumeration_constant
-                |   emumeration_constant '=' constant_expression        { update_enum_val(get_const_val());}
+                |   emumeration_constant '=' constant_expression        {update_enum_val(get_const_val());}
                 ;
 
 type_qualifier      :   CONST
@@ -481,8 +479,8 @@ labeled_statement   :   identifier ':' statement
                     ;
 
 compound_statement  :   '{' '}'
-                    |   '{'                                 {line_break();}
-                        block_item_list '}'                 {line_break();}
+                    |   '{'
+                        block_item_list '}'
                     ;
 
 block_item_list     :   block_item
@@ -494,7 +492,7 @@ block_item      :   declaration
                 ;
 
 expression-statement    :   ';'
-                        |   expression ';'                  {line_break();}
+                        |   expression ';'
                         ;
 
 selection_statement     :   IF '(' expression ')' statement %prec LOWER_THAN_ELSE   {/*conflict workaround*/}
@@ -503,7 +501,7 @@ selection_statement     :   IF '(' expression ')' statement %prec LOWER_THAN_ELS
                         ;
 
 iteration_statement     :   WHILE '(' expression ')' statement
-                        |   DO statement WHILE '(' expression ')' ';'                   {line_break();}
+                        |   DO statement WHILE '(' expression ')' ';'
                         |   FOR '(' ';' ';' ')' statement
                         |   FOR '(' ';' ';' expression ')' statement
                         |   FOR '(' ';' expression ';' ')' statement
@@ -518,11 +516,11 @@ iteration_statement     :   WHILE '(' expression ')' statement
                         |   FOR '(' declaration expression ';' expression ')' statement
                         ;
 
-jump_statement      :   GOTO identifier ';'                         {line_break();}
-                    |   CONTINUE ';'                                {line_break();}
-                    |   BREAK ';'                                   {line_break();}
-                    |   RETURN ';'                                  {line_break();}
-                    |   RETURN expression ';'                       {line_break();}
+jump_statement      :   GOTO identifier ';'
+                    |   CONTINUE ';'
+                    |   BREAK ';'
+                    |   RETURN ';'
+                    |   RETURN expression ';'
                     ;
 
 

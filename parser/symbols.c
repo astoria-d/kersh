@@ -23,13 +23,12 @@ static void clear_sym_buf(void) {
     tmp_symbol_buf = NULL;
 }
 
-void set_last_symbol(const char* sym_name) {
-    clear_sym_buf();
-    tmp_symbol_buf = strdup(sym_name);
+void sym_add_decl(void) {
+/*    printf(">>add sym [%s]", tmp_symbol_buf);*/
 }
 
-void add_symbol(void) {
-    printf(">>add sym [%s]", tmp_symbol_buf);
+void sym_add_struct_def(void) {
+/*    printf(">>add sym [%s]", tmp_symbol_buf);*/
 }
 
 void add_enum_symbol(const char* enum_name, int val) {

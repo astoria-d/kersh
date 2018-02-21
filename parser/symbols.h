@@ -12,11 +12,9 @@
 #define     SYM_GLOBAL_VAR  4
 #define     SYM_FUNC        5
 
-void set_last_symbol(const char* sym_name);
-
 void init_symtable(void);
 void clear_symtable(void);
-void add_symbol(void);
+void sym_add_struct_def(void);
 void add_enum_symbol(const char* enum_name, int val);
 void update_enum_val(int val);
 

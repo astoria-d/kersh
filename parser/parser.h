@@ -14,6 +14,10 @@ void exit_parse_stage(void);
 void line_break(void);
 void set_enum_index(int next_index);
 int get_const_val(void);
+void print_token(const char* parse_text);
+void indent_inc(void);
+void indent_dec(void);
+
 
 #endif /*__parser_h__*/
 

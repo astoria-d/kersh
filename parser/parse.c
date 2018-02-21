@@ -2,13 +2,14 @@
 #include <stdio.h>
 #include "kersh.tab.h"
 #include "kersh.h"
+#include "parser.h"
 #include "symbols.h"
 
 int line_num;
 
 static unsigned int ps_stage;
-static unsigned int ps_stage_level;
-static unsigned int old_token;
+static unsigned int pr_indent;
+static unsigned int pr_newline;
 
 static unsigned int enum_index;
 static unsigned int const_int_val;
@@ -31,15 +32,14 @@ void init_parser(void) {
     yydebug = 0;
     line_num = 1;
     ps_stage = 0;
-    old_token = 0;
-    ps_stage_level = 0;
+    pr_indent = 0;
+    pr_newline = 0;
 }
 
 int return_token(const char* parse_text, int token_num) {
-    printf( "%s ", parse_text);
-    old_token = token_num;
+    print_token(parse_text);
     if (token_num == IDEN) {
-        set_last_symbol(parse_text);
+        /*set_last_symbol(parse_text);*/
     }
     else if (token_num == ENUM_CONSTANT) {
         add_enum_symbol(parse_text, enum_index++);
@@ -76,10 +76,6 @@ int check_symbol_type(void) {
 }
 
 void enter_parse_stage(int stage) {
-    if ((stage == STRUCT || stage == UNION) && (ps_stage == STRUCT || ps_stage == UNION)) {
-        ps_stage_level++;
-        return;
-    }
     if (stage == ENUM) {
         enum_index = 0;
     }
@@ -88,21 +84,30 @@ void enter_parse_stage(int stage) {
 }
 
 void exit_parse_stage(void) {
-    if ((ps_stage == STRUCT || ps_stage == UNION) && (ps_stage_level > 0)) {
-        ps_stage_level--;
-        return;
-    }
     /*if (ps_stage != 0) printf("stage %d exited ", ps_stage);*/
     ps_stage = 0;
 }
 
 void line_break(void) {
     printf("\n");
-    if (ps_stage == STRUCT || ps_stage == UNION) {
+    pr_newline = 1;
+}
+
+void print_token(const char* parse_text) {
+    if (pr_newline) {
         int i;
-        for (i = 0; i < ps_stage_level + 1; i++) {
+        for (i = 0; i < pr_indent; i++) {
              printf("  ");
         }
     }
+    pr_newline = 0;
+    printf("%s ", parse_text);
 }
 
+void indent_inc(void) {
+    pr_indent++;
+}
+
+void indent_dec(void) {
+    pr_indent--;
+}

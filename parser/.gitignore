@@ -6,3 +6,4 @@ entry-preproc-short.c
 *.stackdump
 kersh.html
 kersh.xml
+aaa.*

@@ -98,8 +98,8 @@ gcc_line_num        ^'#' *[^\n]*
 "]"         { rtoken(RBRACKET); }
 "("         { rtoken(LPAR); }
 ")"         { rtoken(RPAR); }
-"{"         { rtoken(LBRACE); }
-"}"         { rtoken(RBRACE); }
+"{"         { print_token(yytext); line_break(); indent_inc(); return LBRACE; }
+"}"         { indent_dec(); print_token(yytext); return RBRACE; }
 "."         { rtoken(DOT); }
 "->"        { rtoken(ARROW); }
 
@@ -131,8 +131,8 @@ gcc_line_num        ^'#' *[^\n]*
 
 
 "?"         { rtoken(QUESTION); }
-":"         { rtoken(COLON); }
-";"         { rtoken(SEMI_COLON); }
+":"         { print_token(yytext); line_break(); return COLON; }
+";"         { print_token(yytext); line_break(); return SEMI_COLON; }
 "..."       { rtoken(DOT3); }
 
 
