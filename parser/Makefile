@@ -15,8 +15,8 @@ lex.yy.c: kersh.l
 lex.yy.o: kersh.tab.c
 
 kersh.tab.c: kersh.y
-#	bison -v -d kersh.y
-	bison -d kersh.y
+	bison -v -d kersh.y
+#	bison -d kersh.y
 
 
 $(BIN): $(OBJECTS)
@@ -40,6 +40,10 @@ clean :
 	-rm *.tab.h
 	-rm *.output
 	-rm *.d
+
+xsl:
+	xsltproc $(shell bison --print-datadir)/xslt/xml2xhtml.xsl kersh.xml > kersh.html
+
 
 %.d: %.c
 	$(CC) $(CFLAGS) -M $<  >  $@
