@@ -10,9 +10,10 @@ int line_num;
 static unsigned int ps_stage;
 static unsigned int pr_indent;
 static unsigned int pr_newline;
-
 static unsigned int enum_index;
 static unsigned int const_int_val;
+
+static int old_token;
 
 
 /*bison required functions...*/
@@ -38,6 +39,7 @@ void init_parser(void) {
 
 int return_token(const char* parse_text, int token_num) {
     print_token(parse_text);
+    old_token = token_num;
     if (token_num == IDEN) {
         /*set_last_symbol(parse_text);*/
     }
@@ -67,7 +69,7 @@ void set_enum_index(int next_index) {
 
 int check_symbol_type(void) {
     /*printf("ps_stage: %d\n", ps_stage);*/
-    if (ps_stage == ENUM) {
+    if (ps_stage == ENUM && (old_token == '{' || old_token == ',') ) {
         return ENUM_CONSTANT;
     }
     else {

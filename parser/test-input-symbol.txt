@@ -3,9 +3,17 @@ enum {
  true = 1,
  enum2,
  enum3 = 5,
- enum4
+ enum4,
+ enum5 = 11,
+ enum6 = 12,
+ enum7,
+ enum8,
 };
 
+enum BOOL {
+ FALSE = 0,
+ TRUE = 1,
+};
 
 struct ftrace_branch_data {
  const char *func;
