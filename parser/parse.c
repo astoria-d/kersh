@@ -15,7 +15,6 @@ static unsigned int const_int_val;
 
 static int old_token;
 
-
 /*bison required functions...*/
 void yyerror (char const *s) {
     fprintf (stderr, "line: %d,\n   %s\n", line_num, s);
@@ -71,7 +70,7 @@ void set_enum_index(int next_index) {
     enum_index = next_index;
 }
 
-int check_symbol_type(void) {
+int check_token_type(void) {
     /*printf("ps_stage: %d\n", ps_stage);*/
     if (ps_stage == ENUM && (old_token == '{' || old_token == ',') ) {
         return ENUM_CONSTANT;

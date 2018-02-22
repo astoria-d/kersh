@@ -1,5 +1,5 @@
 
-SOURCES =	lex.yy.c kersh.tab.c parse.c symbols.c types.c
+SOURCES =	lex.yy.c kersh.tab.c parse.c symbols.c types.c reduce.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 
@@ -27,10 +27,8 @@ tags: FORCE
 
 FORCE:
 
-
 .c.o:
 	gcc $(CFLAGS) -c $*.c
-
 
 clean :
 	-rm *.o
@@ -43,7 +41,6 @@ clean :
 
 xsl:
 	xsltproc $(shell bison --print-datadir)/xslt/xml2xhtml.xsl kersh.xml > kersh.html
-
 
 %.d: %.c
 	$(CC) $(CFLAGS) -M $<  >  $@

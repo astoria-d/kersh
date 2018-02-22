@@ -3,9 +3,8 @@
 #define __parser_h__
 
 
-
 void pre_shift_token(const char* parse_text, int token_num);
-int check_symbol_type(void);
+int check_token_type(void);
 void init_parser(void);
 void enter_parse_stage(int stage);
 void exit_parse_stage(void);

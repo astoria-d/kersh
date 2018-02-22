@@ -73,7 +73,7 @@ gcc_line_num        ^'#' *[^\n]*
 
 
 {nondigit}({nondigit}|{digit})*     {   /*identifier or enum or typename*/
-                                        int token = check_symbol_type();
+                                        int token = check_token_type();
                                         rtoken(token);
                                     }
 
