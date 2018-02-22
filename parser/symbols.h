@@ -24,6 +24,7 @@ struct symbol {
     unsigned int    symbol_value;
     int             id;
     char *          symbol_name;
+    struct symbol*  parent_symbol;
 
     /*hash table handle.*/
     UT_hash_handle  hh;
