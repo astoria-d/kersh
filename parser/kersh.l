@@ -3,7 +3,7 @@
 #include "kersh.tab.h"
 #include "parser.h"
 
-#define     rtoken(name)    return return_token(yytext, name)
+#define     rtoken(name)    {pre_shift_token(yytext, name); return name;}
 /*
 #define     rtoken(name)    printf( "lex: " #name " %s	\n", yytext);   return(name)
 */
@@ -32,9 +32,9 @@ gcc_line_num        ^'#' *[^\n]*
 
  /*keywords*/
 
-"typedef"   { enter_parse_stage(TYPEDEF); rtoken(TYPEDEF); }
+"typedef"   { rtoken(TYPEDEF); }
 "sizeof"    { rtoken(SIZEOF); }
-"enum"      { enter_parse_stage(ENUM); rtoken(ENUM);   }
+"enum"      { rtoken(ENUM);   }
 "struct"    { rtoken(STRUCT); }
 "union"     { rtoken(UNION); }
 
@@ -98,7 +98,7 @@ gcc_line_num        ^'#' *[^\n]*
 "]"         { rtoken(RBRACKET); }
 "("         { rtoken(LPAR); }
 ")"         { rtoken(RPAR); }
-"{"         { return_token(yytext, LBRACE); line_break(); indent_inc(); return LBRACE; }
+"{"         { pre_shift_token(yytext, LBRACE); line_break(); indent_inc(); return LBRACE; }
 "}"         { indent_dec(); rtoken(RBRACE); }
 "."         { rtoken(DOT); }
 "->"        { rtoken(ARROW); }
@@ -131,8 +131,8 @@ gcc_line_num        ^'#' *[^\n]*
 
 
 "?"         { rtoken(QUESTION); }
-":"         { return_token(yytext, COLON); line_break(); return COLON; }
-";"         { return_token(yytext, SEMI_COLON); line_break(); return SEMI_COLON; }
+":"         { pre_shift_token(yytext, COLON); line_break(); return COLON; }
+";"         { pre_shift_token(yytext, SEMI_COLON); line_break(); return SEMI_COLON; }
 "..."       { rtoken(DOT3); }
 
 

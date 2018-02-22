@@ -37,11 +37,17 @@ void init_parser(void) {
     pr_newline = 0;
 }
 
-int return_token(const char* parse_text, int token_num) {
+void pre_shift_token(const char* parse_text, int token_num) {
     print_token(parse_text);
     old_token = token_num;
     if (token_num == IDEN) {
         /*set_last_symbol(parse_text);*/
+    }
+    else if (token_num == TYPEDEF) {
+        enter_parse_stage(TYPEDEF); 
+    }
+    else if (token_num == ENUM) {
+        enter_parse_stage(ENUM); 
     }
     else if (token_num == ENUM_CONSTANT) {
         add_enum_symbol(parse_text, enum_index++);
@@ -55,8 +61,6 @@ int return_token(const char* parse_text, int token_num) {
     else if (token_num == HEX_CONSTANT) {
         sscanf(parse_text, "%x", &const_int_val);
     }
-    
-    return token_num;
 }
 
 int get_const_val(void) {
