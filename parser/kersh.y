@@ -573,6 +573,7 @@ int main(int argc, char* argv[]) {
     init_symtable();
     ret = yyparse();
     clear_symtable();
+    exit_parser();
     printf("parser done.\n");
 
     if (need_close) {

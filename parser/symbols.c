@@ -7,31 +7,35 @@
 
 /*symbol unique id. (application specific id.)*/
 static unsigned int sym_cnt;
-static struct symbol * symbols;
+static struct symbol * global_symbols;
 
 static struct symbol *work_symbol;
-static char *tmp_symbol_buf;
 
 static int get_new_sym_id(void) {
     return sym_cnt++;
 }
 
-static void clear_sym_buf(void) {
-    if (tmp_symbol_buf != NULL) {
-        free(tmp_symbol_buf);
-    }
-    tmp_symbol_buf = NULL;
-}
-
 void sym_add_decl(void) {
-/*    printf(">>add sym [%s]", tmp_symbol_buf);*/
 }
 
-void sym_add_struct_def(void) {
-/*    printf(">>add sym [%s]", tmp_symbol_buf);*/
+void sym_add_struct_def(const char* struct_name) {
+    struct symbol *sym;
+
+    sym = malloc(sizeof(struct symbol));
+    sym->id = get_new_sym_id();
+    sym->symbol_type = SYM_STRUCT;
+    sym->data_size = 0;
+    sym->symbol_name = (char*) struct_name;
+    sym->symbol_value = 0;
+
+    work_symbol = sym;
+    /*skip anonymous struct/union */
+    if (struct_name) {
+        HASH_ADD_STR(global_symbols, symbol_name, sym);
+    }
 }
 
-void add_enum_symbol(const char* enum_name, int val) {
+void sym_add_enum(const char* enum_name, int val) {
     struct symbol *sym;
 
     sym = malloc(sizeof(struct symbol));
@@ -42,7 +46,7 @@ void add_enum_symbol(const char* enum_name, int val) {
     sym->symbol_value = val;
 
     work_symbol = sym;
-    HASH_ADD_STR(symbols, symbol_name, sym);
+    HASH_ADD_STR(global_symbols, symbol_name, sym);
     /*printf(">>add sym [%s:%d]", enum_name, val);*/
 }
 
@@ -55,8 +59,7 @@ void update_enum_val(int val) {
 void init_symtable(void) {
     printf("init sym table...\n");
     sym_cnt = 0;
-    symbols = NULL;
-    tmp_symbol_buf = NULL;
+    global_symbols = NULL;
 }
 
 static void free_symbol(struct symbol* sym) {
@@ -76,11 +79,10 @@ void clear_symtable(void) {
     struct symbol *current_sym, *tmp;
 
     printf("\nsymbol table clean up...\n");
-    HASH_ITER(hh, symbols, current_sym, tmp) {
+    HASH_ITER(hh, global_symbols, current_sym, tmp) {
         print_sym(current_sym);
-        HASH_DEL(symbols, current_sym);
+        HASH_DEL(global_symbols, current_sym);
         free_symbol(current_sym);
     }
-    clear_sym_buf();
 }
 

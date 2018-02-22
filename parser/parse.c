@@ -15,6 +15,8 @@ static unsigned int const_int_val;
 
 static int old_token;
 
+static char* old_identifier;
+
 /*bison required functions...*/
 void yyerror (char const *s) {
     fprintf (stderr, "line: %d,\n   %s\n", line_num, s);
@@ -27,6 +29,19 @@ int yywrap (void )
 
 /*kersh implementations...*/
 
+void free_identifer(void) {
+    free(old_identifier);
+    old_identifier = NULL;
+}
+
+static void check_old_buf(void) {
+    if (old_identifier) {
+        /*old_identifier must be correctly handled in the reducer function.*/
+        printf(">>[%s] symbol left unfree...", old_identifier);
+        free_identifer();
+    }
+}
+
 void init_parser(void) {
     extern int yydebug;
     yydebug = 0;
@@ -34,6 +49,11 @@ void init_parser(void) {
     ps_stage = 0;
     pr_indent = 0;
     pr_newline = 0;
+    old_identifier = NULL;
+}
+
+void exit_parser(void) {
+    check_old_buf();
 }
 
 void pre_shift_token(const char* parse_text, int token_num) {
@@ -41,6 +61,8 @@ void pre_shift_token(const char* parse_text, int token_num) {
     old_token = token_num;
     if (token_num == IDEN) {
         /*set_last_symbol(parse_text);*/
+        check_old_buf();
+        old_identifier = strdup(parse_text);
     }
     else if (token_num == TYPEDEF) {
         enter_parse_stage(TYPEDEF); 
@@ -49,7 +71,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         enter_parse_stage(ENUM); 
     }
     else if (token_num == ENUM_CONSTANT) {
-        add_enum_symbol(parse_text, enum_index++);
+        sym_add_enum(parse_text, enum_index++);
     }
     else if (token_num == DECIMAL_CONSTANT) {
         sscanf(parse_text, "%d", &const_int_val);
@@ -59,6 +81,15 @@ void pre_shift_token(const char* parse_text, int token_num) {
     }
     else if (token_num == HEX_CONSTANT) {
         sscanf(parse_text, "%x", &const_int_val);
+    }
+    else if (token_num == STRUCT) {
+        enter_parse_stage(STRUCT); 
+    }
+    else if (token_num == '{') {
+        if (ps_stage == STRUCT) {
+            sym_add_struct_def(old_identifier);
+            old_identifier = NULL;
+        }
     }
 }
 

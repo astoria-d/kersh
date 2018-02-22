@@ -8,11 +8,24 @@ static void struct_or_union_specifier_0(void) {
 }
 
 static void struct_or_union_specifier_1(void) {
-    sym_add_struct_def();
     exit_parse_stage(); 
 }
 
 static void enum_specifier_0(void) {
+    exit_parse_stage();
+}
+
+static void enum_specifier_1(void) {
+    free_identifer();
+    exit_parse_stage();
+}
+
+static void enum_specifier_2(void) {
+    exit_parse_stage();
+}
+
+static void enum_specifier_3(void) {
+    free_identifer();
     exit_parse_stage();
 }
 
@@ -159,9 +172,9 @@ reduce_hander reduce_hander_array [] = {
 /* 132 indx_struct_declarator_1                 */ NULL,
 /* 133 indx_struct_declarator_2                 */ NULL,
 /* 134 indx_enum_specifier_0                    */ enum_specifier_0,
-/* 135 indx_enum_specifier_1                    */ enum_specifier_0,
-/* 136 indx_enum_specifier_2                    */ enum_specifier_0,
-/* 137 indx_enum_specifier_3                    */ enum_specifier_0,
+/* 135 indx_enum_specifier_1                    */ enum_specifier_1,
+/* 136 indx_enum_specifier_2                    */ enum_specifier_2,
+/* 137 indx_enum_specifier_3                    */ enum_specifier_3,
 /* 138 indx_enum_specifier_4                    */ NULL,
 /* 139 indx_emumerator_list_0                   */ NULL,
 /* 140 indx_emumerator_list_1                   */ NULL,

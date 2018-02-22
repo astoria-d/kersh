@@ -14,8 +14,8 @@
 
 void init_symtable(void);
 void clear_symtable(void);
-void sym_add_struct_def(void);
-void add_enum_symbol(const char* enum_name, int val);
+void sym_add_struct_def(const char* struct_name);
+void sym_add_enum(const char* enum_name, int val);
 void update_enum_val(int val);
 
 struct symbol {
