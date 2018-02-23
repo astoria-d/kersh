@@ -1,7 +1,6 @@
 %{
-#include "kersh.h"
-#include "kersh.tab.h"
 #include "parser.h"
+#include "kersh.tab.h"
 
 #define     rtoken(name)    {pre_shift_token(yytext, name); return name;}
 /*

@@ -1,9 +1,9 @@
 
 #include <stdio.h>
 #include "kersh.tab.h"
-#include "kersh.h"
 #include "parser.h"
 #include "symbols.h"
+#include "code.h"
 
 int line_num;
 
@@ -50,10 +50,12 @@ void init_parser(void) {
     pr_indent = 0;
     pr_newline = 0;
     old_identifier = NULL;
+    init_code_block();
 }
 
 void exit_parser(void) {
     check_old_buf();
+    clear_code_block();
 }
 
 void pre_shift_token(const char* parse_text, int token_num) {
