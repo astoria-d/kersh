@@ -15,7 +15,7 @@ static int get_new_sym_id(void) {
 void sym_add_decl(void) {
 }
 
-struct symbol *alloc_sym(void) {
+static struct symbol *alloc_sym(void) {
     struct symbol *ret;
 
     ret = malloc(sizeof(struct symbol));
@@ -43,7 +43,7 @@ void update_enum_val(struct symbol* sym, int val) {
 }
 */
 
-void init_symtable(void) {
+void init_symbols(void) {
     printf("init sym table...\n");
     sym_cnt = 0;
 }
@@ -53,7 +53,7 @@ static void free_symbol(struct symbol* sym) {
     free(sym);
 }
 
-static void print_sym(struct symbol* sym) {
+static void print_symtable(struct symbol* sym) {
     struct symbol *current_sym, *tmp;
 
     printf("[%50s ]: id:%d, type:%d", sym->symbol_name, sym->id, sym->symbol_type);
@@ -63,14 +63,16 @@ static void print_sym(struct symbol* sym) {
     printf("\n");
 }
 
-void clear_symtable(struct symbol *sym) {
+void free_symtable(struct symbol **head) {
     struct symbol *s1, *s2;
 
+    //printf("head: %08x\n", *head);
     printf("\nsymbol table clean up...\n");
-    HASH_ITER(hh, sym, s1, s2) {
-        print_sym(s1);
-        HASH_DEL(sym, s1);
+    HASH_ITER(hh, *head, s1, s2) {
+        print_symtable(s1);
+        HASH_DEL(*head, s1);
         free_symbol(s1);
+        //printf("s1: %08x\n", s1);
     }
 }
 

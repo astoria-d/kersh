@@ -55,7 +55,7 @@ void init_parser(void) {
 
 void exit_parser(void) {
     check_old_buf();
-    clear_code_block();
+    exit_code_block();
 }
 
 void pre_shift_token(const char* parse_text, int token_num) {

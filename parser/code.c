@@ -5,12 +5,12 @@
 static struct code_block* root_code_block;
 static struct code_block* cur_code_block;
 
-struct code_block* create_code_block(void) {
+static struct code_block* create_code_block(void) {
     struct code_block* cb = malloc(sizeof (struct code_block));
     memset(cb, 0, sizeof (struct code_block));
 }
 
-void free_code_block(struct code_block* cb) {
+static void free_code_block(struct code_block* cb) {
     struct code_block* next;
 
     if (cb->sub_block) {
@@ -22,21 +22,21 @@ void free_code_block(struct code_block* cb) {
         struct code_block* tmp;
 
         tmp = next->next;
-        clear_symtable(next->symbol_table);
+        free_symtable(&next->symbol_table);
         free(next);
         next = tmp;
     }
-    clear_symtable(cb->symbol_table);
+    free_symtable(&cb->symbol_table);
     free(cb);
 }
 
 void init_code_block(void) {
-    init_symtable();
+    init_symbols();
     root_code_block = create_code_block();
     cur_code_block = root_code_block;
 }
 
-void clear_code_block(void) {
+void exit_code_block(void) {
     free_code_block(root_code_block);
 }
 

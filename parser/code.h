@@ -21,7 +21,7 @@ struct code_block {
 };
 
 void init_code_block(void);
-void clear_code_block(void);
+void exit_code_block(void);
 void cb_add_emu_def(const char* enum_name, int val);
 
 #endif /*__code_h__*/
