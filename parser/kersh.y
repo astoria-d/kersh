@@ -6,7 +6,7 @@
 #include "kersh.h"
 #include "kersh.tab.h"
 #include "parser.h"
-#include "symbols.h"
+#include "code.h"
 #include "idtbl.h"
 #include "reduce.h"
 
@@ -570,9 +570,9 @@ int main(int argc, char* argv[]) {
 
     printf("%s start parser...\n", argv[0]);
     init_parser();
-    init_symtable();
+    init_code_block();
     ret = yyparse();
-    clear_symtable();
+    clear_code_block();
     exit_parser();
     printf("parser done.\n");
 

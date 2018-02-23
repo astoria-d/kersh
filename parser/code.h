@@ -1,0 +1,27 @@
+
+#ifndef __code_h__
+#define __code_h__
+
+#include "types.h"
+#include "symbols.h"
+#include "instance.h"
+
+struct code_list {
+    unsigned char       asm_code;
+    struct code_list    *next;
+};
+
+struct code_block {
+    struct type_def_list*   types;
+    struct code_list*       code;
+    struct symbol*          symbol_table;
+    struct code_block*      sub_block;
+    struct code_block*      next;
+};
+
+void init_code_block(void);
+void clear_code_block(void);
+
+
+#endif /*__code_h__*/
+

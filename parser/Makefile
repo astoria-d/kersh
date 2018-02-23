@@ -1,5 +1,6 @@
 
-SOURCES =	lex.yy.c kersh.tab.c parse.c symbols.c types.c reduce.c
+SOURCES =	parse.c symbols.c types.c reduce.c code.c \
+            lex.yy.c kersh.tab.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 

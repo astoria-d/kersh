@@ -71,7 +71,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         enter_parse_stage(ENUM); 
     }
     else if (token_num == ENUM_CONSTANT) {
-        sym_add_enum(parse_text, enum_index++);
+        //sym_add_enum(parse_text, enum_index++);
     }
     else if (token_num == DECIMAL_CONSTANT) {
         sscanf(parse_text, "%d", &const_int_val);
@@ -87,7 +87,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
     }
     else if (token_num == '{') {
         if (ps_stage == STRUCT) {
-            sym_add_struct_def(old_identifier);
+            //sym_add_struct_def(old_identifier);
             old_identifier = NULL;
         }
     }

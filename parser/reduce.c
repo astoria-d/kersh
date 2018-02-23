@@ -30,7 +30,7 @@ static void enum_specifier_3(void) {
 }
 
 static void emumerator_1(void) {
-    update_enum_val(get_const_val());
+    //update_enum_val(get_const_val());
 }
 
 
