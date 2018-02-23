@@ -18,22 +18,25 @@ struct symbol {
     int                     id;
     unsigned char           symbol_type;
     char *                  symbol_name;
-    struct type_definition* type;
-    struct instance*        instance;
+    union {
+        struct type_definition* type;
+        struct instance*        instance;
+    };
 
     /*hash table handle.*/
     UT_hash_handle  hh;
 };
 
 void init_symtable(void);
-void clear_symtable(void);
+void clear_symtable(struct symbol *sym);
 /*
 void sym_add_struct_def(const char* struct_name);
 void sym_add_enum(const char* enum_name, int val);
 void update_enum_val(struct symbol *sym, int val);
 */
 void set_sym_table(struct symbol *sym);
-struct symbol* add_symbol(int sym_type, const char* sym_name, struct type_definition* tdef);
+struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name);
+struct symbol *alloc_sym(void);
 
 #endif /*__symbols_h__*/
 

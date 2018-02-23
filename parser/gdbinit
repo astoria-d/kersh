@@ -1,8 +1,8 @@
 
 file cpars.exe
 
-b main
-b sym_add_enum
+#b main
+b cb_add_emu_def
 
 run test-input-symbol.txt
 

@@ -8,12 +8,6 @@
 /*symbol unique id. (application specific id.)*/
 static unsigned int sym_cnt;
 
-static struct symbol *current_sym_table;
-
-void set_sym_table(struct symbol *sym) {
-    current_sym_table = sym;
-}
-
 static int get_new_sym_id(void) {
     return sym_cnt++;
 }
@@ -21,7 +15,7 @@ static int get_new_sym_id(void) {
 void sym_add_decl(void) {
 }
 
-static struct symbol *alloc_sym(void) {
+struct symbol *alloc_sym(void) {
     struct symbol *ret;
 
     ret = malloc(sizeof(struct symbol));
@@ -31,14 +25,14 @@ static struct symbol *alloc_sym(void) {
 }
 
 
-struct symbol* add_symbol(int sym_type, const char* sym_name, struct type_definition* tdef) {
+struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name) {
     struct symbol *sym;
 
+    //printf(">>sym add[%s]....\n", sym_name);
     sym = alloc_sym();
     sym->symbol_type = sym_type;
-    sym->symbol_name = (char*) sym_name;
-    sym->type = tdef;
-    HASH_ADD_STR(current_sym_table, symbol_name, sym);
+    sym->symbol_name = strdup(sym_name);
+    HASH_ADD_STR(*head, symbol_name, sym);
     return sym;
 }
 
@@ -52,7 +46,6 @@ void update_enum_val(struct symbol* sym, int val) {
 void init_symtable(void) {
     printf("init sym table...\n");
     sym_cnt = 0;
-    current_sym_table = NULL;
 }
 
 static void free_symbol(struct symbol* sym) {
@@ -70,14 +63,14 @@ static void print_sym(struct symbol* sym) {
     printf("\n");
 }
 
-void clear_symtable(void) {
-    struct symbol *current_sym, *tmp;
+void clear_symtable(struct symbol *sym) {
+    struct symbol *s1, *s2;
 
     printf("\nsymbol table clean up...\n");
-    HASH_ITER(hh, current_sym_table, current_sym, tmp) {
-        print_sym(current_sym);
-        HASH_DEL(current_sym_table, current_sym);
-        free_symbol(current_sym);
+    HASH_ITER(hh, sym, s1, s2) {
+        print_sym(s1);
+        HASH_DEL(sym, s1);
+        free_symbol(s1);
     }
 }
 

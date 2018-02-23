@@ -16,12 +16,13 @@ struct code_block {
     struct code_list*       code;
     struct symbol*          symbol_table;
     struct code_block*      sub_block;
+    struct code_block*      parent_block;
     struct code_block*      next;
 };
 
 void init_code_block(void);
 void clear_code_block(void);
-
+void cb_add_emu_def(const char* enum_name, int val);
 
 #endif /*__code_h__*/
 
