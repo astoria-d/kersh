@@ -13,23 +13,23 @@ static void struct_or_union_specifier_1(void) {
 }
 
 static void enum_specifier_0(void) {
-    cb_close_enum_block(NULL);
+    cb_close_enum_block();
     exit_parse_stage();
 }
 
 static void enum_specifier_1(void) {
-    cb_close_enum_block(get_old_identifer());
+    cb_close_enum_block();
     free_identifer();
     exit_parse_stage();
 }
 
 static void enum_specifier_2(void) {
-    cb_close_enum_block(NULL);
+    cb_close_enum_block();
     exit_parse_stage();
 }
 
 static void enum_specifier_3(void) {
-    cb_close_enum_block(get_old_identifer());
+    cb_close_enum_block();
     free_identifer();
     exit_parse_stage();
 }

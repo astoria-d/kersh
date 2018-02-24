@@ -12,21 +12,24 @@ struct code_list {
 };
 
 struct code_block {
-    struct type_def_list*   types;
+    struct typedef_list*    types;
     struct code_list*       code;
     struct symbol*          symbol_table;
     struct code_block*      sub_block;
     struct code_block*      parent_block;
     struct code_block*      next;
+
+    struct typedef_list* cur_tdl;
 };
 
 void init_code_block(void);
 void exit_code_block(void);
 
 void cb_add_enum_block(void);
-void cb_close_enum_block(const char* enum_name);
+void cb_close_enum_block(void);
 void cb_discard_enum_block(void);
 void cb_add_enum_elm(const char* elm_name, int val);
+void cb_set_enum_name(const char* enum_name);
 
 void cb_add_struct_def(int str_or_uni, const char* struct_name);
 

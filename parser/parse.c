@@ -48,8 +48,13 @@ void pre_shift_token(const char* parse_text, int token_num) {
     switch (token_num) {
         case IDEN:
         /*set_last_symbol(parse_text);*/
-        check_old_buf();
-        old_identifier = strdup(parse_text);
+        if (cur_stage->stage == ENUM) {
+            cb_set_enum_name(parse_text);
+        }
+        else {
+            check_old_buf();
+            old_identifier = strdup(parse_text);
+        }
         //printf("dup %s...\n", parse_text);
         break;
 

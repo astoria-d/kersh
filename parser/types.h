@@ -19,15 +19,22 @@ struct type_definition {
     unsigned int                size;
     int                         value;
     unsigned char               is_unsigned;
-    struct type_definition*     members;
+    union {
+        struct type_definition*     next;
+        struct type_definition*     members;
+    };
     struct type_definition*     subtype;
 };
 
-struct type_def_list {
+struct typedef_list {
     struct type_definition  type;
-    struct type_def_list*   next;
-    struct type_def_list*   prev;
+    struct typedef_list*    next;
 };
+
+struct typedef_list* alloc_typedef_list(void);
+void free_typedef_list(struct typedef_list** head);
+
+struct type_definition* alloc_typedef(void);
 
 #endif /*__types_h__*/
 
