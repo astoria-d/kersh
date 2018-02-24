@@ -11,11 +11,8 @@ int line_num;
 static unsigned int pr_indent;
 static unsigned int pr_newline;
 static unsigned int enum_index;
-static unsigned int const_int_val;
 
-static int old_token;
 static char* old_identifier;
-static int old_type_token;
 
 struct parse_stage {
     int     stage;
@@ -24,6 +21,18 @@ struct parse_stage {
 };
 static struct parse_stage* cur_stage;
 static struct parse_stage* head_stage;
+
+struct token_list {
+    int token;
+    union {
+        unsigned long   lval;
+        char*           strval;
+    };
+    struct token_list *prev;
+    struct token_list *next;
+};
+static struct token_list* cur_token;
+static struct token_list* token_list_head;
 
 static void check_old_buf(void);
 
@@ -39,12 +48,28 @@ int yywrap (void )
 
 /*kersh implementations...*/
 
+static void add_token(struct token_list* tl) {
+    DL_APPEND(token_list_head, tl);
+}
+
+static void remove_token(struct token_list* tl) {
+    DL_DELETE(token_list_head, tl);
+}
+
 void pre_shift_token(const char* parse_text, int token_num) {
+    unsigned long const_int_val;
 
     if (token_num == '}') {
         indent_dec(); 
     }
     print_token(parse_text);
+
+    struct token_list* tk;
+    tk = malloc(sizeof(struct token_list));
+    memset(tk, 0, sizeof(struct token_list));
+    tk->token = token_num;
+    add_token(tk);
+    cur_token = tk;
 
     switch (token_num) {
         case IDEN:
@@ -68,14 +93,17 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
         case DECIMAL_CONSTANT:
         sscanf(parse_text, "%d", &const_int_val);
+        tk->lval = const_int_val;
         break;
 
         case OCTAL_CONSTANT:
         sscanf(parse_text, "%o", &const_int_val);
+        tk->lval = const_int_val;
         break;
 
         case HEX_CONSTANT:
         sscanf(parse_text, "%x", &const_int_val);
+        tk->lval = const_int_val;
         break;
 
         case STRUCT:
@@ -114,14 +142,13 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
     }
-
-    old_token = token_num;
 }
 
 /*check input token is identifier or enum constant or typedef name*/
 int check_token_type(void) {
     /*printf("ps_stage: %d\n", ps_stage);*/
-    if (cur_stage->stage == ENUM && (old_token == '{' || old_token == ',') ) {
+    if (cur_stage->stage == ENUM &&
+        (cur_token->token == '{' || cur_token->token == ',') ) {
         return ENUM_CONSTANT;
     }
     else {
@@ -158,7 +185,15 @@ int get_current_stage(void) {
 }
 
 int get_const_val(void) {
-    return const_int_val;
+    struct token_list* prev = cur_token;
+    while(prev) {
+        if (prev->token == DECIMAL_CONSTANT || 
+            prev->token == OCTAL_CONSTANT || 
+            prev->token == HEX_CONSTANT)
+            return (int)prev->lval;
+        prev = prev->prev;
+    }
+    return 0;
 }
 
 int get_enum_index() {
@@ -216,6 +251,8 @@ void init_parser(void) {
     line_num = 1;
     cur_stage = NULL;
     head_stage = NULL;
+    cur_token = NULL;
+    token_list_head = NULL;
     pr_indent = 0;
     pr_newline = 0;
     old_identifier = NULL;
