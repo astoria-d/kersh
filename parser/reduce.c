@@ -1,15 +1,34 @@
+
+#include <stdio.h>
+
 #include "idtbl.h"
 #include "parser.h"
 #include "symbols.h"
 #include "reduce.h"
 #include "code.h"
 
+
 static void struct_or_union_specifier_0(void) {
+    cb_close_struct_block();
     exit_parse_stage();
 }
 
 static void struct_or_union_specifier_1(void) {
+    cb_close_struct_block();
     exit_parse_stage(); 
+}
+
+static void struct_declaration_0(void) {
+}
+
+static void struct_declaration_1(void) {
+    //printf("field:%s\n", get_old_identifer());
+    cb_add_struct_field(NULL);
+    free_identifer();
+}
+
+
+static void struct_declarator_0(void) {
 }
 
 static void enum_specifier_0(void) {
@@ -176,20 +195,20 @@ reduce_hander reduce_hander_array [] = {
 /* 115 indx_type_specifier_9                    */ NULL,
 /* 116 indx_struct_or_union_specifier_0         */ struct_or_union_specifier_0,
 /* 117 indx_struct_or_union_specifier_1         */ struct_or_union_specifier_1,
-/* 118 indx_struct_or_union_specifier_2         */ struct_or_union_specifier_0,
+/* 118 indx_struct_or_union_specifier_2         */ NULL,
 /* 119 indx_struct_or_union_0                   */ NULL,
 /* 120 indx_struct_or_union_1                   */ NULL,
 /* 121 indx_struct_declaration_list_0           */ NULL,
 /* 122 indx_struct_declaration_list_1           */ NULL,
-/* 123 indx_struct_declaration_0                */ NULL,
-/* 124 indx_struct_declaration_1                */ NULL,
+/* 123 indx_struct_declaration_0                */ struct_declaration_0,
+/* 124 indx_struct_declaration_1                */ struct_declaration_1,
 /* 125 indx_specifier_qualifier_list_0          */ NULL,
 /* 126 indx_specifier_qualifier_list_1          */ NULL,
 /* 127 indx_specifier_qualifier_list_2          */ NULL,
 /* 128 indx_specifier_qualifier_list_3          */ NULL,
 /* 129 indx_struct_declarator_list_0            */ NULL,
 /* 130 indx_struct_declarator_list_1            */ NULL,
-/* 131 indx_struct_declarator_0                 */ NULL,
+/* 131 indx_struct_declarator_0                 */ struct_declarator_0,
 /* 132 indx_struct_declarator_1                 */ NULL,
 /* 133 indx_struct_declarator_2                 */ NULL,
 /* 134 indx_enum_specifier_0                    */ enum_specifier_0,

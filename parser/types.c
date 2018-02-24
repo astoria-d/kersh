@@ -11,7 +11,7 @@ struct typedef_list* alloc_typedef_list(void) {
 
     tdl = malloc(sizeof(struct typedef_list));
     memset(tdl, 0, sizeof(struct typedef_list));
-    printf("alloc tdl: %08x\n", tdl);
+    //printf("alloc tdl: %08x\n", tdl);
     return tdl;
 }
 

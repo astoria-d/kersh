@@ -19,6 +19,7 @@ struct type_definition {
     unsigned int                size;
     int                         value;
     unsigned char               is_unsigned;
+    unsigned char               is_pointer;
     struct type_definition*     subtype;
     union {
         struct type_definition*     members;

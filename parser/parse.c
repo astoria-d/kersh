@@ -15,6 +15,7 @@ static unsigned int const_int_val;
 
 static int old_token;
 static char* old_identifier;
+static int old_type_token;
 
 struct parse_stage {
     int     stage;
@@ -82,6 +83,15 @@ void pre_shift_token(const char* parse_text, int token_num) {
         enter_parse_stage(token_num); 
         break;
 
+        case VOID:
+        case CHAR:
+        case SHORT:
+        case INT:
+        case LONG:
+        case SIGNED:
+        case UNSIGNED:
+        break;
+
         case '{':
         if (cur_stage->stage == ENUM) {
             cb_add_enum_block();
@@ -91,7 +101,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
             }
         }
         else if (cur_stage->stage == STRUCT || cur_stage->stage == UNION) {
-            //cb_add_struct_def(cur_stage->stage, old_identifier);
+            cb_add_struct_block(cur_stage->stage, old_identifier);
             free_identifer();
         }
         line_break();

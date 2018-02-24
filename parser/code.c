@@ -40,6 +40,7 @@ void cb_add_enum_block(void) {
     struct typedef_list* tdl = NULL;
 
     tdl = alloc_typedef_list();
+    tdl->type.type_id = TP_ENUM;
     LL_APPEND(cur_code_block->types, tdl);
     cur_code_block->cur_tdl = tdl;
 }
@@ -81,18 +82,28 @@ void cb_close_enum_block(void) {
     }
 }
 
-void cb_add_struct_def(int str_or_uni, const char* struct_name) {
-    struct type_definition* tp = NULL;
+void cb_add_struct_block(int str_or_uni, const char* struct_name) {
+    struct typedef_list* tdl = NULL;
 
-    if(cur_code_block == root_code_block) {
+    tdl = alloc_typedef_list();
+    tdl->type.type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
+    LL_APPEND(cur_code_block->types, tdl);
+    cur_code_block->cur_tdl = tdl;
+
+    if (struct_name) {
         struct symbol* sym;
-        sym = add_symbol(&cur_code_block->symbol_table, 
-            str_or_uni == STRUCT ? SYM_STRUCT : SYM_UNION, struct_name);
-        sym->type = tp;
+        tdl->type.name = strdup(struct_name);
+        sym = add_symbol(&cur_code_block->symbol_table, str_or_uni, struct_name);
+        sym->type = &tdl->type;
     }
+}
 
-//    add_sub_block(cb);
-//    cur_code_block = cb;
+void cb_close_struct_block(void) {
+    /*do nothing...*/
+}
+
+void cb_add_struct_field(struct typedef_list* field) {
+
 }
 
 void cb_exit_cb(void) {
