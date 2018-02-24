@@ -20,7 +20,7 @@ struct type_definition* alloc_typedef(void) {
 
     td = malloc(sizeof(struct type_definition));
     memset(td, 0, sizeof(struct type_definition));
-    printf("alloc td: %08x\n", td);
+    //printf("alloc td: %08x\n", td);
     return td;
 }
 
@@ -34,7 +34,11 @@ static void print_typedef(struct typedef_list* tdl, int indent) {
     LL_FOREACH(&tdl->type, mem) {
         if (&tdl->type == mem) continue;
         for (i = 0; i < indent; i++) printf("  ");
-        printf("  [%-48s ]: type:%d, size:%d\n", mem->name, mem->type_id, mem->size);
+        printf("  [%-48s ]: type:%d, size:%d", mem->name, mem->type_id, mem->size);
+        if (mem->type_id == TP_ENUM) {
+            printf(", value:%d", mem->value);
+        }
+        printf("\n");
     }
 }
 
