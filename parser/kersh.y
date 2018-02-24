@@ -10,6 +10,9 @@
 
 #define     dprint(msg)    printf("  << %s...\n", msg)
 
+int yylex (void);
+void yyerror (char const *s);
+
 %}
 
 %token
@@ -546,6 +549,7 @@ declaration_list        :   declaration                                         
 
 /*main func...*/
 
+int line_num;
 
 int main(int argc, char* argv[]) {
     int ret;
@@ -567,6 +571,7 @@ int main(int argc, char* argv[]) {
     }
 
     printf("%s start parser...\n", argv[0]);
+    line_num = 1;
     init_parser();
     ret = yyparse();
     exit_parser();
@@ -577,3 +582,14 @@ int main(int argc, char* argv[]) {
     }
     return ret;
 }
+
+/*bison required functions...*/
+
+void yyerror (char const *s) {
+    fprintf (stderr, "line: %d,\n   %s\n", line_num, s);
+}
+
+int yywrap (void ) {
+    return 1;
+}
+

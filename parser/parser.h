@@ -27,11 +27,6 @@
 #define     EQ          '='
 #define     COMMA       ','
 
-int yylex (void);
-void yyerror (char const *s);
-
-
-
 void pre_shift_token(const char* parse_text, int token_num);
 int check_token_type(void);
 void enter_parse_stage(int stage);
@@ -51,8 +46,6 @@ void indent_dec(void);
 
 void init_parser(void);
 void exit_parser(void);
-
-extern int line_num;
 
 #endif /*__parser_h__*/
 

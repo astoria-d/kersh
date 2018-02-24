@@ -6,8 +6,6 @@
 #include "code.h"
 #include "utlist.h"
 
-int line_num;
-
 static unsigned int pr_indent;
 static unsigned int pr_newline;
 static unsigned int enum_index;
@@ -31,16 +29,6 @@ struct parse_stage {
 };
 static struct parse_stage* cur_stage;
 static struct parse_stage* head_stage;
-
-/*bison required functions...*/
-void yyerror (char const *s) {
-    fprintf (stderr, "line: %d,\n   %s\n", line_num, s);
-}
-
-int yywrap (void )
-{
-    return 1;
-}
 
 /*kersh implementations...*/
 
@@ -247,7 +235,6 @@ void indent_dec(void) {
 void init_parser(void) {
     extern int yydebug;
     yydebug = 0;
-    line_num = 1;
     cur_stage = NULL;
     head_stage = NULL;
     cur_token = NULL;

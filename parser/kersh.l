@@ -6,6 +6,9 @@
 /*
 #define     rtoken(name)    printf( "lex: " #name " %s	\n", yytext);   return(name)
 */
+
+extern int line_num;
+
 %}
 
 nondigit            [_a-zA-Z]
