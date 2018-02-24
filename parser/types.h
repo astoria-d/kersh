@@ -18,8 +18,13 @@ struct type_definition {
     char*                       name;
     unsigned int                size;
     int                         value;
-    unsigned char               is_unsigned;
-    unsigned char               is_pointer;
+
+    struct qualifier {
+        unsigned char       is_unsigned     : 1;
+        unsigned char       is_pointer      : 1;
+        unsigned char       is_const        : 1;
+        unsigned char       is_volatile     : 1;
+    } q;
     struct type_definition*     subtype;
     union {
         struct type_definition*     members;
