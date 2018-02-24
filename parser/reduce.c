@@ -24,9 +24,7 @@ static void struct_declaration_0(void) {
 static void struct_declaration_1(void) {
     //printf("field:%s\n", get_old_identifer());
     cb_add_struct_field(NULL);
-    free_identifer();
 }
-
 
 static void struct_declarator_0(void) {
 }
@@ -38,7 +36,6 @@ static void enum_specifier_0(void) {
 
 static void enum_specifier_1(void) {
     cb_close_enum_block();
-    free_identifer();
     exit_parse_stage();
 }
 
@@ -49,12 +46,10 @@ static void enum_specifier_2(void) {
 
 static void enum_specifier_3(void) {
     cb_close_enum_block();
-    free_identifer();
     exit_parse_stage();
 }
 
 static void enum_specifier_4(void) {
-    free_identifer();
     exit_parse_stage();
 }
 
@@ -63,14 +58,12 @@ static void emumerator_0(void) {
     int val = get_enum_index();
     cb_add_enum_elm(get_old_identifer(), val);
     set_enum_index(val + 1);
-    free_identifer();
 }
 
 static void emumerator_1(void) {
     int val = get_const_val();
     cb_add_enum_elm(get_old_identifer(), val);
     set_enum_index(val + 1);
-    free_identifer();
 }
 
 

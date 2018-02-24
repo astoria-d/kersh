@@ -12,16 +12,6 @@ static unsigned int pr_indent;
 static unsigned int pr_newline;
 static unsigned int enum_index;
 
-static char* old_identifier;
-
-struct parse_stage {
-    int     stage;
-    struct parse_stage *prev;
-    struct parse_stage *next;
-};
-static struct parse_stage* cur_stage;
-static struct parse_stage* head_stage;
-
 struct token_list {
     int token;
     union {
@@ -34,7 +24,13 @@ struct token_list {
 static struct token_list* cur_token;
 static struct token_list* token_list_head;
 
-static void check_old_buf(void);
+struct parse_stage {
+    struct token_list* start;
+    struct parse_stage *prev;
+    struct parse_stage *next;
+};
+static struct parse_stage* cur_stage;
+static struct parse_stage* head_stage;
 
 /*bison required functions...*/
 void yyerror (char const *s) {
@@ -48,14 +44,6 @@ int yywrap (void )
 
 /*kersh implementations...*/
 
-static void add_token(struct token_list* tl) {
-    DL_APPEND(token_list_head, tl);
-}
-
-static void remove_token(struct token_list* tl) {
-    DL_DELETE(token_list_head, tl);
-}
-
 void pre_shift_token(const char* parse_text, int token_num) {
     unsigned long const_int_val;
 
@@ -68,13 +56,12 @@ void pre_shift_token(const char* parse_text, int token_num) {
     tk = malloc(sizeof(struct token_list));
     memset(tk, 0, sizeof(struct token_list));
     tk->token = token_num;
-    add_token(tk);
+    DL_APPEND(token_list_head, tk);
     cur_token = tk;
 
     switch (token_num) {
         case IDEN:
-        check_old_buf();
-        old_identifier = strdup(parse_text);
+        tk->strval = strdup(parse_text);
         //printf("dup %s...\n", parse_text);
         break;
 
@@ -87,8 +74,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
         case ENUM_CONSTANT:
-        check_old_buf();
-        old_identifier = strdup(parse_text);
+        tk->strval = strdup(parse_text);
         break;
 
         case DECIMAL_CONSTANT:
@@ -121,16 +107,15 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
         case '{':
-        if (cur_stage->stage == ENUM) {
+        if (cur_stage->start->token == ENUM) {
             cb_add_enum_block();
-            if (old_identifier) {
-                cb_set_enum_name(old_identifier);
-                free_identifer();
+            if (cur_token->prev->token == IDEN) {
+                cb_set_enum_name(cur_token->prev->strval);
             }
         }
-        else if (cur_stage->stage == STRUCT || cur_stage->stage == UNION) {
-            cb_add_struct_block(cur_stage->stage, old_identifier);
-            free_identifer();
+        else if (cur_stage->start->token == STRUCT || cur_stage->start->token == UNION) {
+            cb_add_struct_block(cur_stage->start->token, 
+                cur_token->prev->token == IDEN ? cur_token->prev->strval : NULL);
         }
         line_break();
         indent_inc(); 
@@ -147,7 +132,10 @@ void pre_shift_token(const char* parse_text, int token_num) {
 /*check input token is identifier or enum constant or typedef name*/
 int check_token_type(void) {
     /*printf("ps_stage: %d\n", ps_stage);*/
-    if (cur_stage->stage == ENUM &&
+    if (!cur_stage || !cur_stage->start) {
+        return IDEN;
+    }
+    if (cur_stage->start->token == ENUM &&
         (cur_token->token == '{' || cur_token->token == ',') ) {
         return ENUM_CONSTANT;
     }
@@ -164,7 +152,7 @@ void enter_parse_stage(int stage) {
     }
     ps = malloc(sizeof(struct parse_stage));
     memset(ps, 0, sizeof(struct parse_stage));
-    ps->stage = stage;
+    ps->start = cur_token;
     DL_APPEND(head_stage, ps);
     cur_stage = ps;
     //printf("stage %d entered, %08x\n", stage, ps);
@@ -172,16 +160,30 @@ void enter_parse_stage(int stage) {
 
 void exit_parse_stage(void) {
     struct parse_stage* ps;
+/*
+*/
+    struct token_list *prev, *t1;
+
+    prev = cur_token;
+    cur_token = cur_stage->start->prev;
+    //printf("cur_token:%08x, prev:%08x\n", cur_token, prev);
+    while(prev != cur_token) {
+        //printf("del token:%x, :%x\n", prev->token, prev);
+        DL_DELETE(token_list_head, prev);
+        t1 = prev;
+        prev = prev->prev;
+        free(t1);
+    }
 
     ps = cur_stage;
     cur_stage = cur_stage->prev;
     DL_DELETE(head_stage, ps);
-    //printf("stage %d exite, %08x\n", ps->stage, ps);
     free(ps);
+    //printf("stage %d exite, %08x\n", ps->stage, ps);
 }
 
 int get_current_stage(void) {
-    return cur_stage->stage;
+    return cur_stage->start->token;
 }
 
 int get_const_val(void) {
@@ -205,20 +207,13 @@ void set_enum_index(int val) {
 }
 
 char* get_old_identifer(void) {
-    return old_identifier;
-}
-
-void free_identifer(void) {
-    free(old_identifier);
-    old_identifier = NULL;
-}
-
-static void check_old_buf(void) {
-    if (old_identifier) {
-        /*old_identifier must be correctly handled in the reducer function.*/
-        printf(">>[%s] symbol left unfree...", old_identifier);
-        free_identifer();
+    struct token_list* prev = cur_token;
+    while(prev) {
+        if (prev->token == IDEN || prev->token == ENUM_CONSTANT)
+            return prev->strval;
+        prev = prev->prev;
     }
+    return NULL;
 }
 
 void line_break(void) {
@@ -255,7 +250,6 @@ void init_parser(void) {
     token_list_head = NULL;
     pr_indent = 0;
     pr_newline = 0;
-    old_identifier = NULL;
     init_code_block();
 }
 
@@ -263,6 +257,5 @@ void exit_parser(void) {
     if (head_stage) {
         free(head_stage);
     }
-    check_old_buf();
     exit_code_block();
 }
