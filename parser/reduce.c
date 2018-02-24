@@ -35,7 +35,6 @@ static void enum_specifier_3(void) {
 }
 
 static void enum_specifier_4(void) {
-    cb_discard_enum_block();
     free_identifer();
     exit_parse_stage();
 }

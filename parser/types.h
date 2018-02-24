@@ -19,11 +19,11 @@ struct type_definition {
     unsigned int                size;
     int                         value;
     unsigned char               is_unsigned;
-    union {
-        struct type_definition*     next;
-        struct type_definition*     members;
-    };
     struct type_definition*     subtype;
+    union {
+        struct type_definition*     members;
+        struct type_definition*     next;
+    };
 };
 
 struct typedef_list {

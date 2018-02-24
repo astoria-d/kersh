@@ -81,14 +81,6 @@ void cb_close_enum_block(void) {
     }
 }
 
-void cb_discard_enum_block(void) {
-    struct typedef_list* tdl = NULL;
-
-    tdl = cur_code_block->cur_tdl;
-    LL_DELETE(cur_code_block->types, tdl);
-    free_typedef_list(&tdl);
-}
-
 void cb_add_struct_def(int str_or_uni, const char* struct_name) {
     struct type_definition* tp = NULL;
 

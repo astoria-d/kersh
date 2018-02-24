@@ -27,7 +27,6 @@ void exit_code_block(void);
 
 void cb_add_enum_block(void);
 void cb_close_enum_block(void);
-void cb_discard_enum_block(void);
 void cb_add_enum_elm(const char* elm_name, int val);
 void cb_set_enum_name(const char* enum_name);
 

@@ -47,14 +47,8 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
     switch (token_num) {
         case IDEN:
-        /*set_last_symbol(parse_text);*/
-        if (cur_stage->stage == ENUM) {
-            cb_set_enum_name(parse_text);
-        }
-        else {
-            check_old_buf();
-            old_identifier = strdup(parse_text);
-        }
+        check_old_buf();
+        old_identifier = strdup(parse_text);
         //printf("dup %s...\n", parse_text);
         break;
 
@@ -63,7 +57,6 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
         case ENUM:
-        cb_add_enum_block();
         enter_parse_stage(token_num); 
         break;
 
@@ -90,7 +83,14 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
         case '{':
-        if (cur_stage->stage == STRUCT || cur_stage->stage == UNION) {
+        if (cur_stage->stage == ENUM) {
+            cb_add_enum_block();
+            if (old_identifier) {
+                cb_set_enum_name(old_identifier);
+                free_identifer();
+            }
+        }
+        else if (cur_stage->stage == STRUCT || cur_stage->stage == UNION) {
             //cb_add_struct_def(cur_stage->stage, old_identifier);
             free_identifer();
         }
