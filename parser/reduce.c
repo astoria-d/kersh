@@ -2,6 +2,7 @@
 #include "parser.h"
 #include "symbols.h"
 #include "reduce.h"
+#include "code.h"
 
 static void struct_or_union_specifier_0(void) {
     exit_parse_stage();
@@ -12,25 +13,46 @@ static void struct_or_union_specifier_1(void) {
 }
 
 static void enum_specifier_0(void) {
+    cb_close_enum_block(NULL);
     exit_parse_stage();
 }
 
 static void enum_specifier_1(void) {
+    cb_close_enum_block(get_old_identifer());
     free_identifer();
     exit_parse_stage();
 }
 
 static void enum_specifier_2(void) {
+    cb_close_enum_block(NULL);
     exit_parse_stage();
 }
 
 static void enum_specifier_3(void) {
+    cb_close_enum_block(get_old_identifer());
     free_identifer();
     exit_parse_stage();
 }
 
+static void enum_specifier_4(void) {
+    cb_discard_enum_block();
+    free_identifer();
+    exit_parse_stage();
+}
+
+
+static void emumerator_0(void) {
+    int val = get_enum_index();
+    cb_add_enum_elm(get_old_identifer(), val);
+    set_enum_index(val + 1);
+    free_identifer();
+}
+
 static void emumerator_1(void) {
-    //update_enum_val(get_const_val());
+    int val = get_const_val();
+    cb_add_enum_elm(get_old_identifer(), val);
+    set_enum_index(val + 1);
+    free_identifer();
 }
 
 
@@ -175,10 +197,10 @@ reduce_hander reduce_hander_array [] = {
 /* 135 indx_enum_specifier_1                    */ enum_specifier_1,
 /* 136 indx_enum_specifier_2                    */ enum_specifier_2,
 /* 137 indx_enum_specifier_3                    */ enum_specifier_3,
-/* 138 indx_enum_specifier_4                    */ NULL,
+/* 138 indx_enum_specifier_4                    */ enum_specifier_4,
 /* 139 indx_emumerator_list_0                   */ NULL,
 /* 140 indx_emumerator_list_1                   */ NULL,
-/* 141 indx_emumerator_0                        */ NULL,
+/* 141 indx_emumerator_0                        */ emumerator_0,
 /* 142 indx_emumerator_1                        */ emumerator_1,
 /* 143 indx_type_qualifier_0                    */ NULL,
 /* 144 indx_type_qualifier_1                    */ NULL,

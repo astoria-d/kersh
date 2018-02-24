@@ -41,12 +41,21 @@ void exit_code_block(void) {
     free_code_block(root_code_block);
 }
 
-void cb_add_emu_def(const char* enum_name, int val) {
+void cb_add_enum_block(void) {
+}
+
+void cb_add_enum_elm(const char* elm_name, int val) {
     struct type_definition* tp = NULL;
     struct symbol* sym;
 
-    sym = add_symbol(&cur_code_block->symbol_table, SYM_ENUM, enum_name);
+    sym = add_symbol(&cur_code_block->symbol_table, SYM_ENUM, elm_name);
     sym->type = tp;
+}
+
+void cb_close_enum_block(const char* enum_name) {
+}
+
+void cb_discard_enum_block(void) {
 }
 
 void cb_add_struct_def(int str_or_uni, const char* struct_name) {
@@ -68,8 +77,5 @@ void cb_exit_cb(void) {
 }
 
 void add_sub_block(struct code_block* cb) {
-}
-
-void add_next_block(void) {
 }
 

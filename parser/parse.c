@@ -58,11 +58,13 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
         case ENUM:
+        cb_add_enum_block();
         enter_parse_stage(token_num); 
         break;
 
         case ENUM_CONSTANT:
-        cb_add_emu_def(parse_text, enum_index++);
+        check_old_buf();
+        old_identifier = strdup(parse_text);
         break;
 
         case DECIMAL_CONSTANT:
@@ -136,12 +138,24 @@ void exit_parse_stage(void) {
     free(ps);
 }
 
+int get_current_stage(void) {
+    return cur_stage->stage;
+}
+
 int get_const_val(void) {
     return const_int_val;
 }
 
-void set_enum_index(int next_index) {
-    enum_index = next_index;
+int get_enum_index() {
+    return enum_index;
+}
+
+void set_enum_index(int val) {
+    enum_index = val;
+}
+
+char* get_old_identifer(void) {
+    return old_identifier;
 }
 
 void free_identifer(void) {

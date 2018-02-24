@@ -34,17 +34,23 @@ void yyerror (char const *s);
 
 void pre_shift_token(const char* parse_text, int token_num);
 int check_token_type(void);
-void init_parser(void);
-void exit_parser(void);
 void enter_parse_stage(int stage);
 void exit_parse_stage(void);
-void line_break(void);
-void set_enum_index(int next_index);
+void free_identifer(void);
+
+int get_current_stage(void);
 int get_const_val(void);
+char* get_old_identifer(void);
+int get_enum_index();
+void set_enum_index(int val);
+
 void print_token(const char* parse_text);
+void line_break(void);
 void indent_inc(void);
 void indent_dec(void);
-void free_identifer(void);
+
+void init_parser(void);
+void exit_parser(void);
 
 extern int line_num;
 
