@@ -2,7 +2,9 @@
 file cpars.exe
 
 #b main
-b cb_add_emu_def
+#b cb_add_emu_def
+b enter_parse_stage
+b exit_parse_stage
 
 run test-input-symbol.txt
 
