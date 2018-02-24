@@ -1,5 +1,6 @@
 
 
+#include "kersh.tab.h"
 #include "code.h"
 
 static struct code_block* root_code_block;
@@ -46,11 +47,27 @@ void cb_add_emu_def(const char* enum_name, int val) {
 
     sym = add_symbol(&cur_code_block->symbol_table, SYM_ENUM, enum_name);
     sym->type = tp;
-
-
 }
 
-void add_sub_block(void) {
+void cb_add_struct_def(int str_or_uni, const char* struct_name) {
+    struct type_definition* tp = NULL;
+
+    if(cur_code_block == root_code_block) {
+        struct symbol* sym;
+        sym = add_symbol(&cur_code_block->symbol_table, 
+            str_or_uni == STRUCT ? SYM_STRUCT : SYM_UNION, struct_name);
+        sym->type = tp;
+    }
+
+//    add_sub_block(cb);
+//    cur_code_block = cb;
+}
+
+void cb_exit_cb(void) {
+    cur_code_block = cur_code_block->parent_block;
+}
+
+void add_sub_block(struct code_block* cb) {
 }
 
 void add_next_block(void) {

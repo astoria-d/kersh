@@ -50,6 +50,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         /*set_last_symbol(parse_text);*/
         check_old_buf();
         old_identifier = strdup(parse_text);
+        //printf("dup %s...\n", parse_text);
         break;
 
         case TYPEDEF:
@@ -83,8 +84,8 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
         case '{':
         if (cur_stage->stage == STRUCT || cur_stage->stage == UNION) {
-            //sym_add_struct_def(old_identifier);
-            old_identifier = NULL;
+            //cb_add_struct_def(cur_stage->stage, old_identifier);
+            free_identifer();
         }
         line_break();
         indent_inc(); 

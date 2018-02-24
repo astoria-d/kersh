@@ -23,6 +23,7 @@ struct code_block {
 void init_code_block(void);
 void exit_code_block(void);
 void cb_add_emu_def(const char* enum_name, int val);
+void cb_add_struct_def(int str_or_uni, const char* struct_name);
 
 #endif /*__code_h__*/
 
