@@ -168,10 +168,14 @@ void exit_parse_stage(void) {
     cur_token = cur_stage->start->prev;
     //printf("cur_token:%08x, prev:%08x\n", cur_token, prev);
     while(prev != cur_token) {
-        //printf("del token:%x, :%x\n", prev->token, prev);
+        //printf("del token:%04x, %40s, %x\n", prev->token, 
+          //      (prev->token == IDEN || prev->token == ENUM_CONSTANT) ? prev->strval : "-", prev);
         DL_DELETE(token_list_head, prev);
         t1 = prev;
         prev = prev->prev;
+        if (t1->token == IDEN || t1->token == ENUM_CONSTANT) {
+            free(t1->strval);
+        }
         free(t1);
     }
 
