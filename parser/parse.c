@@ -10,6 +10,8 @@ static unsigned int pr_indent;
 static unsigned int pr_newline;
 static unsigned int enum_index;
 
+static void print_token(const char* parse_text);
+
 struct token_list {
     int token;
     union {
@@ -29,6 +31,8 @@ struct parse_stage {
 };
 static struct parse_stage* cur_stage;
 static struct parse_stage* head_stage;
+
+static void dbg_print_token(struct token_list* tl);
 
 /*kersh implementations...*/
 
@@ -156,8 +160,7 @@ void exit_parse_stage(void) {
     cur_token = cur_stage->start->prev;
     //printf("cur_token:%08x, prev:%08x\n", cur_token, prev);
     while(prev != cur_token) {
-        //printf("del token:%04x, %40s, %x\n", prev->token, 
-          //      (prev->token == IDEN || prev->token == ENUM_CONSTANT) ? prev->strval : "-", prev);
+        dbg_print_token(prev);
         DL_DELETE(token_list_head, prev);
         t1 = prev;
         prev = prev->prev;
@@ -213,7 +216,7 @@ void line_break(void) {
     pr_newline = 1;
 }
 
-void print_token(const char* parse_text) {
+static void print_token(const char* parse_text) {
     if (pr_newline) {
         int i;
         for (i = 0; i < pr_indent; i++) {
@@ -222,6 +225,102 @@ void print_token(const char* parse_text) {
     }
     pr_newline = 0;
     printf("%s ", parse_text);
+}
+
+static void dbg_print_token(struct token_list* tl) {
+    char* p;
+    switch (tl->token) {
+case AUTO:                      p = "AUTO"; break;
+case BREAK:                     p = "BREAK"; break;
+case CASE:                      p = "CASE"; break;
+case CHAR:                      p = "CHAR"; break;
+case CONST:                     p = "CONST"; break;
+case CONTINUE:                  p = "CONTINUE"; break;
+case DEFAULT:                   p = "DEFAULT"; break;
+case DO:                        p = "DO"; break;
+case ELSE:                      p = "ELSE"; break;
+case ENUM:                      p = "ENUM"; break;
+case EXTERN:                    p = "EXTERN"; break;
+case FOR:                       p = "FOR"; break;
+case GOTO:                      p = "GOTO"; break;
+case IF:                        p = "IF"; break;
+case INLINE:                    p = "INLINE"; break;
+case INT:                       p = "INT"; break;
+case LONG:                      p = "LONG"; break;
+case REGISTER:                  p = "REGISTER"; break;
+case RETURN:                    p = "RETURN"; break;
+case SHORT:                     p = "SHORT"; break;
+case SIGNED:                    p = "SIGNED"; break;
+case SIZEOF:                    p = "SIZEOF"; break;
+case STATIC:                    p = "STATIC"; break;
+case STRUCT:                    p = "STRUCT"; break;
+case SWITCH:                    p = "SWITCH"; break;
+case TYPEDEF:                   p = "TYPEDEF"; break;
+case UNION:                     p = "UNION"; break;
+case UNSIGNED:                  p = "UNSIGNED"; break;
+case VOID:                      p = "VOID"; break;
+case VOLATILE:                  p = "VOLATILE"; break;
+case WHILE:                     p = "WHILE"; break;
+case IDEN:                      p = "IDEN"; break;
+case DECIMAL_CONSTANT:          p = "DECIMAL_CONSTANT"; break;
+case OCTAL_CONSTANT:            p = "OCTAL_CONSTANT"; break;
+case HEX_CONSTANT:              p = "HEX_CONSTANT"; break;
+case ENUM_CONSTANT:             p = "ENUM_CONSTANT"; break;
+case INVALID:                   p = "INVALID"; break;
+case C_CHAR:                    p = "C_CHAR"; break;
+case S_CHAR:                    p = "S_CHAR"; break;
+case TYPEDEF_NAME:              p = "TYPEDEF_NAME"; break;
+case LOWER_THAN_ELSE:           p = "LOWER_THAN_ELSE"; break;
+case ARROW:                     p = "ARROW"; break;
+case INC:                       p = "INC"; break;
+case DEC:                       p = "DEC"; break;
+case LSHIFT:                    p = "LSHIFT"; break;
+case RSHIFT:                    p = "RSHIFT"; break;
+case LE:                        p = "LE"; break;
+case GE:                        p = "GE"; break;
+case EQEQ:                      p = "EQEQ"; break;
+case NE:                        p = "NE"; break;
+case L_AND:                     p = "L_AND"; break;
+case L_OR:                      p = "L_OR"; break;
+case DOT3:                      p = "DOT3"; break;
+case ASTR_EQ:                   p = "ASTR_EQ"; break;
+case DASH_EQ:                   p = "DASH_EQ"; break;
+case PERC_EQ:                   p = "PERC_EQ"; break;
+case PLUS_EQ:                   p = "PLUS_EQ"; break;
+case MINUS_EQ:                  p = "MINUS_EQ"; break;
+case LSHIFT_EQ:                 p = "LSHIFT_EQ"; break;
+case RSHIFT_EQ:                 p = "RSHIFT_EQ"; break;
+case AMP_EQ:                    p = "AMP_EQ"; break;
+case HAT_EQ:                    p = "HAT_EQ"; break;
+case OR_EQ:                     p = "OR_EQ"; break;
+
+case LBRACKET:                  p = "["; break;
+case RBRACKET:                  p = "]"; break;
+case LPAR:                      p = "("; break;
+case RPAR:                      p = ")"; break;
+case LBRACE:                    p = "{"; break;
+case RBRACE:                    p = "}"; break;
+case DOT:                       p = "."; break;
+case AMP:                       p = "&"; break;
+case ASTR:                      p = "*"; break;
+case PLUS:                      p = "+"; break;
+case MINUS:                     p = "-"; break;
+case TILDA:                     p = "~"; break;
+case EXQL:                      p = "!"; break;
+case DASH:                      p = "/"; break;
+case PERCENT:                   p = "%"; break;
+case LT:                        p = "<"; break;
+case GT:                        p = ">"; break;
+case HAT:                       p = "^"; break;
+case OR:                        p = "|"; break;
+case QUESTION:                  p = "?"; break;
+case COLON:                     p = ":"; break;
+case SEMI_COLON:                p = ";"; break;
+case EQ:                        p = "="; break;
+case COMMA:                     p = ","; break;
+      }
+    printf("token = [%s]\n", (tl->token == IDEN || tl->token == ENUM_CONSTANT) ? tl->strval : p);
+
 }
 
 void indent_inc(void) {

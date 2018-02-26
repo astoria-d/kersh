@@ -39,7 +39,6 @@ char* get_old_identifer(void);
 int get_enum_index();
 void set_enum_index(int val);
 
-void print_token(const char* parse_text);
 void line_break(void);
 void indent_inc(void);
 void indent_dec(void);
