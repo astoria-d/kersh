@@ -19,11 +19,14 @@ static void struct_or_union_specifier_1(void) {
 }
 
 static void struct_declaration_0(void) {
+    cb_add_struct_field(NULL);
 }
 
 static void struct_declaration_1(void) {
-    //printf("field:%s\n", get_old_identifer());
-    cb_add_struct_field(NULL);
+    struct typedef_list* fld;
+
+    fld = lookup_declaration();
+    cb_add_struct_field(fld);
 }
 
 static void struct_declarator_0(void) {

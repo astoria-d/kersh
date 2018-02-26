@@ -36,6 +36,9 @@ void free_identifer(void);
 int get_current_stage(void);
 int get_const_val(void);
 char* get_old_identifer(void);
+
+struct typedef_list* lookup_declaration(void);
+
 int get_enum_index();
 void set_enum_index(int val);
 

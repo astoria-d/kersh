@@ -1,4 +1,5 @@
 
+#include <stdio.h>
 
 #include "kersh.tab.h"
 #include "code.h"
@@ -84,6 +85,7 @@ void cb_close_enum_block(void) {
 
 void cb_add_struct_block(int str_or_uni, const char* struct_name) {
     struct typedef_list* tdl = NULL;
+    //printf("add struct %s\n", struct_name);
 
     tdl = alloc_typedef_list();
     tdl->type.type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
@@ -103,7 +105,8 @@ void cb_close_struct_block(void) {
 }
 
 void cb_add_struct_field(struct typedef_list* field) {
-
+    //printf("add field %s\n", field->type.name);
+    LL_APPEND(cur_code_block->cur_tdl, field);
 }
 
 void cb_exit_cb(void) {

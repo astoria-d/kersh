@@ -32,6 +32,7 @@ struct parse_stage {
 static struct parse_stage* cur_stage;
 static struct parse_stage* head_stage;
 
+static void free_token(struct token_list* tkn);
 static void dbg_print_token(struct token_list* tl);
 
 /*kersh implementations...*/
@@ -160,14 +161,11 @@ void exit_parse_stage(void) {
     cur_token = cur_stage->start->prev;
     //printf("cur_token:%08x, prev:%08x\n", cur_token, prev);
     while(prev != cur_token) {
-        dbg_print_token(prev);
+        //dbg_print_token(prev);
         DL_DELETE(token_list_head, prev);
         t1 = prev;
         prev = prev->prev;
-        if (t1->token == IDEN || t1->token == ENUM_CONSTANT) {
-            free(t1->strval);
-        }
-        free(t1);
+        free_token(t1);
     }
 
     ps = cur_stage;
@@ -175,6 +173,13 @@ void exit_parse_stage(void) {
     DL_DELETE(head_stage, ps);
     free(ps);
     //printf("stage %d exite, %08x\n", ps->stage, ps);
+}
+
+static void free_token(struct token_list* tkn) {
+    if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT) {
+        free(tkn->strval);
+    }
+    free(tkn);
 }
 
 int get_current_stage(void) {
@@ -209,6 +214,82 @@ char* get_old_identifer(void) {
         prev = prev->prev;
     }
     return NULL;
+}
+
+struct typedef_list* lookup_declaration(void) {
+    struct typedef_list* decl;
+    struct token_list* prev;
+    struct token_list* tmp;
+
+    /*lookup token history.*/
+    decl = alloc_typedef_list();
+
+    /*cur token is ';'*/
+    prev = cur_token->prev;
+    DL_DELETE(token_list_head, cur_token);
+    free_token(cur_token);
+
+    while(prev) {
+
+        //dbg_print_token(prev);
+        if (prev->token == ';' || prev->token == '{') {
+            break;
+        }
+        switch (prev->token) {
+        case IDEN:
+            decl->type.name = strdup(prev->strval);
+            break;
+
+        case CONST:
+            decl->type.ql.is_const = 1;
+            break;
+
+        case VOLATILE:
+            decl->type.ql.is_volatile = 1;
+            break;
+
+        case '*':
+            decl->type.ql.is_pointer = 1;
+            decl->type.pointer_cnt++;
+            decl->type.size = sizeof(void*);
+            break;
+
+        case VOID:
+            decl->type.type_id = TP_BASE_0;
+            decl->type.size = 0;
+            break;
+
+        case CHAR:
+            decl->type.type_id = TP_BASE_1;
+            decl->type.size = 1;
+            break;
+
+        case SHORT:
+            decl->type.type_id = TP_BASE_2;
+            decl->type.size = 2;
+            break;
+
+        case INT:
+            decl->type.type_id = TP_BASE_4;
+            decl->type.size = 2;
+            break;
+
+        case LONG:
+            decl->type.type_id = sizeof(long) == 8 ? TP_BASE_8 : TP_BASE_4;
+            decl->type.size = sizeof(long);
+            break;
+        }
+        tmp = prev->prev;
+        DL_DELETE(token_list_head, prev);
+        free_token(prev);
+        prev = tmp;
+    }
+    cur_token = prev;
+    if (!prev) {
+        return NULL;
+    }
+
+    return decl;
 }
 
 void line_break(void) {

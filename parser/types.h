@@ -3,15 +3,18 @@
 #define __types_h__
 
 
-#define     TP_BASE_1       0
-#define     TP_BASE_2       1
-#define     TP_BASE_4       2
-#define     TP_BASE_8       3
-#define     TP_BASE_16      4
-#define     TP_ENUM         5
-#define     TP_TYPEDEF      6
-#define     TP_STRUCT       7
-#define     TP_UNION        8
+enum {
+    TP_BASE_0       ,
+    TP_BASE_1       ,
+    TP_BASE_2       ,
+    TP_BASE_4       ,
+    TP_BASE_8       ,
+    TP_BASE_16      ,
+    TP_ENUM         ,
+    TP_TYPEDEF      ,
+    TP_STRUCT       ,
+    TP_UNION        ,
+};
 
 struct type_definition {
     unsigned char               type_id;
@@ -22,9 +25,13 @@ struct type_definition {
     struct qualifier {
         unsigned char       is_unsigned     : 1;
         unsigned char       is_pointer      : 1;
+        unsigned char       is_array        : 1;
         unsigned char       is_const        : 1;
         unsigned char       is_volatile     : 1;
-    } q;
+    } ql;
+    int                         pointer_cnt;
+    int                         array_cnt;
+
     struct type_definition*     subtype;
     union {
         struct type_definition*     members;
