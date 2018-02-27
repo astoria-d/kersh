@@ -6,6 +6,8 @@
 #include "code.h"
 #include "utlist.h"
 
+#define START_TOKEN 0
+
 static unsigned int pr_indent;
 static unsigned int pr_newline;
 static unsigned int enum_index;
@@ -28,9 +30,15 @@ struct parse_stage {
     struct token_list* start;
     struct parse_stage *prev;
     struct parse_stage *next;
+    struct code_block* cb;
+    struct typedef_list* tdl;
 };
 static struct parse_stage* cur_stage;
 static struct parse_stage* head_stage;
+
+static struct code_block* root_code_block;
+
+
 
 static void free_token(struct token_list* tkn);
 static void dbg_print_token(struct token_list* tl);
@@ -89,7 +97,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         case UNION:
         enter_parse_stage(token_num); 
         break;
-
+/*
         case VOID:
         case CHAR:
         case SHORT:
@@ -98,17 +106,23 @@ void pre_shift_token(const char* parse_text, int token_num) {
         case SIGNED:
         case UNSIGNED:
         break;
-
+*/
         case '{':
         if (cur_stage->start->token == ENUM) {
-            cb_add_enum_block();
+            struct typedef_list* tdef;
+
+            tdef = cb_add_enum_block(cur_stage->cb);
             if (cur_token->prev->token == IDEN) {
-                cb_set_enum_name(cur_token->prev->strval);
+                tdef->type.name = strdup(cur_token->prev->strval);
             }
+            cur_stage->tdl = tdef;
         }
         else if (cur_stage->start->token == STRUCT || cur_stage->start->token == UNION) {
-            cb_add_struct_block(cur_stage->start->token, 
+            struct typedef_list* tdef;
+
+            tdef = cb_add_struct_block(cur_stage->cb, cur_stage->start->token, 
                 cur_token->prev->token == IDEN ? cur_token->prev->strval : NULL);
+            cur_stage->tdl = tdef;
         }
         line_break();
         indent_inc(); 
@@ -146,6 +160,7 @@ void enter_parse_stage(int stage) {
     ps = malloc(sizeof(struct parse_stage));
     memset(ps, 0, sizeof(struct parse_stage));
     ps->start = cur_token;
+    ps->cb = cur_stage != NULL ? cur_stage->cb : NULL;
     DL_APPEND(head_stage, ps);
     cur_stage = ps;
     //printf("stage %d entered, %08x\n", stage, ps);
@@ -184,6 +199,14 @@ static void free_token(struct token_list* tkn) {
 
 int get_current_stage(void) {
     return cur_stage->start->token;
+}
+
+struct code_block* get_current_cb(void) {
+    return cur_stage->cb;
+}
+
+struct typedef_list* get_current_tdl(void) {
+    return cur_stage->tdl;
 }
 
 int get_const_val(void) {
@@ -421,12 +444,16 @@ void init_parser(void) {
     token_list_head = NULL;
     pr_indent = 0;
     pr_newline = 0;
-    init_code_block();
+    init_symbols();
+
+    root_code_block = create_code_block();
+    enter_parse_stage(START_TOKEN);
+    cur_stage->cb = root_code_block;
 }
 
 void exit_parser(void) {
     if (head_stage) {
         free(head_stage);
     }
-    exit_code_block();
+    free_code_block(root_code_block);
 }

@@ -9,46 +9,69 @@
 
 
 static void struct_or_union_specifier_0(void) {
-    cb_close_struct_block();
+    struct code_block* cb;
+
+    cb = get_current_cb();
+    cb_close_struct_block(cb);
     exit_parse_stage();
 }
 
 static void struct_or_union_specifier_1(void) {
-    cb_close_struct_block();
+    struct code_block* cb;
+
+    cb = get_current_cb();
+    cb_close_struct_block(cb);
     exit_parse_stage(); 
 }
 
 static void struct_declaration_0(void) {
-    cb_add_struct_field(NULL);
+    struct typedef_list* tdl;
+
+    tdl = get_current_tdl();
+    cb_add_struct_field(tdl, NULL);
 }
 
 static void struct_declaration_1(void) {
     struct typedef_list* fld;
+    struct typedef_list* tdl;
 
+    tdl = get_current_tdl();
     fld = lookup_declaration();
-    cb_add_struct_field(fld);
+    cb_add_struct_field(tdl, fld);
 }
 
 static void struct_declarator_0(void) {
 }
 
 static void enum_specifier_0(void) {
-    cb_close_enum_block();
+    struct code_block* cb;
+
+    cb = get_current_cb();
+    cb_close_enum_block(cb);
     exit_parse_stage();
 }
 
 static void enum_specifier_1(void) {
-    cb_close_enum_block();
+    struct code_block* cb;
+
+    cb = get_current_cb();
+    cb_close_enum_block(cb);
     exit_parse_stage();
 }
 
 static void enum_specifier_2(void) {
-    cb_close_enum_block();
+    struct code_block* cb;
+
+    cb = get_current_cb();
+    cb_close_enum_block(cb);
     exit_parse_stage();
 }
 
 static void enum_specifier_3(void) {
-    cb_close_enum_block();
+    struct code_block* cb;
+
+    cb = get_current_cb();
+    cb_close_enum_block(cb);
     exit_parse_stage();
 }
 
@@ -59,13 +82,19 @@ static void enum_specifier_4(void) {
 
 static void emumerator_0(void) {
     int val = get_enum_index();
-    cb_add_enum_elm(get_old_identifer(), val);
+    struct typedef_list* tdl;
+
+    tdl = get_current_tdl();
+    cb_add_enum_elm(tdl, get_old_identifer(), val);
     set_enum_index(val + 1);
 }
 
 static void emumerator_1(void) {
     int val = get_const_val();
-    cb_add_enum_elm(get_old_identifer(), val);
+    struct typedef_list* tdl;
+
+    tdl = get_current_tdl();
+    cb_add_enum_elm(tdl, get_old_identifer(), val);
     set_enum_index(val + 1);
 }
 

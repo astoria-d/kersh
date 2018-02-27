@@ -14,7 +14,6 @@ struct instance {
 struct instance_list {
     struct instance         inst;
     struct instance_list    *next;
-    struct instance_list    *prev;
 };
 
 

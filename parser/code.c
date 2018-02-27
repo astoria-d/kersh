@@ -5,15 +5,13 @@
 #include "code.h"
 #include "utlist.h"
 
-static struct code_block* root_code_block;
-static struct code_block* cur_code_block;
-
-static struct code_block* create_code_block(void) {
+struct code_block* create_code_block(void) {
     struct code_block* cb = malloc(sizeof (struct code_block));
     memset(cb, 0, sizeof (struct code_block));
+    return cb;
 }
 
-static void free_code_block(struct code_block* cb) {
+void free_code_block(struct code_block* cb) {
     struct code_block* next;
 
     /*free child blocks first.*/
@@ -37,16 +35,16 @@ static void free_code_block(struct code_block* cb) {
     free(cb);
 }
 
-void cb_add_enum_block(void) {
+struct typedef_list* cb_add_enum_block(struct code_block* cb) {
     struct typedef_list* tdl = NULL;
 
     tdl = alloc_typedef_list();
     tdl->type.type_id = TP_ENUM;
-    LL_APPEND(cur_code_block->types, tdl);
-    cur_code_block->cur_tdl = tdl;
+    LL_APPEND(cb->types, tdl);
+    return tdl;
 }
 
-void cb_add_enum_elm(const char* elm_name, int val) {
+void cb_add_enum_elm(struct typedef_list* tdl, const char* elm_name, int val) {
     struct type_definition* head;
     struct type_definition* td;
 
@@ -56,73 +54,57 @@ void cb_add_enum_elm(const char* elm_name, int val) {
     td->size = sizeof(int);
     td->value = val;
 
-    head = &cur_code_block->cur_tdl->type;
+    head = &tdl->type;
     LL_APPEND(head, td);
 
 }
 
-void cb_set_enum_name(const char* enum_name) {
-    struct type_definition* head;
-    head = &cur_code_block->cur_tdl->type;
-    head->name = strdup(enum_name);
-}
-
-void cb_close_enum_block(void) {
+void cb_close_enum_block(struct code_block* cb) {
     struct type_definition* head;
     struct type_definition* tp = NULL;
     struct symbol* sym;
 
     /*insert all enum members into symbol table.*/
-    head = &cur_code_block->cur_tdl->type;
+    head = &cb->types->type;
     LL_FOREACH(head, tp) {
         if (tp == head && !tp->name) {
             continue;
         }
-        sym = add_symbol(&cur_code_block->symbol_table, SYM_ENUM, tp->name);
+        sym = add_symbol(&cb->symbol_table, SYM_ENUM, tp->name);
         sym->type = tp;
     }
 }
 
-void cb_add_struct_block(int str_or_uni, const char* struct_name) {
+struct typedef_list* cb_add_struct_block(struct code_block* cb, int str_or_uni, const char* struct_name) {
     struct typedef_list* tdl = NULL;
     //printf("add struct %s\n", struct_name);
 
     tdl = alloc_typedef_list();
     tdl->type.type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
-    LL_APPEND(cur_code_block->types, tdl);
-    cur_code_block->cur_tdl = tdl;
+    LL_APPEND(cb->types, tdl);
 
     if (struct_name) {
         struct symbol* sym;
         tdl->type.name = strdup(struct_name);
-        sym = add_symbol(&cur_code_block->symbol_table, str_or_uni, struct_name);
+        sym = add_symbol(&cb->symbol_table, str_or_uni, struct_name);
         sym->type = &tdl->type;
     }
+    return tdl;
 }
 
-void cb_close_struct_block(void) {
+void cb_close_struct_block(struct code_block* cb) {
     /*do nothing...*/
 }
 
-void cb_add_struct_field(struct typedef_list* field) {
-    //printf("add field %s\n", field->type.name);
-    LL_APPEND(cur_code_block->cur_tdl, field);
+void cb_add_struct_field(struct typedef_list* tdl, struct typedef_list* field) {
+    printf("add field %s\n", field->type.name);
+    LL_APPEND(tdl, field);
 }
 
 void cb_exit_cb(void) {
-    cur_code_block = cur_code_block->parent_block;
+    /*do nothing.*/
 }
 
 void add_sub_block(struct code_block* cb) {
-}
-
-void init_code_block(void) {
-    init_symbols();
-    root_code_block = create_code_block();
-    cur_code_block = root_code_block;
-}
-
-void exit_code_block(void) {
-    free_code_block(root_code_block);
 }
 
