@@ -16,6 +16,8 @@ enum {
     TP_UNION        ,
 };
 
+struct typedef_list;
+
 struct type_definition {
     unsigned char               type_id;
     char*                       name;
@@ -32,7 +34,7 @@ struct type_definition {
     int                         pointer_cnt;
     int                         array_cnt;
 
-    struct type_definition*     subtype;
+    struct typedef_list*        subtypes;
     union {
         struct type_definition*     members;
         struct type_definition*     next;

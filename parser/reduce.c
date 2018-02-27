@@ -32,7 +32,7 @@ static void struct_declaration_0(void) {
 }
 
 static void struct_declaration_1(void) {
-    struct typedef_list* fld;
+    struct type_definition* fld;
     struct typedef_list* tdl;
 
     tdl = get_current_tdl();

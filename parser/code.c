@@ -92,13 +92,38 @@ struct typedef_list* cb_add_struct_block(struct code_block* cb, int str_or_uni, 
     return tdl;
 }
 
+struct typedef_list* cb_add_sub_struct_block(struct typedef_list* parent, int str_or_uni, const char* struct_name) {
+    struct type_definition* head;
+    struct type_definition* sub_type;
+
+    /*add sub type to the parent.*/
+    sub_type = alloc_typedef();
+    sub_type->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
+    if (struct_name) sub_type->name = strdup(struct_name);
+    head = &parent->type.subtypes->type;
+    LL_APPEND(head, sub_type);
+
+    /*also add field to the parent.*/
+    head = &parent->type;
+    LL_APPEND(head, sub_type);
+
+    return sub_type;
+}
+
 void cb_close_struct_block(struct code_block* cb) {
     /*do nothing...*/
 }
 
-void cb_add_struct_field(struct typedef_list* tdl, struct typedef_list* field) {
-    printf("add field %s\n", field->type.name);
-    LL_APPEND(tdl, field);
+void cb_add_struct_field(struct typedef_list* tdl, struct type_definition* field) {
+    struct type_definition* head;
+
+    if (!field) {
+        printf("add anonymous field\n");
+        return;
+    }
+    printf("add field %s\n", field->name);
+    head = &tdl->type;
+    LL_APPEND(head, field);
 }
 
 void cb_exit_cb(void) {

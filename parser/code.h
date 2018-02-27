@@ -29,7 +29,10 @@ void cb_add_enum_elm        (struct typedef_list* tdl, const char* elm_name, int
 struct typedef_list* cb_add_struct_block
                             (struct code_block* cb, int str_or_uni, const char* struct_name);
 void cb_close_struct_block  (struct code_block* cb);
-void cb_add_struct_field    (struct typedef_list* tdl, struct typedef_list* field);
+void cb_add_struct_field    (struct typedef_list* tdl, struct type_definition* field);
+
+struct typedef_list* cb_add_sub_struct_block
+                            (struct typedef_list* parent, int str_or_uni, const char* struct_name);
 
 #endif /*__code_h__*/
 

@@ -39,7 +39,7 @@ struct typedef_list* get_current_tdl(void);
 int get_const_val(void);
 char* get_old_identifer(void);
 
-struct typedef_list* lookup_declaration(void);
+struct type_definition* lookup_declaration(void);
 
 int get_enum_index();
 void set_enum_index(int val);

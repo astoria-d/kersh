@@ -7,3 +7,6 @@ entry-preproc-short.c
 kersh.html
 kersh.xml
 aaa.*
+.cproject
+.project
+.settings/*

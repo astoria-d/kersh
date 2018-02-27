@@ -120,9 +120,18 @@ void pre_shift_token(const char* parse_text, int token_num) {
         else if (cur_stage->start->token == STRUCT || cur_stage->start->token == UNION) {
             struct typedef_list* tdef;
 
-            tdef = cb_add_struct_block(cur_stage->cb, cur_stage->start->token, 
-                cur_token->prev->token == IDEN ? cur_token->prev->strval : NULL);
-            cur_stage->tdl = tdef;
+            if (cur_stage->tdl) {
+                /*already in struct definition stage.*/
+                tdef = cb_add_sub_struct_block(cur_stage->tdl, cur_stage->start->token,
+                    cur_token->prev->token == IDEN ? cur_token->prev->strval : NULL);
+                cur_stage->tdl = tdef;
+            }
+            else {
+                /*first level struct definition. add to code block.*/
+                tdef = cb_add_struct_block(cur_stage->cb, cur_stage->start->token,
+                    cur_token->prev->token == IDEN ? cur_token->prev->strval : NULL);
+                cur_stage->tdl = tdef;
+            }
         }
         line_break();
         indent_inc(); 
@@ -161,6 +170,7 @@ void enter_parse_stage(int stage) {
     memset(ps, 0, sizeof(struct parse_stage));
     ps->start = cur_token;
     ps->cb = cur_stage != NULL ? cur_stage->cb : NULL;
+    ps->tdl = cur_stage != NULL ? cur_stage->tdl : NULL;
     DL_APPEND(head_stage, ps);
     cur_stage = ps;
     //printf("stage %d entered, %08x\n", stage, ps);
@@ -239,13 +249,13 @@ char* get_old_identifer(void) {
     return NULL;
 }
 
-struct typedef_list* lookup_declaration(void) {
-    struct typedef_list* decl;
+struct type_definition* lookup_declaration(void) {
+    struct type_definition* decl;
     struct token_list* prev;
     struct token_list* tmp;
 
     /*lookup token history.*/
-    decl = alloc_typedef_list();
+    decl = alloc_typedef();
 
     /*cur token is ';'*/
     prev = cur_token->prev;
@@ -260,46 +270,46 @@ struct typedef_list* lookup_declaration(void) {
         }
         switch (prev->token) {
         case IDEN:
-            decl->type.name = strdup(prev->strval);
+            decl->name = strdup(prev->strval);
             break;
 
         case CONST:
-            decl->type.ql.is_const = 1;
+            decl->ql.is_const = 1;
             break;
 
         case VOLATILE:
-            decl->type.ql.is_volatile = 1;
+            decl->ql.is_volatile = 1;
             break;
 
         case '*':
-            decl->type.ql.is_pointer = 1;
-            decl->type.pointer_cnt++;
-            decl->type.size = sizeof(void*);
+            decl->ql.is_pointer = 1;
+            decl->pointer_cnt++;
+            decl->size = sizeof(void*);
             break;
 
         case VOID:
-            decl->type.type_id = TP_BASE_0;
-            decl->type.size = 0;
+            decl->type_id = TP_BASE_0;
+            decl->size = 0;
             break;
 
         case CHAR:
-            decl->type.type_id = TP_BASE_1;
-            decl->type.size = 1;
+            decl->type_id = TP_BASE_1;
+            decl->size = 1;
             break;
 
         case SHORT:
-            decl->type.type_id = TP_BASE_2;
-            decl->type.size = 2;
+            decl->type_id = TP_BASE_2;
+            decl->size = 2;
             break;
 
         case INT:
-            decl->type.type_id = TP_BASE_4;
-            decl->type.size = 2;
+            decl->type_id = TP_BASE_4;
+            decl->size = 2;
             break;
 
         case LONG:
-            decl->type.type_id = sizeof(long) == 8 ? TP_BASE_8 : TP_BASE_4;
-            decl->type.size = sizeof(long);
+            decl->type_id = sizeof(long) == 8 ? TP_BASE_8 : TP_BASE_4;
+            decl->size = sizeof(long);
             break;
         }
         tmp = prev->prev;
