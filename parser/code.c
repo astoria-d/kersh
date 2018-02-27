@@ -93,19 +93,17 @@ struct typedef_list* cb_add_struct_block(struct code_block* cb, int str_or_uni, 
 }
 
 struct typedef_list* cb_add_sub_struct_block(struct typedef_list* parent, int str_or_uni, const char* struct_name) {
-    struct type_definition* head;
-    struct type_definition* sub_type;
+    struct typedef_list* sub_type;
 
     /*add sub type to the parent.*/
-    sub_type = alloc_typedef();
-    sub_type->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
-    if (struct_name) sub_type->name = strdup(struct_name);
-    head = &parent->type.subtypes->type;
-    LL_APPEND(head, sub_type);
+    sub_type = alloc_typedef_list();
+    sub_type->type.type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
+    if (struct_name) sub_type->type.name = strdup(struct_name);
+    LL_APPEND(parent->type.subtypes, sub_type);
 
-    /*also add field to the parent.*/
+    /*also add field to the parent.
     head = &parent->type;
-    LL_APPEND(head, sub_type);
+    LL_APPEND(head, sub_type);*/
 
     return sub_type;
 }

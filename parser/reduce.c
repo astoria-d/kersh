@@ -28,6 +28,7 @@ static void struct_declaration_0(void) {
     struct typedef_list* tdl;
 
     tdl = get_current_tdl();
+    ///TODO! anonymous field must be added, not NULL!
     cb_add_struct_field(tdl, NULL);
 }
 
