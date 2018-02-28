@@ -4,12 +4,12 @@
 
 
 enum {
-    TP_BASE_0       ,
-    TP_BASE_1       ,
-    TP_BASE_2       ,
-    TP_BASE_4       ,
-    TP_BASE_8       ,
-    TP_BASE_16      ,
+    TP_BASE_0 = 1   , /*void*/
+    TP_BASE_1       , /*char*/
+    TP_BASE_2       , /*short*/
+    TP_BASE_4       , /*int*/
+    TP_BASE_8       , /*long*/
+    TP_BASE_16      , /*long long*/
     TP_ENUM         ,
     TP_TYPEDEF      ,
     TP_STRUCT       ,

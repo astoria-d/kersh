@@ -26,17 +26,26 @@ struct type_definition* alloc_typedef(void) {
 
 static void print_typedef(struct typedef_list* tdl, int indent) {
     struct type_definition *mem;
+    struct typedef_list *subtype;
     int i;
 
+    subtype = tdl->type.subtypes;
+    while (subtype) {
+        print_typedef(subtype, indent + 1);
+        subtype = subtype->type.subtypes;
+    }
     for (i = 0; i < indent; i++) printf("  ");
-    printf("[%-50s ]: type:%d, size:%d", tdl->type.name, tdl->type.type_id, tdl->type.size);
+    printf("- %-50s type:%d, size:%d", tdl->type.name, tdl->type.type_id, tdl->type.size);
     printf("\n");
     LL_FOREACH(&tdl->type, mem) {
         if (&tdl->type == mem) continue;
         for (i = 0; i < indent; i++) printf("  ");
-        printf("  [%-48s ]: type:%d, size:%d", mem->name, mem->type_id, mem->size);
+        printf("  - %-48s type:%d, size:%d", mem->name, mem->type_id, mem->size);
         if (mem->type_id == TP_ENUM) {
             printf(", value:%d", mem->value);
+        }
+        if (mem->subtypes) {
+            print_typedef(subtype, indent + 1);
         }
         printf("\n");
     }

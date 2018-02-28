@@ -163,6 +163,7 @@ int check_token_type(void) {
 void enter_parse_stage(int stage) {
     struct parse_stage* ps;
 
+    printf("enter stage...\n");
     if (stage == ENUM) {
         enum_index = 0;
     }
@@ -180,17 +181,17 @@ void exit_parse_stage(void) {
     struct parse_stage* ps;
 /*
 */
+    printf("exit stage...\n");
     struct token_list *prev, *t1;
 
     prev = cur_token;
     cur_token = cur_stage->start->prev;
     //printf("cur_token:%08x, prev:%08x\n", cur_token, prev);
     while(prev != cur_token) {
-        //dbg_print_token(prev);
-        DL_DELETE(token_list_head, prev);
-        t1 = prev;
+//        DL_DELETE(token_list_head, prev);
+//        t1 = prev;
         prev = prev->prev;
-        free_token(t1);
+//        free_token(t1);
     }
 
     ps = cur_stage;
@@ -201,6 +202,8 @@ void exit_parse_stage(void) {
 }
 
 static void free_token(struct token_list* tkn) {
+    printf("delete token ");
+    dbg_print_token(tkn);
     if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT) {
         free(tkn->strval);
     }
@@ -254,6 +257,7 @@ struct type_definition* lookup_declaration(void) {
     struct token_list* prev;
     struct token_list* tmp;
 
+    printf("lookup decl...\n");
     /*lookup token history.*/
     decl = alloc_typedef();
 
@@ -263,9 +267,13 @@ struct type_definition* lookup_declaration(void) {
     free_token(cur_token);
 
     while(prev) {
+        struct token_list* pp;
 
         //dbg_print_token(prev);
-        if (prev->token == ';' || prev->token == '{') {
+        if (prev->token == ';') {
+            break;
+        }
+        if (prev->token == '{') {
             break;
         }
         switch (prev->token) {
@@ -310,6 +318,24 @@ struct type_definition* lookup_declaration(void) {
         case LONG:
             decl->type_id = sizeof(long) == 8 ? TP_BASE_8 : TP_BASE_4;
             decl->size = sizeof(long);
+            break;
+
+        case '}':
+            pp = prev->prev;
+            if (pp->token == '{') {
+                tmp = prev->prev;
+                DL_DELETE(token_list_head, prev);
+                free_token(prev);
+                prev = tmp;
+                break;
+            }
+
+        case STRUCT:
+            decl->type_id = TP_STRUCT;
+            break;
+
+        case UNION:
+            decl->type_id = TP_UNION;
             break;
         }
         tmp = prev->prev;
