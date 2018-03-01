@@ -12,7 +12,7 @@ struct code_block* create_code_block(void) {
 }
 
 void free_code_block(struct code_block* cb) {
-    struct code_block* next;
+    struct code_block *next, *tmp;
 
     /*free child blocks first.*/
     if (cb->sub_block) {
@@ -20,108 +20,95 @@ void free_code_block(struct code_block* cb) {
     }
 
     /*free siblings next.*/
-    next = cb->next;
-    while (next) {
-        struct code_block* tmp;
-
-        tmp = next->next;
-        free_typedef_list(&next->types);
+    printf("\ntypedef clean up...\n");
+    LL_FOREACH_SAFE(cb, next, tmp) {
+        print_typedef(&next->types, 0);
+        free_typedef(&next->types);
         free_symtable(&next->symbol_table);
         free(next);
-        next = tmp;
     }
-    free_typedef_list(&cb->types);
-    free_symtable(&cb->symbol_table);
-    free(cb);
 }
 
-struct typedef_list* cb_add_enum_block(struct code_block* cb) {
-    struct typedef_list* tdl = NULL;
-
-    tdl = alloc_typedef_list();
-    tdl->type.type_id = TP_ENUM;
-    LL_APPEND(cb->types, tdl);
-    return tdl;
-}
-
-void cb_add_enum_elm(struct typedef_list* tdl, const char* elm_name, int val) {
-    struct type_definition* head;
+struct type_definition* cb_add_enum_block(struct type_definition** head) {
     struct type_definition* td;
 
-    td =alloc_typedef();
+    td = alloc_typedef();
+    td->type_id = TP_ENUM;
+    LL_APPEND(*head, td);
+    return td;
+}
+
+void cb_add_enum_elm(struct type_definition** head, const char* elm_name, int val) {
+    struct type_definition* td;
+
+    td = alloc_typedef();
     td->type_id = TP_ENUM;
     td->name = strdup(elm_name);
     td->size = sizeof(int);
     td->value = val;
 
-    head = &tdl->type;
-    LL_APPEND(head, td);
+    LL_APPEND(*head, td);
 
 }
 
-void cb_close_enum_block(struct code_block* cb) {
-    struct type_definition* head;
-    struct type_definition* tp = NULL;
+void cb_close_enum_block(struct code_block* cb, struct type_definition* enum_td) {
+    struct type_definition* enum_ent;
     struct symbol* sym;
 
     /*insert all enum members into symbol table.*/
-    head = &cb->types->type;
-    LL_FOREACH(head, tp) {
-        if (tp == head && !tp->name) {
+    LL_FOREACH(enum_td->members, enum_ent) {
+        if (!enum_ent->name) {
             continue;
         }
-        sym = add_symbol(&cb->symbol_table, SYM_ENUM, tp->name);
-        sym->type = tp;
+        sym = add_symbol(&cb->symbol_table, SYM_ENUM, enum_ent->name);
+        sym->type = enum_ent;
     }
 }
 
-struct typedef_list* cb_add_struct_block(struct code_block* cb, int str_or_uni, const char* struct_name) {
-    struct typedef_list* tdl = NULL;
-    //printf("add struct %s\n", struct_name);
+struct type_definition* cb_add_struct_block(struct type_definition** head, int str_or_uni, const char* struct_name) {
+    struct type_definition* td;
+    printf("add struct %s\n", struct_name);
 
-    tdl = alloc_typedef_list();
-    tdl->type.type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
-    LL_APPEND(cb->types, tdl);
+    td = alloc_typedef();
+    td->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
+    LL_APPEND(*head, td);
 
     if (struct_name) {
         struct symbol* sym;
-        tdl->type.name = strdup(struct_name);
-        sym = add_symbol(&cb->symbol_table, str_or_uni, struct_name);
-        sym->type = &tdl->type;
+        td->name = strdup(struct_name);
+//        sym = add_symbol(&cb->symbol_table, str_or_uni, struct_name);
+//        sym->type = &td;
     }
-    return tdl;
+    return td;
 }
 
-struct typedef_list* cb_add_sub_struct_block(struct typedef_list* parent, int str_or_uni, const char* struct_name) {
-    struct typedef_list* sub_type;
+struct type_definition* cb_add_sub_struct_block(struct type_definition* parent, int str_or_uni, const char* struct_name) {
+    struct type_definition* sub_type;
 
     /*add sub type to the parent.*/
-    sub_type = alloc_typedef_list();
-    sub_type->type.type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
-    if (struct_name) sub_type->type.name = strdup(struct_name);
-    LL_APPEND(parent->type.subtypes, sub_type);
-
-    /*also add field to the parent.
-    head = &parent->type;
-    LL_APPEND(head, sub_type);*/
+    sub_type = alloc_typedef();
+    sub_type->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
+    if (struct_name) sub_type->name = strdup(struct_name);
+    LL_APPEND(parent->members, sub_type);
 
     return sub_type;
 }
 
-void cb_close_struct_block(struct code_block* cb) {
-    /*do nothing...*/
+void cb_close_struct_block(struct code_block* cb, struct type_definition* str_td) {
+    struct symbol* sym;
+
+    if (!str_td->name) return ;
+    sym = add_symbol(&cb->symbol_table, SYM_ENUM, str_td->name);
+    sym->type = str_td;
 }
 
-void cb_add_struct_field(struct typedef_list* tdl, struct type_definition* field) {
-    struct type_definition* head;
-
+void cb_add_struct_field(struct type_definition** head, struct type_definition* field) {
     if (!field) {
         printf("add anonymous field\n");
         return;
     }
     printf("add field %s\n", field->name);
-    head = &tdl->type;
-    LL_APPEND(head, field);
+    LL_APPEND(*head, field);
 }
 
 void cb_exit_cb(void) {

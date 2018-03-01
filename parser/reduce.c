@@ -12,7 +12,7 @@ static void struct_or_union_specifier_0(void) {
     struct code_block* cb;
 
     cb = get_current_cb();
-    cb_close_struct_block(cb);
+//    cb_close_struct_block(cb);
     exit_parse_stage();
 }
 
@@ -20,33 +20,33 @@ static void struct_or_union_specifier_1(void) {
     struct code_block* cb;
 
     cb = get_current_cb();
-    cb_close_struct_block(cb);
+//    cb_close_struct_block(cb);
     exit_parse_stage(); 
 }
 
 static void struct_declaration_0(void) {
-    struct typedef_list* tdl;
+    struct type_definition* td;
     struct type_definition* fld;
 
-    tdl = get_current_tdl();
+    td = get_current_td();
     fld = lookup_declaration();
     if (fld->type_id == TP_STRUCT || fld->type_id == TP_UNION ) {
         //TODO!! field type must be set???
 //        fld->subtypes = tdl;
     }
-    cb_add_struct_field(tdl, fld);
+    cb_add_struct_field(&td, fld);
 }
 
 static void struct_declaration_1(void) {
+    struct type_definition* td;
     struct type_definition* fld;
-    struct typedef_list* tdl;
 
-    tdl = get_current_tdl();
+    td = get_current_td();
     fld = lookup_declaration();
     if (fld->type_id == TP_STRUCT || fld->type_id == TP_UNION ) {
 //        fld->subtypes = tdl;
     }
-    cb_add_struct_field(tdl, fld);
+    cb_add_struct_field(&td, fld);
 }
 
 static void struct_declarator_0(void) {
@@ -54,33 +54,41 @@ static void struct_declarator_0(void) {
 
 static void enum_specifier_0(void) {
     struct code_block* cb;
+    struct type_definition* td;
 
     cb = get_current_cb();
-    cb_close_enum_block(cb);
+    td = get_current_td();
+//    cb_close_enum_block(cb, tdl);
     exit_parse_stage();
 }
 
 static void enum_specifier_1(void) {
     struct code_block* cb;
+    struct type_definition* td;
 
     cb = get_current_cb();
-    cb_close_enum_block(cb);
+    td = get_current_td();
+//    cb_close_enum_block(cb, tdl);
     exit_parse_stage();
 }
 
 static void enum_specifier_2(void) {
     struct code_block* cb;
+    struct type_definition* td;
 
     cb = get_current_cb();
-    cb_close_enum_block(cb);
+    td = get_current_td();
+//    cb_close_enum_block(cb, tdl);
     exit_parse_stage();
 }
 
 static void enum_specifier_3(void) {
     struct code_block* cb;
+    struct type_definition* td;
 
     cb = get_current_cb();
-    cb_close_enum_block(cb);
+    td = get_current_td();
+    cb_close_enum_block(cb, td);
     exit_parse_stage();
 }
 
@@ -91,19 +99,19 @@ static void enum_specifier_4(void) {
 
 static void emumerator_0(void) {
     int val = get_enum_index();
-    struct typedef_list* tdl;
+    struct type_definition* td;
 
-    tdl = get_current_tdl();
-    cb_add_enum_elm(tdl, get_old_identifer(), val);
+    td = get_current_td();
+    cb_add_enum_elm(&td->members, get_old_identifer(), val);
     set_enum_index(val + 1);
 }
 
 static void emumerator_1(void) {
     int val = get_const_val();
-    struct typedef_list* tdl;
+    struct type_definition* td;
 
-    tdl = get_current_tdl();
-    cb_add_enum_elm(tdl, get_old_identifer(), val);
+    td = get_current_td();
+    cb_add_enum_elm(&td->members, get_old_identifer(), val);
     set_enum_index(val + 1);
 }
 

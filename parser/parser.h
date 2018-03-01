@@ -35,7 +35,7 @@ void free_identifer(void);
 
 int get_current_stage(void);
 struct code_block* get_current_cb(void);
-struct typedef_list* get_current_tdl(void);
+struct type_definition* get_current_td(void);
 int get_const_val(void);
 char* get_old_identifer(void);
 

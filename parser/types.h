@@ -16,10 +16,9 @@ enum {
     TP_UNION        ,
 };
 
-struct typedef_list;
-
 struct type_definition {
     unsigned char               type_id;
+    char*                       type_name;
     char*                       name;
     unsigned int                size;
     int                         value;
@@ -34,22 +33,13 @@ struct type_definition {
     int                         pointer_cnt;
     int                         array_cnt;
 
-    struct typedef_list*        subtypes;
-    union {
-        struct type_definition*     members;
-        struct type_definition*     next;
-    };
+    struct type_definition*    members;
+    struct type_definition*    next;
 };
-
-struct typedef_list {
-    struct type_definition  type;
-    struct typedef_list*    next;
-};
-
-struct typedef_list* alloc_typedef_list(void);
-void free_typedef_list(struct typedef_list** head);
 
 struct type_definition* alloc_typedef(void);
+void free_typedef(struct type_definition** head);
+void print_typedef(struct type_definition** head, int indent);
 
 #endif /*__types_h__*/
 

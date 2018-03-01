@@ -31,8 +31,9 @@ struct parse_stage {
     struct parse_stage *prev;
     struct parse_stage *next;
     struct code_block* cb;
-    struct typedef_list* tdl;
+    struct type_definition* td;
 };
+
 static struct parse_stage* cur_stage;
 static struct parse_stage* head_stage;
 
@@ -109,28 +110,28 @@ void pre_shift_token(const char* parse_text, int token_num) {
 */
         case '{':
         if (cur_stage->start->token == ENUM) {
-            struct typedef_list* tdef;
+            struct type_definition* td;
 
-            tdef = cb_add_enum_block(cur_stage->cb);
+            td = cb_add_enum_block(&cur_stage->cb->types);
             if (cur_token->prev->token == IDEN) {
-                tdef->type.name = strdup(cur_token->prev->strval);
+                td->name = strdup(cur_token->prev->strval);
             }
-            cur_stage->tdl = tdef;
+            cur_stage->td = td;
         }
         else if (cur_stage->start->token == STRUCT || cur_stage->start->token == UNION) {
-            struct typedef_list* tdef;
-
-            if (cur_stage->tdl) {
+            if (cur_stage->td->type_id == TP_STRUCT || cur_stage->td->type_id == TP_UNION) {
+                struct type_definition* td;
                 /*already in struct definition stage.*/
-                tdef = cb_add_sub_struct_block(cur_stage->tdl, cur_stage->start->token,
+                td = cb_add_sub_struct_block(cur_stage->td, cur_stage->start->token,
                     cur_token->prev->token == IDEN ? cur_token->prev->strval : NULL);
-                cur_stage->tdl = tdef;
+                cur_stage->td = td;
             }
             else {
+                struct type_definition* td;
                 /*first level struct definition. add to code block.*/
-                tdef = cb_add_struct_block(cur_stage->cb, cur_stage->start->token,
+                td = cb_add_struct_block(&cur_stage->td, cur_stage->start->token,
                     cur_token->prev->token == IDEN ? cur_token->prev->strval : NULL);
-                cur_stage->tdl = tdef;
+                cur_stage->td = td;
             }
         }
         line_break();
@@ -170,8 +171,8 @@ void enter_parse_stage(int stage) {
     ps = malloc(sizeof(struct parse_stage));
     memset(ps, 0, sizeof(struct parse_stage));
     ps->start = cur_token;
-    ps->cb = cur_stage != NULL ? cur_stage->cb : NULL;
-    ps->tdl = cur_stage != NULL ? cur_stage->tdl : NULL;
+    ps->cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
+    ps->td = cur_stage != NULL ? cur_stage->td : root_code_block->types;
     DL_APPEND(head_stage, ps);
     cur_stage = ps;
     //printf("stage %d entered, %08x\n", stage, ps);
@@ -214,12 +215,12 @@ int get_current_stage(void) {
     return cur_stage->start->token;
 }
 
-struct code_block* get_current_cb(void) {
-    return cur_stage->cb;
+struct type_definition* get_current_td(void) {
+    return cur_stage->td;
 }
 
-struct typedef_list* get_current_tdl(void) {
-    return cur_stage->tdl;
+struct code_block* get_current_cb(void) {
+    return cur_stage->cb;
 }
 
 int get_const_val(void) {
@@ -483,6 +484,7 @@ void init_parser(void) {
     init_symbols();
 
     root_code_block = create_code_block();
+    root_code_block->types = alloc_typedef();
     enter_parse_stage(START_TOKEN);
     cur_stage->cb = root_code_block;
 }

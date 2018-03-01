@@ -6,15 +6,6 @@
 #include "utlist.h"
 #include "types.h"
 
-struct typedef_list* alloc_typedef_list(void) {
-    struct typedef_list* tdl;
-
-    tdl = malloc(sizeof(struct typedef_list));
-    memset(tdl, 0, sizeof(struct typedef_list));
-    //printf("alloc tdl: %08x\n", tdl);
-    return tdl;
-}
-
 struct type_definition* alloc_typedef(void) {
     struct type_definition* td;
 
@@ -24,60 +15,33 @@ struct type_definition* alloc_typedef(void) {
     return td;
 }
 
-static void print_typedef(struct typedef_list* tdl, int indent) {
+void print_typedef(struct type_definition** head, int indent) {
     struct type_definition *mem;
-    struct typedef_list *subtype;
     int i;
 
-    subtype = tdl->type.subtypes;
-    while (subtype) {
-        print_typedef(subtype, indent + 1);
-        subtype = subtype->type.subtypes;
-    }
-    for (i = 0; i < indent; i++) printf("  ");
-    printf("- %-50s type:%d, size:%d", tdl->type.name, tdl->type.type_id, tdl->type.size);
-    printf("\n");
-    LL_FOREACH(&tdl->type, mem) {
-        if (&tdl->type == mem) continue;
+    LL_FOREACH(*head, mem) {
         for (i = 0; i < indent; i++) printf("  ");
-        printf("  - %-48s type:%d, size:%d", mem->name, mem->type_id, mem->size);
-        if (mem->type_id == TP_ENUM) {
-            printf(", value:%d", mem->value);
-        }
-        if (mem->subtypes) {
-            print_typedef(subtype, indent + 1);
-        }
+        printf("- %-50s type:%d, size:%d", mem->name, mem->type_id, mem->size);
+        if (mem->type_id == TP_ENUM) printf(", value:%d", mem->value);
         printf("\n");
-    }
-}
-
-void free_typedef_list(struct typedef_list **head) {
-    struct typedef_list *t1, *t2;
-
-    printf("\ntypedef clean up...\n");
-    LL_FOREACH_SAFE(*head, t1, t2) {
-        struct type_definition *def_head;
-        struct type_definition *mem, *t3;
-
-        //printf("t1: %08x\n", t1);
-        print_typedef(t1, 0);
-        LL_DELETE(*head, t1);
-        def_head = &t1->type;
-
-        /*LL_FOREACH_SAFE macro can't be used because address of 
-        def_head and first t1 element is the same!*/
-        mem = def_head->members;
-        while(mem) {
-            //printf("mem: %08x, %s\n", mem, mem->name);
-            LL_DELETE(def_head, mem);
-            free(mem->name);
-            //printf("next: %08x, %08x\n", mem->next, t1->next);
-            t3 = mem;
-            mem = mem->next;
-            free(t3);
+        if (mem->type_id == TP_STRUCT || mem->type_id == TP_UNION || mem->type_id == TP_ENUM) {
+            print_typedef(&mem->members, indent + 1);
         }
-        //printf("next: %08x\n", t1->next);
-        free(t1);
     }
 }
 
+void free_typedef(struct type_definition** head) {
+    struct type_definition *df, *tmp;
+
+    LL_FOREACH_SAFE(*head, df, tmp) {
+        LL_DELETE(*head, df);
+
+        if (df->type_id == TP_STRUCT || df->type_id == TP_UNION || df->type_id == TP_ENUM) {
+            free_typedef(&df->members);
+        }
+
+        if (df->name) free (df->name);
+        if (df->type_name) free (df->type_name);
+        free(df);
+    }
+}
