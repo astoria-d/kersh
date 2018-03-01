@@ -75,7 +75,7 @@ struct type_definition* cb_add_struct_block(struct type_definition** head, int s
 
     if (struct_name) {
         struct symbol* sym;
-        td->name = strdup(struct_name);
+        td->type_name = strdup(struct_name);
 //        sym = add_symbol(&cb->symbol_table, str_or_uni, struct_name);
 //        sym->type = &td;
     }
@@ -88,7 +88,7 @@ struct type_definition* cb_add_sub_struct_block(struct type_definition* parent, 
     /*add sub type to the parent.*/
     sub_type = alloc_typedef();
     sub_type->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
-    if (struct_name) sub_type->name = strdup(struct_name);
+    if (struct_name) sub_type->type_name = strdup(struct_name);
     LL_APPEND(parent->members, sub_type);
 
     return sub_type;
@@ -102,13 +102,15 @@ void cb_close_struct_block(struct code_block* cb, struct type_definition* str_td
     sym->type = str_td;
 }
 
-void cb_add_struct_field(struct type_definition** head, struct type_definition* field) {
-    if (!field) {
-        printf("add anonymous field\n");
+void cb_add_struct_field(struct type_definition* parent, struct type_definition* field) {
+    //if ((parent->type_id == TP_STRUCT || parent->type_id == TP_UNION) && !parent->members) {
+    if (!field->name) {
+        printf("add struct definition & field\n");
+        if (field->name) parent->name = strdup(field->name);
         return;
     }
     printf("add field %s\n", field->name);
-    LL_APPEND(*head, field);
+    LL_APPEND(parent->members, field);
 }
 
 void cb_exit_cb(void) {

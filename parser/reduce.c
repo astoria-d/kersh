@@ -30,11 +30,7 @@ static void struct_declaration_0(void) {
 
     td = get_current_td();
     fld = lookup_declaration();
-    if (fld->type_id == TP_STRUCT || fld->type_id == TP_UNION ) {
-        //TODO!! field type must be set???
-//        fld->subtypes = tdl;
-    }
-    cb_add_struct_field(&td, fld);
+    cb_add_struct_field(td, fld);
 }
 
 static void struct_declaration_1(void) {
@@ -43,10 +39,7 @@ static void struct_declaration_1(void) {
 
     td = get_current_td();
     fld = lookup_declaration();
-    if (fld->type_id == TP_STRUCT || fld->type_id == TP_UNION ) {
-//        fld->subtypes = tdl;
-    }
-    cb_add_struct_field(&td, fld);
+    cb_add_struct_field(td, fld);
 }
 
 static void struct_declarator_0(void) {

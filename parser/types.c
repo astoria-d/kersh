@@ -21,7 +21,11 @@ void print_typedef(struct type_definition** head, int indent) {
 
     LL_FOREACH(*head, mem) {
         for (i = 0; i < indent; i++) printf("  ");
-        printf("- %-50s type:%d, size:%d", mem->name, mem->type_id, mem->size);
+        if (mem->type_id == TP_STRUCT || mem->type_id == TP_UNION)
+            printf("- %s:%-50s type:%d, size:%d", mem->type_name, mem->name, mem->type_id, mem->size);
+        else
+            printf("- %-50s type:%d, size:%d", mem->name, mem->type_id, mem->size);
+
         if (mem->type_id == TP_ENUM) printf(", value:%d", mem->value);
         printf("\n");
         if (mem->type_id == TP_STRUCT || mem->type_id == TP_UNION || mem->type_id == TP_ENUM) {

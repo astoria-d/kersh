@@ -30,7 +30,7 @@ struct type_definition* cb_add_struct_block
                             (struct type_definition** head, int str_or_uni, const char* struct_name);
 struct type_definition* cb_add_sub_struct_block
                             (struct type_definition* parent, int str_or_uni, const char* struct_name);
-void cb_add_struct_field    (struct type_definition** head, struct type_definition* field);
+void cb_add_struct_field    (struct type_definition* parent, struct type_definition* field);
 void cb_close_struct_block  (struct code_block* cb, struct type_definition* str_td);
 
 #endif /*__code_h__*/
