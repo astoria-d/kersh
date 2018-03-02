@@ -119,7 +119,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
             cur_stage->td = td;
         }
         else if (cur_stage->start->token == STRUCT || cur_stage->start->token == UNION) {
-            if (cur_stage->td->type_id == TP_STRUCT || cur_stage->td->type_id == TP_UNION) {
+            if (cur_stage->td->type_id == TP_STRUCT_DEF || cur_stage->td->type_id == TP_UNION_DEF) {
                 struct type_definition* td;
                 /*already in struct definition stage.*/
                 td = cb_add_sub_struct_block(cur_stage->td, cur_stage->start->token,
@@ -257,6 +257,7 @@ struct type_definition* lookup_declaration(void) {
     struct type_definition* decl;
     struct token_list* prev;
     struct token_list* tmp;
+    int name_cnt = 0;
 
     printf("lookup decl...\n");
     /*lookup token history.*/
@@ -279,7 +280,12 @@ struct type_definition* lookup_declaration(void) {
         }
         switch (prev->token) {
         case IDEN:
-            decl->name = strdup(prev->strval);
+            /*struct case declaration is like this.
+             * struct type_name str_name;
+             * */
+            if (name_cnt == 0)
+                decl->name = strdup(prev->strval);
+            name_cnt++;
             break;
 
         case CONST:
@@ -328,6 +334,7 @@ struct type_definition* lookup_declaration(void) {
                 DL_DELETE(token_list_head, prev);
                 free_token(prev);
                 prev = tmp;
+                name_cnt++;
                 break;
             }
 

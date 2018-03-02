@@ -10,15 +10,17 @@ enum {
     TP_BASE_4       , /*int*/
     TP_BASE_8       , /*long*/
     TP_BASE_16      , /*long long*/
-    TP_ENUM         ,
+    TP_ENUM_DEF     , /*enum block definition*/
+    TP_ENUM         , /*enum entry definition*/
     TP_TYPEDEF      ,
-    TP_STRUCT       ,
-    TP_UNION        ,
+    TP_STRUCT_DEF   , /*struct block definition*/
+    TP_STRUCT       , /*struct field definition*/
+    TP_UNION_DEF    , /*union block definition*/
+    TP_UNION        , /*union field definition*/
 };
 
 struct type_definition {
     unsigned char               type_id;
-    char*                       type_name;
     char*                       name;
     unsigned int                size;
     int                         value;
@@ -29,10 +31,12 @@ struct type_definition {
         unsigned char       is_array        : 1;
         unsigned char       is_const        : 1;
         unsigned char       is_volatile     : 1;
+        unsigned char       internal_def    : 1;
     } ql;
     int                         pointer_cnt;
     int                         array_cnt;
 
+    struct type_definition*    def;
     struct type_definition*    members;
     struct type_definition*    next;
 };
