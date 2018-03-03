@@ -15,21 +15,41 @@ struct type_definition* alloc_typedef(void) {
     return td;
 }
 
+static char* tname_arr[] = {
+                    "invalid"       ,
+/*TP_BASE_0   */    "void"          ,
+/*TP_BASE_1   */    "char"          ,
+/*TP_BASE_2   */    "short"         ,
+/*TP_BASE_4   */    "int"           ,
+/*TP_BASE_8   */    "long"          ,
+/*TP_BASE_16  */    "longlong"      ,
+/*TP_ENUM_DEF */    "enum(def)"     ,
+/*TP_ENUM     */    "enum"          ,
+/*TP_TYPEDEF  */    "typedef"       ,
+/*TP_STRUCT   */    "struct"        ,
+/*TP_UNION    */    "union"         ,
+};
+
 void print_typedef(struct type_definition** head, int indent) {
     struct type_definition *mem;
     int i;
 
     LL_FOREACH(*head, mem) {
+        for (i = 0; i < indent; i++) printf("  ");
         if (mem->type_id == TP_STRUCT || mem->type_id == TP_UNION) {
-            for (i = 0; i < indent; i++) printf("  ");
-            printf("- %s:%-50s type:%d, size:%d\n", mem->type_name, mem->name, mem->type_id, mem->size);
+            printf("- %s:%-50s type:%s, size:%d\n", mem->type_name, mem->name, tname_arr[mem->type_id], mem->size);
+            if (mem->members) {
+                print_typedef(&mem->members, indent + 1);
+            }
+        }
+        else if (mem->type_id == TP_ENUM_DEF) {
+            printf("- %-50s type:%s\n", mem->name, tname_arr[mem->type_id], mem->size);
             if (mem->members) {
                 print_typedef(&mem->members, indent + 1);
             }
         }
         else {
-            for (i = 0; i < indent; i++) printf("  ");
-            printf("- %-50s type:%d, size:%d", mem->name, mem->type_id, mem->size);
+            printf("- %-50s type:%s, size:%d", mem->name, tname_arr[mem->type_id], mem->size);
             if (mem->type_id == TP_ENUM) {
                 printf(", value:%d", mem->value);
             }
