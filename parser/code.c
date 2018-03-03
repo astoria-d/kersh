@@ -108,8 +108,10 @@ void cb_close_struct_block(struct code_block* cb, struct type_definition* str_td
 }
 
 void cb_add_struct_field(struct type_definition* parent, struct type_definition* field) {
+    int free_fld;
     //printf("add field %s\n", field->name);
 
+    free_fld = 0;
     if (field->type_id == TP_STRUCT || field->type_id == TP_UNION) {
 
         /*set type definition.*/
@@ -125,7 +127,7 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
         if (prev->type_id == TP_STRUCT || prev->type_id == TP_UNION) {
             field->ql.internal_def = 1;
             if (field->name) prev->name = strdup (field->name);
-            free_typedef(&field);
+            free_fld = 1;
         }
         else {
             //TODO! look up sym table.
@@ -133,17 +135,18 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
         }
     }
     else {
-        if (parent->type_id == TP_STRUCT) {
-            parent->size += field->size;
-        }
-        else {
-            /*case parent union.*/
-            if (parent->size < field->size) {
-                parent->size = field->size;
-            }
-        }
         LL_APPEND(parent->members, field);
     }
+    if (parent->type_id == TP_STRUCT) {
+        parent->size += field->size;
+    }
+    else {
+        /*case parent union.*/
+        if (parent->size < field->size) {
+            parent->size = field->size;
+        }
+    }
+    if (free_fld) free_typedef(&field);
 }
 
 void cb_exit_cb(void) {
