@@ -119,7 +119,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
             cur_stage->td = td;
         }
         else if (cur_stage->start->token == STRUCT || cur_stage->start->token == UNION) {
-            if (cur_stage->td->type_id == TP_STRUCT_DEF || cur_stage->td->type_id == TP_UNION_DEF) {
+            if (cur_stage->td->type_id == TP_STRUCT || cur_stage->td->type_id == TP_UNION) {
                 struct type_definition* td;
                 /*already in struct definition stage.*/
                 td = cb_add_sub_struct_block(cur_stage->td, cur_stage->start->token,
@@ -164,7 +164,7 @@ int check_token_type(void) {
 void enter_parse_stage(int stage) {
     struct parse_stage* ps;
 
-    printf("enter stage...\n");
+    //printf("enter stage...\n");
     if (stage == ENUM) {
         enum_index = 0;
     }
@@ -182,7 +182,7 @@ void exit_parse_stage(void) {
     struct parse_stage* ps;
 /*
 */
-    printf("exit stage...\n");
+    //printf("exit stage...\n");
     struct token_list *prev, *t1;
 
     prev = cur_token;
@@ -203,8 +203,8 @@ void exit_parse_stage(void) {
 }
 
 static void free_token(struct token_list* tkn) {
-    printf("delete token ");
-    dbg_print_token(tkn);
+    //printf("delete token ");
+    //dbg_print_token(tkn);
     if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT) {
         free(tkn->strval);
     }
@@ -259,7 +259,7 @@ struct type_definition* lookup_declaration(void) {
     struct token_list* tmp;
     int name_cnt = 0;
 
-    printf("lookup decl...\n");
+    //printf("lookup decl...\n");
     /*lookup token history.*/
     decl = alloc_typedef();
 
@@ -309,22 +309,31 @@ struct type_definition* lookup_declaration(void) {
 
         case CHAR:
             decl->type_id = TP_BASE_1;
-            decl->size = 1;
+            if (!decl->ql.is_pointer) decl->size = 1;
             break;
 
         case SHORT:
             decl->type_id = TP_BASE_2;
-            decl->size = 2;
+            if (!decl->ql.is_pointer) decl->size = 2;
             break;
 
         case INT:
             decl->type_id = TP_BASE_4;
-            decl->size = 2;
+            if (!decl->ql.is_pointer) decl->size = 2;
             break;
 
         case LONG:
             decl->type_id = sizeof(long) == 8 ? TP_BASE_8 : TP_BASE_4;
-            decl->size = sizeof(long);
+            if (!decl->ql.is_pointer) decl->size = sizeof(long);
+            break;
+
+        case UNSIGNED:
+            decl->ql.is_unsigned = 1;
+        case SIGNED:
+            if (!decl->type_id) decl->type_id = TP_BASE_4;
+            if (!decl->ql.is_pointer) {
+                if (!decl->size) decl->size = 4;
+            }
             break;
 
         case '}':
@@ -345,6 +354,9 @@ struct type_definition* lookup_declaration(void) {
         case UNION:
             decl->type_id = TP_UNION;
             break;
+
+        default:
+            printf("not handled!!!!\n");
         }
         tmp = prev->prev;
         DL_DELETE(token_list_head, prev);

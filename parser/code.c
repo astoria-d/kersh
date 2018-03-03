@@ -71,15 +71,15 @@ void cb_close_enum_block(struct code_block* cb, struct type_definition* enum_td)
 
 struct type_definition* cb_add_struct_block(struct type_definition** head, int str_or_uni, const char* struct_name) {
     struct type_definition* td;
-    printf("add struct %s\n", struct_name);
+    //printf("add struct %s\n", struct_name);
 
     td = alloc_typedef();
-    td->type_id = str_or_uni == STRUCT ? TP_STRUCT_DEF : TP_UNION_DEF;
+    td->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
     LL_APPEND(*head, td);
 
     if (struct_name) {
         struct symbol* sym;
-        td->name = strdup(struct_name);
+        td->type_name = strdup(struct_name);
 //        sym = add_symbol(&cb->symbol_table, str_or_uni, struct_name);
 //        sym->type = &td;
     }
@@ -91,8 +91,8 @@ struct type_definition* cb_add_sub_struct_block(struct type_definition* parent, 
 
     /*add sub type to the parent.*/
     sub_type = alloc_typedef();
-    sub_type->type_id = str_or_uni == STRUCT ? TP_STRUCT_DEF : TP_UNION_DEF;
-    if (struct_name) sub_type->name = strdup(struct_name);
+    sub_type->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
+    if (struct_name) sub_type->type_name = strdup(struct_name);
     LL_APPEND(parent->members, sub_type);
 
     return sub_type;
@@ -101,35 +101,48 @@ struct type_definition* cb_add_sub_struct_block(struct type_definition* parent, 
 void cb_close_struct_block(struct code_block* cb, struct type_definition* str_td) {
     struct symbol* sym;
 
-    if (!str_td->name) return ;
-    sym = add_symbol(&cb->symbol_table, SYM_ENUM, str_td->name);
-    sym->type = str_td;
+    if (str_td->type_name) {
+        sym = add_symbol(&cb->symbol_table, SYM_STRUCT, str_td->type_name);
+        sym->type = str_td;
+    }
 }
 
 void cb_add_struct_field(struct type_definition* parent, struct type_definition* field) {
-    printf("add field %s\n", field->name);
-    LL_APPEND(parent->members, field);
+    //printf("add field %s\n", field->name);
 
     if (field->type_id == TP_STRUCT || field->type_id == TP_UNION) {
+
         /*set type definition.*/
         struct type_definition* prev;
 
         prev = parent->members;
         while (prev) {
-            if (prev->next == field)
+            /*get the previous field. check if that is struct definition.*/
+            if (prev->next == NULL)
                 break;
             prev = prev->next;
         }
-        if (prev->type_id == TP_STRUCT_DEF || prev->type_id == TP_UNION_DEF) {
-            struct type_definition* def = prev;
+        if (prev->type_id == TP_STRUCT || prev->type_id == TP_UNION) {
             field->ql.internal_def = 1;
-            field->def = def;
-            LL_DELETE(parent->members, def);
-            def->next = NULL;
+            if (field->name) prev->name = strdup (field->name);
+            free_typedef(&field);
         }
         else {
             //TODO! look up sym table.
+            LL_APPEND(parent->members, field);
         }
+    }
+    else {
+        if (parent->type_id == TP_STRUCT) {
+            parent->size += field->size;
+        }
+        else {
+            /*case parent union.*/
+            if (parent->size < field->size) {
+                parent->size = field->size;
+            }
+        }
+        LL_APPEND(parent->members, field);
     }
 }
 

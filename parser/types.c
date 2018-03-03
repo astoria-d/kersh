@@ -22,21 +22,18 @@ void print_typedef(struct type_definition** head, int indent) {
     LL_FOREACH(*head, mem) {
         if (mem->type_id == TP_STRUCT || mem->type_id == TP_UNION) {
             for (i = 0; i < indent; i++) printf("  ");
-            printf("- %s:%-50s type:%d, size:%d\n", mem->def->name, mem->name, mem->type_id, mem->size);
+            printf("- %s:%-50s type:%d, size:%d\n", mem->type_name, mem->name, mem->type_id, mem->size);
+            if (mem->members) {
+                print_typedef(&mem->members, indent + 1);
+            }
         }
-        else if (mem->type_id != TP_STRUCT_DEF && mem->type_id != TP_UNION_DEF) {
+        else {
             for (i = 0; i < indent; i++) printf("  ");
             printf("- %-50s type:%d, size:%d", mem->name, mem->type_id, mem->size);
             if (mem->type_id == TP_ENUM) {
                 printf(", value:%d", mem->value);
             }
             printf("\n");
-        }
-        if (mem->def) {
-            print_typedef(&mem->def, indent);
-        }
-        if (mem->members) {
-            print_typedef(&mem->members, indent + 1);
         }
     }
 }
@@ -50,15 +47,13 @@ void free_typedef(struct type_definition** head) {
         if (df->type_id == TP_ENUM_DEF) {
             free_typedef(&df->members);
         }
-        else if (df->type_id == TP_STRUCT_DEF || df->type_id == TP_UNION_DEF) {
-            free_typedef(&df->members);
-        }
         else if (df->type_id == TP_STRUCT || df->type_id == TP_UNION) {
-            if (df->ql.internal_def && df->def)
-                free_typedef(&df->def);
+            free_typedef(&df->members);
         }
 
         if (df->name) free (df->name);
+        if (df->type_name) free (df->type_name);
+
         free(df);
     }
 }

@@ -3,7 +3,7 @@
 #define __types_h__
 
 
-enum {
+enum TP {
     TP_BASE_0 = 1   , /*void*/
     TP_BASE_1       , /*char*/
     TP_BASE_2       , /*short*/
@@ -13,14 +13,13 @@ enum {
     TP_ENUM_DEF     , /*enum block definition*/
     TP_ENUM         , /*enum entry definition*/
     TP_TYPEDEF      ,
-    TP_STRUCT_DEF   , /*struct block definition*/
     TP_STRUCT       , /*struct field definition*/
-    TP_UNION_DEF    , /*union block definition*/
     TP_UNION        , /*union field definition*/
 };
 
 struct type_definition {
-    unsigned char               type_id;
+    enum TP                     type_id;
+    char*                       type_name;
     char*                       name;
     unsigned int                size;
     int                         value;
@@ -36,7 +35,6 @@ struct type_definition {
     int                         pointer_cnt;
     int                         array_cnt;
 
-    struct type_definition*    def;
     struct type_definition*    members;
     struct type_definition*    next;
 };
