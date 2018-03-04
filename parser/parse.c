@@ -203,57 +203,6 @@ void exit_parse_stage(void) {
     //printf("stage %d exite, %08x\n", ps->stage, ps);
 }
 
-static void free_token(struct token_list* tkn) {
-    //printf("delete token ");
-    //dbg_print_token(tkn);
-    if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT) {
-        free(tkn->strval);
-    }
-    free(tkn);
-}
-
-int get_current_stage(void) {
-    return cur_stage->start->token;
-}
-
-struct type_definition* get_current_td(void) {
-    return cur_stage->td;
-}
-
-struct code_block* get_current_cb(void) {
-    return cur_stage->cb;
-}
-
-int get_const_val(void) {
-    struct token_list* prev = cur_token;
-    while(prev) {
-        if (prev->token == DECIMAL_CONSTANT || 
-            prev->token == OCTAL_CONSTANT || 
-            prev->token == HEX_CONSTANT)
-            return (int)prev->lval;
-        prev = prev->prev;
-    }
-    return 0;
-}
-
-int get_enum_index() {
-    return enum_index;
-}
-
-void set_enum_index(int val) {
-    enum_index = val;
-}
-
-char* get_old_identifer(void) {
-    struct token_list* prev = cur_token;
-    while(prev) {
-        if (prev->token == IDEN || prev->token == ENUM_CONSTANT)
-            return prev->strval;
-        prev = prev->prev;
-    }
-    return NULL;
-}
-
 struct type_definition* lookup_declaration(void) {
     struct type_definition* decl;
     struct token_list* prev;
@@ -286,6 +235,8 @@ struct type_definition* lookup_declaration(void) {
              * */
             if (name_cnt == 0)
                 decl->name = strdup(prev->strval);
+            else if (name_cnt == 1)
+                decl->type_name = strdup(prev->strval);
             name_cnt++;
             break;
 
@@ -372,6 +323,68 @@ struct type_definition* lookup_declaration(void) {
 
     return decl;
 }
+
+static void free_token(struct token_list* tkn) {
+    //printf("delete token ");
+    //dbg_print_token(tkn);
+    if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT) {
+        free(tkn->strval);
+    }
+    free(tkn);
+}
+
+int get_current_stage(void) {
+    return cur_stage->start->token;
+}
+
+struct type_definition* get_current_td(void) {
+    return cur_stage->td;
+}
+
+struct code_block* get_current_cb(void) {
+    return cur_stage->cb;
+}
+
+int get_const_val(void) {
+    struct token_list* prev = cur_token;
+    while(prev) {
+        if (prev->token == DECIMAL_CONSTANT ||
+            prev->token == OCTAL_CONSTANT ||
+            prev->token == HEX_CONSTANT)
+            return (int)prev->lval;
+        prev = prev->prev;
+    }
+    return 0;
+}
+
+int get_enum_index() {
+    return enum_index;
+}
+
+void set_enum_index(int val) {
+    enum_index = val;
+}
+
+char* get_old_identifer(void) {
+    struct token_list* prev = cur_token;
+    while(prev) {
+        if (prev->token == IDEN || prev->token == ENUM_CONSTANT)
+            return prev->strval;
+        prev = prev->prev;
+    }
+    return NULL;
+}
+
+void indent_inc(void) {
+    pr_indent++;
+}
+
+void indent_dec(void) {
+    pr_indent--;
+}
+
+
+/* print utilities....*/
 
 void line_break(void) {
     printf("\n");
@@ -483,14 +496,6 @@ case COMMA:                     p = ","; break;
       }
     printf("token = [%s]\n", (tl->token == IDEN || tl->token == ENUM_CONSTANT) ? tl->strval : p);
 
-}
-
-void indent_inc(void) {
-    pr_indent++;
-}
-
-void indent_dec(void) {
-    pr_indent--;
 }
 
 void init_parser(void) {
