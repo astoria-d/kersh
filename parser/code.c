@@ -113,20 +113,19 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
 
     free_fld = 0;
     if (field->type_id == TP_STRUCT || field->type_id == TP_UNION) {
-
         /*set type definition.*/
         struct type_definition* prev;
 
-        prev = parent->members;
-        while (prev) {
-            /*get the previous field. check if that is struct definition.*/
-            if (prev->next == NULL)
-                break;
-            prev = prev->next;
-        }
-        if (prev->type_id == TP_STRUCT || prev->type_id == TP_UNION) {
-            field->ql.internal_def = 1;
+        if (field->ql.internal_def) {
+            prev = parent->members;
+            while (prev) {
+                /*get the previous field. check if that is struct definition.*/
+                if (prev->next == NULL)
+                    break;
+                prev = prev->next;
+            }
             if (field->name) prev->name = strdup (field->name);
+            prev->ql.internal_def = 1;
             free_fld = 1;
         }
         else {

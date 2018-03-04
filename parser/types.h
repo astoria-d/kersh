@@ -37,6 +37,7 @@ struct type_definition {
 
     struct type_definition*    members;
     struct type_definition*    next;
+    struct type_definition*    ref;
 };
 
 struct type_definition* alloc_typedef(void);

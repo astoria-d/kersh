@@ -10,18 +10,32 @@
 
 static void struct_or_union_specifier_0(void) {
     struct code_block* cb;
+    struct type_definition* td;
 
     cb = get_current_cb();
-//    cb_close_struct_block(cb);
+    td = get_current_td();
+    cb_close_struct_block(cb, td);
     exit_parse_stage();
 }
 
 static void struct_or_union_specifier_1(void) {
     struct code_block* cb;
+    struct type_definition* td;
 
     cb = get_current_cb();
-//    cb_close_struct_block(cb);
+    td = get_current_td();
+    cb_close_struct_block(cb, td);
     exit_parse_stage(); 
+}
+
+static void struct_or_union_specifier_2(void) {
+    struct code_block* cb;
+    struct type_definition* td;
+
+    cb = get_current_cb();
+    td = get_current_td();
+    cb_close_struct_block(cb, td);
+    exit_parse_stage();
 }
 
 static void struct_declaration_0(void) {
@@ -51,7 +65,7 @@ static void enum_specifier_0(void) {
 
     cb = get_current_cb();
     td = get_current_td();
-//    cb_close_enum_block(cb, tdl);
+    cb_close_enum_block(cb, td);
     exit_parse_stage();
 }
 
@@ -61,7 +75,7 @@ static void enum_specifier_1(void) {
 
     cb = get_current_cb();
     td = get_current_td();
-//    cb_close_enum_block(cb, tdl);
+    cb_close_enum_block(cb, td);
     exit_parse_stage();
 }
 
@@ -71,7 +85,7 @@ static void enum_specifier_2(void) {
 
     cb = get_current_cb();
     td = get_current_td();
-//    cb_close_enum_block(cb, tdl);
+    cb_close_enum_block(cb, td);
     exit_parse_stage();
 }
 
@@ -230,7 +244,7 @@ reduce_hander reduce_hander_array [] = {
 /* 115 indx_type_specifier_9                    */ NULL,
 /* 116 indx_struct_or_union_specifier_0         */ struct_or_union_specifier_0,
 /* 117 indx_struct_or_union_specifier_1         */ struct_or_union_specifier_1,
-/* 118 indx_struct_or_union_specifier_2         */ NULL,
+/* 118 indx_struct_or_union_specifier_2         */ struct_or_union_specifier_2,
 /* 119 indx_struct_or_union_0                   */ NULL,
 /* 120 indx_struct_or_union_1                   */ NULL,
 /* 121 indx_struct_declaration_list_0           */ NULL,

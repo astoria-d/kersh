@@ -188,6 +188,7 @@ void exit_parse_stage(void) {
     prev = cur_token;
     cur_token = cur_stage->start->prev;
     //printf("cur_token:%08x, prev:%08x\n", cur_token, prev);
+    //dbg_print_token(cur_token);
     while(prev != cur_token) {
 //        DL_DELETE(token_list_head, prev);
 //        t1 = prev;
@@ -344,6 +345,7 @@ struct type_definition* lookup_declaration(void) {
                 free_token(prev);
                 prev = tmp;
                 name_cnt++;
+                decl->ql.internal_def = 1;
                 break;
             }
 
