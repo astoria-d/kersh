@@ -1,18 +1,14 @@
 
 #include <stdio.h>
 #include "kersh.tab.h"
+#include "util.h"
 #include "parser.h"
 #include "symbols.h"
 #include "code.h"
 #include "utlist.h"
+#include "util.h"
 
 #define START_TOKEN 0
-
-static unsigned int pr_indent;
-static unsigned int pr_newline;
-static unsigned int enum_index;
-
-static void print_token(const char* parse_text);
 
 struct token_list {
     int token;
@@ -23,9 +19,8 @@ struct token_list {
     struct token_list *prev;
     struct token_list *next;
 };
-static struct token_list* cur_token;
-static struct token_list* token_list_head;
 
+/*  nested code block main data  */
 struct parse_stage {
     struct token_list* start;
     struct parse_stage *prev;
@@ -34,15 +29,23 @@ struct parse_stage {
     struct type_definition* td;
 };
 
-static struct parse_stage* cur_stage;
-static struct parse_stage* head_stage;
 
+static void print_token(const char* parse_text);
+static void free_token(struct token_list* tkn);
+static void dbg_print_token(struct token_list* tl);
+
+static unsigned int pr_indent;
+static unsigned int pr_newline;
+static unsigned int enum_index;
+
+static struct token_list* cur_token;
+static struct parse_stage* cur_stage;
+
+static struct token_list* token_list_head;
+static struct parse_stage* head_stage;
 static struct code_block* root_code_block;
 
 
-
-static void free_token(struct token_list* tkn);
-static void dbg_print_token(struct token_list* tl);
 
 /*kersh implementations...*/
 
@@ -55,7 +58,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
     print_token(parse_text);
 
     struct token_list* tk;
-    tk = malloc(sizeof(struct token_list));
+    tk = ker_malloc(sizeof(struct token_list));
     memset(tk, 0, sizeof(struct token_list));
     tk->token = token_num;
     DL_APPEND(token_list_head, tk);
@@ -63,7 +66,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
     switch (token_num) {
         case IDEN:
-        tk->strval = strdup(parse_text);
+        tk->strval = ker_strdup(parse_text);
         //printf("dup %s...\n", parse_text);
         break;
 
@@ -76,7 +79,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
         case ENUM_CONSTANT:
-        tk->strval = strdup(parse_text);
+        tk->strval = ker_strdup(parse_text);
         break;
 
         case DECIMAL_CONSTANT:
@@ -114,7 +117,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
             td = cb_add_enum_block(&cur_stage->cb->types);
             if (cur_token->prev->token == IDEN) {
-                td->name = strdup(cur_token->prev->strval);
+                td->name = ker_strdup(cur_token->prev->strval);
             }
             cur_stage->td = td;
         }
@@ -168,7 +171,7 @@ void enter_parse_stage(int stage) {
     if (stage == ENUM) {
         enum_index = 0;
     }
-    ps = malloc(sizeof(struct parse_stage));
+    ps = ker_malloc(sizeof(struct parse_stage));
     memset(ps, 0, sizeof(struct parse_stage));
     ps->start = cur_token;
     ps->cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
@@ -199,7 +202,7 @@ void exit_parse_stage(void) {
     ps = cur_stage;
     cur_stage = cur_stage->prev;
     DL_DELETE(head_stage, ps);
-    free(ps);
+    ker_free(ps);
     //printf("stage %d exite, %08x\n", ps->stage, ps);
 }
 
@@ -234,9 +237,9 @@ struct type_definition* lookup_declaration(void) {
              * struct type_name str_name;
              * */
             if (name_cnt == 0)
-                decl->name = strdup(prev->strval);
+                decl->name = ker_strdup(prev->strval);
             else if (name_cnt == 1)
-                decl->type_name = strdup(prev->strval);
+                decl->type_name = ker_strdup(prev->strval);
             name_cnt++;
             break;
 
@@ -328,9 +331,9 @@ static void free_token(struct token_list* tkn) {
     //printf("delete token ");
     //dbg_print_token(tkn);
     if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT) {
-        free(tkn->strval);
+        ker_free(tkn->strval);
     }
-    free(tkn);
+    ker_free(tkn);
 }
 
 int get_current_stage(void) {
@@ -507,6 +510,7 @@ void init_parser(void) {
     token_list_head = NULL;
     pr_indent = 0;
     pr_newline = 0;
+    init_utils();
     init_symbols();
 
     root_code_block = create_code_block();
@@ -516,8 +520,17 @@ void init_parser(void) {
 }
 
 void exit_parser(void) {
-    if (head_stage) {
-        free(head_stage);
+    struct parse_stage *stg, *tmp1;
+    struct token_list *tk, *tmp2;
+
+    DL_FOREACH_SAFE(head_stage, stg, tmp1) {
+        LL_DELETE(head_stage, stg);
+        ker_free(stg);
+    }
+    DL_FOREACH_SAFE(token_list_head, tk, tmp2) {
+        LL_DELETE(token_list_head, tk);
+        if (tk) free_token(tk);
     }
     free_code_block(root_code_block);
+    exit_utils();
 }

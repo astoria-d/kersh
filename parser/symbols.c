@@ -4,6 +4,7 @@
 
 #include "symbols.h"
 #include "parser.h"
+#include "util.h"
 
 /*symbol unique id. (application specific id.)*/
 static unsigned int sym_cnt;
@@ -18,7 +19,7 @@ void sym_add_decl(void) {
 static struct symbol *alloc_sym(void) {
     struct symbol *ret;
 
-    ret = malloc(sizeof(struct symbol));
+    ret = ker_malloc(sizeof(struct symbol));
     memset(ret, 0, sizeof(struct symbol));
     ret->id = get_new_sym_id();
     return ret;
@@ -31,7 +32,7 @@ struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_na
     //printf(">>sym add[%s]....\n", sym_name);
     sym = alloc_sym();
     sym->symbol_type = sym_type;
-    sym->symbol_name = strdup(sym_name);
+    sym->symbol_name = ker_strdup(sym_name);
     HASH_ADD_STR(*head, symbol_name, sym);
     return sym;
 }

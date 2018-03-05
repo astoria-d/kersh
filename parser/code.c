@@ -4,9 +4,10 @@
 #include "kersh.tab.h"
 #include "code.h"
 #include "utlist.h"
+#include "util.h"
 
 struct code_block* create_code_block(void) {
-    struct code_block* cb = malloc(sizeof (struct code_block));
+    struct code_block* cb = ker_malloc(sizeof (struct code_block));
     memset(cb, 0, sizeof (struct code_block));
     return cb;
 }
@@ -25,7 +26,7 @@ void free_code_block(struct code_block* cb) {
         print_typedef(&next->types, 0);
         free_typedef(&next->types);
         free_symtable(&next->symbol_table);
-        free(next);
+        ker_free(next);
     }
 }
 
@@ -43,7 +44,7 @@ void cb_add_enum_elm(struct type_definition** head, const char* elm_name, int va
 
     td = alloc_typedef();
     td->type_id = TP_ENUM;
-    td->name = strdup(elm_name);
+    td->name = ker_strdup(elm_name);
     td->size = sizeof(int);
     td->value = val;
 
@@ -79,7 +80,7 @@ struct type_definition* cb_add_struct_block(struct type_definition** head, int s
 
     if (struct_name) {
         struct symbol* sym;
-        td->type_name = strdup(struct_name);
+        td->type_name = ker_strdup(struct_name);
 //        sym = add_symbol(&cb->symbol_table, str_or_uni, struct_name);
 //        sym->type = &td;
     }
@@ -92,7 +93,7 @@ struct type_definition* cb_add_sub_struct_block(struct type_definition* parent, 
     /*add sub type to the parent.*/
     sub_type = alloc_typedef();
     sub_type->type_id = str_or_uni == STRUCT ? TP_STRUCT : TP_UNION;
-    if (struct_name) sub_type->type_name = strdup(struct_name);
+    if (struct_name) sub_type->type_name = ker_strdup(struct_name);
     LL_APPEND(parent->members, sub_type);
 
     return sub_type;
@@ -124,7 +125,7 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
                     break;
                 prev = prev->next;
             }
-            if (field->name) prev->name = strdup (field->name);
+            if (field->name) prev->name = ker_strdup (field->name);
             prev->ql.internal_def = 1;
             free_fld = 1;
         }
@@ -146,12 +147,5 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
         }
     }
     if (free_fld) free_typedef(&field);
-}
-
-void cb_exit_cb(void) {
-    /*do nothing.*/
-}
-
-void add_sub_block(struct code_block* cb) {
 }
 

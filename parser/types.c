@@ -5,11 +5,12 @@
 
 #include "utlist.h"
 #include "types.h"
+#include "util.h"
 
 struct type_definition* alloc_typedef(void) {
     struct type_definition* td;
 
-    td = malloc(sizeof(struct type_definition));
+    td = ker_malloc(sizeof(struct type_definition));
     memset(td, 0, sizeof(struct type_definition));
     //printf("alloc td: %08x\n", td);
     return td;
@@ -71,9 +72,9 @@ void free_typedef(struct type_definition** head) {
             free_typedef(&df->members);
         }
 
-        if (df->name) free (df->name);
-        if (df->type_name) free (df->type_name);
+        if (df->name) ker_free (df->name);
+        if (df->type_name) ker_free (df->type_name);
 
-        free(df);
+        ker_free(df);
     }
 }
