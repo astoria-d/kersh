@@ -523,14 +523,20 @@ void exit_parser(void) {
     struct parse_stage *stg, *tmp1;
     struct token_list *tk, *tmp2;
 
+    printf("deleting stages\n");
     DL_FOREACH_SAFE(head_stage, stg, tmp1) {
+        printf(".");
         LL_DELETE(head_stage, stg);
         ker_free(stg);
     }
+    printf("\n");
+    printf("deleting tokens\n");
     DL_FOREACH_SAFE(token_list_head, tk, tmp2) {
+        printf(".");
         LL_DELETE(token_list_head, tk);
         if (tk) free_token(tk);
     }
+    printf("\n");
     free_code_block(root_code_block);
     exit_utils();
 }
