@@ -6,30 +6,6 @@
 #include "utlist.h"
 #include "util.h"
 
-struct code_block* create_code_block(void) {
-    struct code_block* cb = ker_malloc(sizeof (struct code_block));
-    memset(cb, 0, sizeof (struct code_block));
-    return cb;
-}
-
-void free_code_block(struct code_block* cb) {
-    struct code_block *next, *tmp;
-
-    /*free child blocks first.*/
-    if (cb->sub_block) {
-        free_code_block(cb->sub_block);
-    }
-
-    /*free siblings next.*/
-    printf("\ntypedef clean up...\n");
-    LL_FOREACH_SAFE(cb, next, tmp) {
-        print_typedef(&next->types, 0);
-        free_typedef(&next->types);
-        free_symtable(&next->symbol_table);
-        ker_free(next);
-    }
-}
-
 struct type_definition* cb_add_enum_block(struct type_definition** head) {
     struct type_definition* td;
 
@@ -154,3 +130,26 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
     if (free_fld) free_typedef(&field);
 }
 
+struct code_block* create_code_block(void) {
+    struct code_block* cb = ker_malloc(sizeof (struct code_block));
+    memset(cb, 0, sizeof (struct code_block));
+    return cb;
+}
+
+void free_code_block(struct code_block* cb) {
+    struct code_block *next, *tmp;
+
+    /*free child blocks first.*/
+    if (cb->sub_block) {
+        free_code_block(cb->sub_block);
+    }
+
+    /*free siblings next.*/
+    printf("typedef clean up...\n");
+    LL_FOREACH_SAFE(cb, next, tmp) {
+        print_typedef(&next->types, 0);
+        free_typedef(&next->types);
+        free_symtable(&next->symbol_table);
+        ker_free(next);
+    }
+}

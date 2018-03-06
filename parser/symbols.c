@@ -68,7 +68,7 @@ void free_symtable(struct symbol **head) {
     struct symbol *s1, *s2;
 
     //printf("head: %08x\n", *head);
-    printf("\nsymbol table clean up...\n");
+    printf("symbol table clean up...\n");
     HASH_ITER(hh, *head, s1, s2) {
         print_symtable(s1);
         HASH_DEL(*head, s1);

@@ -614,14 +614,14 @@ void exit_parser(void) {
     struct parse_stage *stg, *tmp1;
     struct token_list *tk, *tmp2;
 
-    printf("deleting stages\n");
+    printf("deleting stages");
     DL_FOREACH_SAFE(head_stage, stg, tmp1) {
         printf(".");
         LL_DELETE(head_stage, stg);
         ker_free(stg);
     }
     printf("\n");
-    printf("deleting tokens\n");
+    printf("deleting tokens");
     DL_FOREACH_SAFE(token_list_head, tk, tmp2) {
         printf(".");
         LL_DELETE(token_list_head, tk);
