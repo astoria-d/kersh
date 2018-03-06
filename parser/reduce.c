@@ -7,6 +7,8 @@
 #include "reduce.h"
 #include "code.h"
 
+static void declaration_0(void) {
+}
 
 static void struct_or_union_specifier_0(void) {
     struct code_block* cb;
@@ -213,7 +215,7 @@ reduce_hander reduce_hander_array [] = {
 /*  84 indx_expression_0                        */ NULL,
 /*  85 indx_expression_1                        */ NULL,
 /*  86 indx_constant_expression_0               */ NULL,
-/*  87 indx_declaration_0                       */ NULL,
+/*  87 indx_declaration_0                       */ declaration_0,
 /*  88 indx_declaration_1                       */ NULL,
 /*  89 indx_declaration_specifiers_0            */ NULL,
 /*  90 indx_declaration_specifiers_1            */ NULL,
