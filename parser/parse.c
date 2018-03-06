@@ -224,6 +224,10 @@ struct type_definition* lookup_declaration(void) {
         struct token_list* pp;
 
         //dbg_print_token(prev);
+        if (prev == token_list_head) {
+            /*the head item is token_list_head*/
+            break;
+        }
         if (prev->token == ';') {
             break;
         }

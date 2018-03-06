@@ -1,21 +1,17 @@
 
-#ifndef __instance_h__
-#define __instance_h__
+#ifndef __declaration_h__
+#define __declaration_h__
 
 #include "types.h"
 
-struct instance {
+struct declaration {
     char*                       name;
     unsigned char               is_pointer;
     struct type_definition*     type;
     unsigned long               value;
-};
-
-struct instance_list {
-    struct instance         inst;
-    struct instance_list    *next;
+    struct declaration *        next;
 };
 
 
-#endif /*__instance_h__*/
+#endif /*__declaration_h__*/
 

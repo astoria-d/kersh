@@ -4,7 +4,7 @@
 
 #include "uthash.h"
 #include "types.h"
-#include "instance.h"
+#include "declaration.h"
 
 
 #define     SYM_ENUM        0
@@ -20,7 +20,7 @@ struct symbol {
     char *                  symbol_name;
     union {
         struct type_definition* type;
-        struct instance*        instance;
+        struct declaration*     decl;
     };
 
     /*hash table handle.*/

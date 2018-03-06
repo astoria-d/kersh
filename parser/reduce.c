@@ -8,6 +8,23 @@
 #include "code.h"
 
 static void declaration_0(void) {
+    struct code_block* cb;
+    struct type_definition* decl;
+
+    cb = get_current_cb();
+    decl = lookup_declaration();
+    cb_add_declaration(cb, decl);
+}
+
+static void declaration_1(void) {
+    struct code_block* cb;
+    struct type_definition* decl;
+
+    cb = get_current_cb();
+    decl = lookup_declaration();
+    cb_add_declaration(cb, decl);
+    ////TODO! must be managed by the code block.
+    free_typedef(&decl);
 }
 
 static void struct_or_union_specifier_0(void) {
@@ -216,7 +233,7 @@ reduce_hander reduce_hander_array [] = {
 /*  85 indx_expression_1                        */ NULL,
 /*  86 indx_constant_expression_0               */ NULL,
 /*  87 indx_declaration_0                       */ declaration_0,
-/*  88 indx_declaration_1                       */ NULL,
+/*  88 indx_declaration_1                       */ declaration_1,
 /*  89 indx_declaration_specifiers_0            */ NULL,
 /*  90 indx_declaration_specifiers_1            */ NULL,
 /*  91 indx_declaration_specifiers_2            */ NULL,

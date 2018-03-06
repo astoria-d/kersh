@@ -153,3 +153,7 @@ void free_code_block(struct code_block* cb) {
         ker_free(next);
     }
 }
+
+struct type_definition* cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
+    return NULL;
+}
