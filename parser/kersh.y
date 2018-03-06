@@ -574,9 +574,9 @@ int main(int argc, char* argv[]) {
     line_num = 1;
     init_parser();
     ret = yyparse();
-    printf("\nparse done.\n==========================\n");
+    printf("\nparse finished.\n==========================\n");
     exit_parser();
-    printf("parser done.\n");
+    printf("parser exit.\n");
 
     if (need_close) {
         fclose(yyin);

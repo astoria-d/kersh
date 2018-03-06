@@ -606,6 +606,8 @@ void init_parser(void) {
 
     root_code_block = create_code_block();
     root_code_block->types = alloc_typedef();
+    /*create dummy head block.*/
+    root_code_block->types->name = ker_strdup("null_type");
     enter_parse_stage(START_TOKEN);
     cur_stage->cb = root_code_block;
 }
