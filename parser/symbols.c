@@ -50,8 +50,8 @@ void init_symbols(void) {
 }
 
 static void free_symbol(struct symbol* sym) {
-    free(sym->symbol_name);
-    free(sym);
+    ker_free(sym->symbol_name);
+    ker_free(sym);
 }
 
 static void print_symtable(struct symbol* sym) {
