@@ -81,8 +81,6 @@ struct type_definition* cb_add_struct_block(struct type_definition** head, int s
     if (struct_name) {
         struct symbol* sym;
         td->type_name = ker_strdup(struct_name);
-//        sym = add_symbol(&cb->symbol_table, str_or_uni, struct_name);
-//        sym->type = &td;
     }
     return td;
 }
@@ -101,8 +99,15 @@ struct type_definition* cb_add_sub_struct_block(struct type_definition* parent, 
 
 void cb_close_struct_block(struct code_block* cb, struct type_definition* str_td) {
     struct symbol* sym;
+    struct type_definition* t;
 
-    if (str_td->type_name) {
+    /*check if the closing struct is declared under the code block directly.*/
+    t = cb->types;
+    while (t->next != NULL) {
+        t = t->next;
+    }
+
+    if (t == str_td && str_td->type_name) {
         sym = add_symbol(&cb->symbol_table, SYM_STRUCT, str_td->type_name);
         sym->type = str_td;
     }
