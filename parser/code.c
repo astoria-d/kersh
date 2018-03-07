@@ -55,7 +55,6 @@ struct type_definition* cb_add_struct_block(struct type_definition** head, int s
     LL_APPEND(*head, td);
 
     if (struct_name) {
-        struct symbol* sym;
         td->type_name = ker_strdup(struct_name);
     }
     return td;
@@ -130,6 +129,15 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
     if (free_fld) free_typedef(&field);
 }
 
+void cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
+    LL_APPEND(cb->types, decl);
+
+    if (decl->name) {
+        struct symbol* sym;
+        sym = add_symbol(&cb->symbol_table, SYM_TYPEDEF, decl->name);
+    }
+}
+
 struct code_block* create_code_block(void) {
     struct code_block* cb = ker_malloc(sizeof (struct code_block));
     memset(cb, 0, sizeof (struct code_block));
@@ -154,6 +162,3 @@ void free_code_block(struct code_block* cb) {
     }
 }
 
-struct type_definition* cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
-    return NULL;
-}

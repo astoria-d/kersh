@@ -12,7 +12,6 @@ enum TP {
     TP_BASE_16      , /*long long*/
     TP_ENUM_DEF     , /*enum block definition*/
     TP_ENUM         , /*enum entry definition*/
-    TP_TYPEDEF      ,
     TP_STRUCT       , /*struct field definition*/
     TP_UNION        , /*union field definition*/
 };
@@ -31,6 +30,7 @@ struct type_definition {
         unsigned char       is_const        : 1;
         unsigned char       is_volatile     : 1;
         unsigned char       internal_def    : 1;
+        unsigned char       is_typedef      : 1;
     } ql;
     int                         pointer_cnt;
     int                         array_cnt;

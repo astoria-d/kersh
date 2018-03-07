@@ -4,24 +4,22 @@
 
 #include "uthash.h"
 #include "types.h"
-#include "declaration.h"
 
 
-#define     SYM_ENUM        0
-#define     SYM_TYPEDEF     1
-#define     SYM_STRUCT      2
-#define     SYM_UNION       3
-#define     SYM_INSTANCE    4
-#define     SYM_FUNC        5
+enum SYM_TYPE {
+    SYM_ENUM        ,
+    SYM_TYPEDEF     ,
+    SYM_STRUCT      ,
+    SYM_UNION       ,
+    SYM_FUNC        ,
+    SYM_INSTANCE    ,
+};
 
 struct symbol {
-    int                     id;
+    enum SYM_TYPE           id;
     unsigned char           symbol_type;
     char *                  symbol_name;
-    union {
-        struct type_definition* type;
-        struct declaration*     decl;
-    };
+    struct type_definition* type;
 
     /*hash table handle.*/
     UT_hash_handle  hh;

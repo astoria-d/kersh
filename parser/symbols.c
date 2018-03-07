@@ -56,8 +56,18 @@ static void free_symbol(struct symbol* sym) {
 
 static void print_symtable(struct symbol* sym) {
     struct symbol *current_sym, *tmp;
+    const char* p;
 
-    printf("[%50s ]: id:%d, type:%d", sym->symbol_name, sym->id, sym->symbol_type);
+    printf("[%50s ]: id:%d, ", sym->symbol_name, sym->id);
+    switch (sym->symbol_type) {
+    case SYM_ENUM        : p = "enum"; break;
+    case SYM_TYPEDEF     : p = "typedef"; break;
+    case SYM_STRUCT      : p = "struct"; break;
+    case SYM_UNION       : p = "union"; break;
+    case SYM_FUNC        : p = "func"; break;
+    case SYM_INSTANCE    : p = "instance"; break;
+      }
+    printf("type:%s", p);
 /*    if (sym->symbol_type == SYM_ENUM) {
         printf(", value:%d", sym->symbol_value);
     }*/

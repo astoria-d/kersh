@@ -23,8 +23,6 @@ static void declaration_1(void) {
     cb = get_current_cb();
     decl = lookup_declaration();
     cb_add_declaration(cb, decl);
-    ////TODO! must be managed by the code block.
-    free_typedef(&decl);
 }
 
 static void struct_or_union_specifier_0(void) {

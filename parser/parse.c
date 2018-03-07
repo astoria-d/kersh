@@ -70,9 +70,6 @@ void pre_shift_token(const char* parse_text, int token_num) {
         //printf("dup %s...\n", parse_text);
         break;
 
-        case TYPEDEF:
-        break;
-
         case ENUM:
         enter_parse_stage(token_num); 
         break;
@@ -100,16 +97,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         case UNION:
         enter_parse_stage(token_num); 
         break;
-/*
-        case VOID:
-        case CHAR:
-        case SHORT:
-        case INT:
-        case LONG:
-        case SIGNED:
-        case UNSIGNED:
-        break;
-*/
+
         case '{':
         if (cur_stage->start->token == ENUM) {
             struct type_definition* td;
@@ -144,7 +132,6 @@ void pre_shift_token(const char* parse_text, int token_num) {
         case ':':
         line_break();
         break;
-
     }
 }
 
@@ -312,6 +299,10 @@ struct type_definition* lookup_declaration(void) {
 
         case UNION:
             decl->type_id = TP_UNION;
+            break;
+
+        case TYPEDEF:
+            decl->ql.is_typedef = 1;
             break;
 
         default:
