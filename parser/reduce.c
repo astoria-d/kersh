@@ -7,22 +7,35 @@
 #include "reduce.h"
 #include "code.h"
 
+
 static void declaration_0(void) {
     struct code_block* cb;
     struct type_definition* decl;
 
-    cb = get_current_cb();
-    decl = lookup_declaration();
-    cb_add_declaration(cb, decl);
+    if (!get_decl_handled()) {
+        cb = get_current_cb();
+        decl = lookup_declaration();
+        cb_add_declaration(cb, decl);
+    }
+    else {
+        /*enum, struct are already there. reset the flag.*/
+        set_decl_handled(0);
+    }
 }
 
 static void declaration_1(void) {
     struct code_block* cb;
     struct type_definition* decl;
 
-    cb = get_current_cb();
-    decl = lookup_declaration();
-    cb_add_declaration(cb, decl);
+    if (!get_decl_handled()) {
+        cb = get_current_cb();
+        decl = lookup_declaration();
+        cb_add_declaration(cb, decl);
+    }
+    else {
+        /*enum, struct are already there. reset the flag.*/
+        set_decl_handled(0);
+    }
 }
 
 static void struct_or_union_specifier_0(void) {
@@ -42,7 +55,7 @@ static void struct_or_union_specifier_1(void) {
     cb = get_current_cb();
     td = get_current_td();
     cb_close_struct_block(cb, td);
-    exit_parse_stage(); 
+    exit_parse_stage();
 }
 
 static void struct_or_union_specifier_2(void) {

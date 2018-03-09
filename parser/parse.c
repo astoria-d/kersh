@@ -45,7 +45,7 @@ static struct token_list* token_list_head;
 static struct parse_stage* head_stage;
 static struct code_block* root_code_block;
 
-
+static int declare_handled;
 
 /*kersh implementations...*/
 
@@ -71,7 +71,8 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
 
         case ENUM:
-        enter_parse_stage(token_num); 
+        enter_parse_stage(token_num);
+        declare_handled = 0;
         break;
 
         case ENUM_CONSTANT:
@@ -96,6 +97,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         case STRUCT:
         case UNION:
         enter_parse_stage(token_num); 
+        declare_handled = 0;
         break;
 
         case '{':
@@ -290,8 +292,8 @@ struct type_definition* lookup_declaration(void) {
                 prev = tmp;
                 name_cnt++;
                 decl->ql.internal_def = 1;
-                break;
             }
+            break;
 
         case STRUCT:
             decl->type_id = TP_STRUCT;
@@ -360,6 +362,14 @@ int get_enum_index() {
 
 void set_enum_index(int val) {
     enum_index = val;
+}
+
+void set_decl_handled(int val) {
+    declare_handled = val;
+}
+
+int get_decl_handled(void) {
+    return declare_handled;
 }
 
 char* get_old_identifer(void) {
@@ -504,6 +514,7 @@ void init_parser(void) {
     token_list_head = NULL;
     pr_indent = 0;
     pr_newline = 0;
+    declare_handled = 0;
     init_utils();
     init_symbols();
 

@@ -44,6 +44,7 @@ void cb_close_enum_block(struct code_block* cb, struct type_definition* enum_td)
         sym = add_symbol(&cb->symbol_table, SYM_ENUM, enum_ent->name);
         sym->type = enum_ent;
     }
+    set_decl_handled(1);
 }
 
 struct type_definition* cb_add_struct_block(struct type_definition** head, int str_or_uni, const char* struct_name) {
@@ -86,6 +87,7 @@ void cb_close_struct_block(struct code_block* cb, struct type_definition* str_td
         sym = add_symbol(&cb->symbol_table, SYM_STRUCT, str_td->type_name);
         sym->type = str_td;
     }
+    set_decl_handled(1);
 }
 
 void cb_add_struct_field(struct type_definition* parent, struct type_definition* field) {

@@ -44,6 +44,9 @@ struct type_definition* lookup_declaration(void);
 int get_enum_index();
 void set_enum_index(int val);
 
+int get_decl_handled(void);
+void set_decl_handled(int val);
+
 void line_break(void);
 void indent_inc(void);
 void indent_dec(void);
