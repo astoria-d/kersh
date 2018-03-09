@@ -26,7 +26,6 @@ static char* tname_arr[] = {
 /*TP_BASE_16  */    "longlong"      ,
 /*TP_ENUM_DEF */    "enum(def)"     ,
 /*TP_ENUM     */    "enum"          ,
-/*TP_TYPEDEF  */    "typedef"       ,
 /*TP_STRUCT   */    "struct"        ,
 /*TP_UNION    */    "union"         ,
 };

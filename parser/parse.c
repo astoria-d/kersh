@@ -266,7 +266,7 @@ struct type_definition* lookup_declaration(void) {
 
         case INT:
             decl->type_id = TP_BASE_4;
-            if (!decl->ql.is_pointer) decl->size = 2;
+            if (!decl->ql.is_pointer) decl->size = 4;
             break;
 
         case LONG:

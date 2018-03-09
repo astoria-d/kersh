@@ -64,7 +64,7 @@ static void struct_or_union_specifier_2(void) {
 
     cb = get_current_cb();
     td = get_current_td();
-    cb_close_struct_block(cb, td);
+//    cb_close_struct_block(cb, td);
     exit_parse_stage();
 }
 
