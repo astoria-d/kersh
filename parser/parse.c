@@ -138,16 +138,22 @@ void pre_shift_token(const char* parse_text, int token_num) {
 }
 
 /*check input token is identifier or enum constant or typedef name*/
-int check_token_type(void) {
+int check_token_type(const char* parse_text) {
     /*printf("ps_stage: %d\n", ps_stage);*/
-    if (!cur_stage || !cur_stage->start) {
-        return IDEN;
-    }
-    if (cur_stage->start->token == ENUM &&
+    if (cur_stage->start && cur_stage->start->token == ENUM &&
         (cur_token->token == '{' || cur_token->token == ',') ) {
         return ENUM_CONSTANT;
     }
     else {
+        /*check if the token is in the symbol table.*/
+        struct code_block* cb;
+        struct symbol* sym;
+
+        cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
+        if (cb->symbol_table == NULL) return IDEN;
+        sym = lookup_symbol(cb->symbol_table, parse_text);
+        if (sym == NULL) return IDEN;
+        if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF;
         return IDEN;
     }
 }

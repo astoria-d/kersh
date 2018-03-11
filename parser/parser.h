@@ -28,7 +28,7 @@
 #define     COMMA       ','
 
 void pre_shift_token(const char* parse_text, int token_num);
-int check_token_type(void);
+int check_token_type(const char* parse_text);
 void enter_parse_stage(int stage);
 void exit_parse_stage(void);
 void free_identifer(void);

@@ -9,22 +9,8 @@
 /*symbol unique id. (application specific id.)*/
 static unsigned int sym_cnt;
 
-static int get_new_sym_id(void) {
-    return sym_cnt++;
-}
-
-void sym_add_decl(void) {
-}
-
-static struct symbol *alloc_sym(void) {
-    struct symbol *ret;
-
-    ret = ker_malloc(sizeof(struct symbol));
-    memset(ret, 0, sizeof(struct symbol));
-    ret->id = get_new_sym_id();
-    return ret;
-}
-
+static void print_symtable(struct symbol* sym);
+static struct symbol *alloc_sym(void);
 
 struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name) {
     struct symbol *sym;
@@ -37,21 +23,41 @@ struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_na
     return sym;
 }
 
-/*
-void update_enum_val(struct symbol* sym, int val) {
-    sym->symbol_value = val;
-    set_enum_index(val + 1);
+struct symbol* lookup_symbol(struct symbol *head, const char* sym_name) {
+    struct symbol* ret;
+    HASH_FIND_STR(head, sym_name, ret);
+    return ret;
 }
-*/
 
-void init_symbols(void) {
-    printf("init sym table...\n");
-    sym_cnt = 0;
+static int get_new_sym_id(void) {
+    return sym_cnt++;
+}
+
+static struct symbol *alloc_sym(void) {
+    struct symbol *ret;
+
+    ret = ker_malloc(sizeof(struct symbol));
+    memset(ret, 0, sizeof(struct symbol));
+    ret->id = get_new_sym_id();
+    return ret;
 }
 
 static void free_symbol(struct symbol* sym) {
     ker_free(sym->symbol_name);
     ker_free(sym);
+}
+
+void free_symtable(struct symbol **head) {
+    struct symbol *s1, *s2;
+
+    //printf("head: %08x\n", *head);
+    printf("symbol table clean up...\n");
+    HASH_ITER(hh, *head, s1, s2) {
+        print_symtable(s1);
+        HASH_DEL(*head, s1);
+        free_symbol(s1);
+        //printf("s1: %08x\n", s1);
+    }
 }
 
 static void print_symtable(struct symbol* sym) {
@@ -74,16 +80,8 @@ static void print_symtable(struct symbol* sym) {
     printf("\n");
 }
 
-void free_symtable(struct symbol **head) {
-    struct symbol *s1, *s2;
-
-    //printf("head: %08x\n", *head);
-    printf("symbol table clean up...\n");
-    HASH_ITER(hh, *head, s1, s2) {
-        print_symtable(s1);
-        HASH_DEL(*head, s1);
-        free_symbol(s1);
-        //printf("s1: %08x\n", s1);
-    }
+void init_symbols(void) {
+    printf("init sym table...\n");
+    sym_cnt = 0;
 }
 

@@ -16,8 +16,8 @@ enum SYM_TYPE {
 };
 
 struct symbol {
-    enum SYM_TYPE           id;
-    unsigned char           symbol_type;
+    int                     id;
+    enum SYM_TYPE           symbol_type;
     char *                  symbol_name;
     struct type_definition* type;
 
@@ -34,6 +34,7 @@ void update_enum_val(struct symbol *sym, int val);
 */
 struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name);
 void free_symtable(struct symbol **head);
+struct symbol* lookup_symbol(struct symbol *head, const char* sym_name);
 
 #endif /*__symbols_h__*/
 
