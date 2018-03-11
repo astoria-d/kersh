@@ -153,7 +153,7 @@ int check_token_type(const char* parse_text) {
         if (cb->symbol_table == NULL) return IDEN;
         sym = lookup_symbol(cb->symbol_table, parse_text);
         if (sym == NULL) return IDEN;
-        if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF;
+        if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF_NAME;
         return IDEN;
     }
 }
