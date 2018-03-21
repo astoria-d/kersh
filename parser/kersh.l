@@ -73,6 +73,29 @@ gcc_line_num        ^'#' *[^\n]*
 "signed"    { rtoken(SIGNED); }
 "unsigned"  { rtoken(UNSIGNED); }
 
+ /* https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+GNU extensions add these keywords:
+__FUNCTION__ __PRETTY_FUNCTION__ __alignof __alignof__ __asm
+__asm__ __attribute __attribute__ __builtin_offsetof __builtin_va_arg
+__complex __complex__ __const __extension__ __func__ __imag __imag__ 
+__inline __inline__ __label__ __null __real __real__ 
+__restrict __restrict__ __signed __signed__ __thread __typeof
+__volatile __volatile__ 
+ */
+
+"__inline"      { rtoken(INLINE); }
+"__inline__"    { rtoken(INLINE); }
+"__signed"      { rtoken(SIGNED); }
+"__signed__"    { rtoken(SIGNED); }
+"__volatile"    { rtoken(VOLATILE); }
+"__volatile__"  { rtoken(VOLATILE); }
+
+ /*don't know how to handle this key word...*/
+"__extension__"  ;
+
+"__attribute"       { rtoken(ATTRIBUTE); }
+"__attribute__"     { rtoken(ATTRIBUTE); }
+
 
 {nondigit}({nondigit}|{digit})*     {   /*identifier or enum or typename*/
                                         int token = check_token_type(yytext);

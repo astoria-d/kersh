@@ -51,6 +51,9 @@ AMP_EQ
 HAT_EQ
 OR_EQ
 
+%token
+ATTRIBUTE
+
 %start translation_unit
 
 %%
