@@ -363,7 +363,19 @@ type_qualifier      :   CONST                                                   
                     |   VOLATILE                                                                                                    {post_reduce_action(indx_type_qualifier_1); }
                     ;
 
+ /* gcc function attributes...*/
+
+attribute_param_list    :   identifier                                                                                                  {post_reduce_action(indx_identifier_list_0); }
+                        |   attribute_param_list ',' identifier                                                                              {post_reduce_action(indx_identifier_list_1); }
+                        ;
+
+attribute_list          :   ATTRIBUTE '(' '(' ')' ')'
+                        |   ATTRIBUTE '(' '(' IDEN ')' ')'
+                        |   ATTRIBUTE '(' '(' IDEN ','  attribute_param_list ')' ')'
+                        ;
+
 function_speficier  :   INLINE                                                                                                      {post_reduce_action(indx_function_speficier_0); }
+                    |   attribute_list
                     ;
 
 declarator      :   direct_declarator                                                                                               {post_reduce_action(indx_declarator_0); }
