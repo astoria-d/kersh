@@ -38,6 +38,12 @@ static void declaration_1(void) {
     }
 }
 
+static void declarator_0(void) {
+}
+
+static void declarator_1(void) {
+}
+
 static void struct_or_union_specifier_0(void) {
     struct code_block* cb;
     struct type_definition* td;
@@ -152,6 +158,13 @@ static void emumerator_1(void) {
     set_enum_index(val + 1);
 }
 
+static void function_definition_0(void) {
+    printf("func end.\n");
+}
+
+static void function_definition_1(void) {
+    printf("func end.\n");
+}
 
 typedef void (*reduce_hander)(void);
 
@@ -302,8 +315,8 @@ reduce_hander reduce_hander_array [] = {
 /* 143 indx_type_qualifier_0                    */ NULL,
 /* 144 indx_type_qualifier_1                    */ NULL,
 /* 145 indx_function_speficier_0                */ NULL,
-/* 146 indx_declarator_0                        */ NULL,
-/* 147 indx_declarator_1                        */ NULL,
+/* 146 indx_declarator_0                        */ declarator_0,
+/* 147 indx_declarator_1                        */ declarator_1,
 /* 148 indx_direct_declarator_0                 */ NULL,
 /* 149 indx_direct_declarator_1                 */ NULL,
 /* 150 indx_direct_declarator_2                 */ NULL,
@@ -415,8 +428,8 @@ reduce_hander reduce_hander_array [] = {
 /* 256 indx_translation_unit_1                  */ NULL,
 /* 257 indx_external_declaration_0              */ NULL,
 /* 258 indx_external_declaration_1              */ NULL,
-/* 259 indx_function_definition_0               */ NULL,
-/* 260 indx_function_definition_1               */ NULL,
+/* 259 indx_function_definition_0               */ function_definition_0,
+/* 260 indx_function_definition_1               */ function_definition_1,
 /* 261 indx_declaration_list_0                  */ NULL,
 /* 262 indx_declaration_list_1                  */ NULL
 };

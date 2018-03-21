@@ -365,8 +365,8 @@ type_qualifier      :   CONST                                                   
 
  /* gcc function attributes...*/
 
-attribute_param_list    :   identifier                                                                                                  {post_reduce_action(indx_identifier_list_0); }
-                        |   attribute_param_list ',' identifier                                                                              {post_reduce_action(indx_identifier_list_1); }
+attribute_param_list    :   identifier
+                        |   attribute_param_list ',' identifier
                         ;
 
 attribute_list          :   ATTRIBUTE '(' '(' ')' ')'

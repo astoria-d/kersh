@@ -100,8 +100,12 @@ void pre_shift_token(const char* parse_text, int token_num) {
         declare_handled = 0;
         break;
 
+
         case '{':
-        if (cur_stage->start->token == ENUM) {
+        if (!cur_stage->start) {
+            printf("new block...");
+        }
+        else if (cur_stage->start->token == ENUM) {
             struct type_definition* td;
 
             td = cb_add_enum_block(&cur_stage->cb->types);
