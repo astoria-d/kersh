@@ -1,14 +1,76 @@
-enum {
- false = 0,
- true = 1,
- enum2,
- enum3 = 5,
- enum4,
- enum5 = 11,
- enum6 = 17,
- enum7,
- enum8,
+
+typedef int INTEGER;
+
+int func(void) {
+	int a;
+	INTEGER bb;
+	a = c + 1;
+	return;
+}
+
+///////////
+
+
+typedef int aaa;
+
+struct ftrace_likely_data {
+ struct ftrace_branch_data data;
+ unsigned long constant;
 };
+
+typedef unsigned char __u8;
+typedef unsigned short __u16;
+typedef unsigned int __u32;
+__extension__ typedef unsigned long long __u64;
+
+static inline __attribute__((always_inline,unused)) __attribute__((no_instrument_function)) __attribute__((always_inline))
+void __read_once_size(const volatile void *p, void *res, int size)
+{
+	int a, c;
+	c = a;
+ { 
+ 	switch (size) { 
+ 		case 1: *(__u8 *)res = *(volatile __u8 *)p; break; 
+ 		case 2: *(__u16 *)res = *(volatile __u16 *)p; break; 
+ 		case 4: *(__u32 *)res = *(volatile __u32 *)p; break; 
+ 		case 8: *(__u64 *)res = *(volatile __u64 *)p; break; 
+ 	} 
+ }
+}
+
+void __read_once_size(const volatile void *p, void *res, int size)
+{
+ (
+ { 
+ 	switch (size) { 
+ 		case 1: *(__u8 *)res = *(volatile __u8 *)p; break; 
+ 		case 2: *(__u16 *)res = *(volatile __u16 *)p; break; 
+ 		case 4: *(__u32 *)res = *(volatile __u32 *)p; break; 
+ 		case 8: *(__u64 *)res = *(volatile __u64 *)p; break; 
+ 		default: __asm__ __volatile__("": : :"memory"); __builtin_memcpy((void *)res, (const void *)p, size); __asm__ __volatile__("": : :"memory"); 
+ 	} 
+ }
+ );
+}
+
+
+//////////////////////
+
+void __read_once_size(const volatile void *p, void *res, int size)
+{
+ (
+ { 
+ 	switch (size) { 
+ 		case 1: *(__u8 *)res = *(volatile __u8 *)p; break; 
+ 		case 2: *(__u16 *)res = *(volatile __u16 *)p; break; 
+ 		case 4: *(__u32 *)res = *(volatile __u32 *)p; break; 
+ 		case 8: *(__u64 *)res = *(volatile __u64 *)p; break; 
+ 		default: __asm__ __volatile__("": : :"memory"); __builtin_memcpy((void *)res, (const void *)p, size); __asm__ __volatile__("": : :"memory"); 
+ 	} 
+ }
+ );
+}
+
 
 enum BOOL {
  FALSE = 5,
@@ -20,42 +82,34 @@ struct ftrace_branch_data {
  const char *file;
  unsigned line;
  union {
-  struct {
+  struct ddd {
    unsigned long correct;
    unsigned long incorrect;
-  };
-  struct {
+  } ;
+  struct ee {
    unsigned long miss;
    unsigned long hit;
-  };
+  } sss;
   unsigned long miss_hit[2];
- };
+ } ee;
+ int aaa;
 };
 
-aaaa
-
-struct ftrace_likely_data {
- struct ftrace_branch_data data;
- unsigned long constant;
-};
-
-
-
-
-enum {
- false = 0,
- true = 1
-};
-
-typedef struct {
- unsigned long fds_bits[1024 / (8 * sizeof(long))];
-} __kernel_fd_set;
 
 
 typedef void (*__kernel_sighandler_t)(int);
 
 
+typedef struct {
+ unsigned long fds_bits[1024 / (8 * sizeof(long))];
+} __kernel_fd_set;
+
 typedef int __kernel_key_t;
+
+
+
+
+
 typedef int __kernel_mqd_t;
 
 typedef unsigned short __kernel_mode_t;
@@ -69,6 +123,29 @@ typedef unsigned short __kernel_gid_t;
 
 
 typedef unsigned short __kernel_old_dev_t;
+
+
+enum {
+ false = 0,
+ true = 1,
+ enum2,
+ enum3 = 5,
+ enum4,
+ enum5 = 11,
+ enum6 = 17,
+ enum7,
+ enum8,
+};
+
+
+
+
+
+enum {
+ false = 0,
+ true = 1
+};
+
 
 
 
@@ -237,6 +314,9 @@ struct msqid64_ds {
 # 1 "/home/dmotooka/kersh/linux-4.14.14-ti-r26/arch/arm/include/generated/uapi/asm/bitsperlong.h" 1
 # 6 "/home/dmotooka/kersh/linux-4.14.14-ti-r26/include/uapi/asm-generic/shmbuf.h" 2
 # 26 "/home/dmotooka/kersh/linux-4.14.14-ti-r26/include/uapi/asm-generic/shmbuf.h"
+
+typedef usigned int size_t;
+
 struct shmid64_ds {
  struct ipc64_perm shm_perm;
  size_t shm_segsz;
