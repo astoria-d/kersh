@@ -53,6 +53,9 @@ void print_typedef(struct type_definition** head, int indent) {
             if (mem->type_id == TP_ENUM) {
                 printf(", value:%d", mem->value);
             }
+            if (mem->ql.is_typedef) {
+                printf(", typedef");
+            }
             printf("\n");
         }
     }

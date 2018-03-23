@@ -136,7 +136,12 @@ void cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
 
     if (decl->name) {
         struct symbol* sym;
-        sym = add_symbol(&cb->symbol_table, SYM_TYPEDEF, decl->name);
+        if (decl->ql.is_typedef) {
+            sym = add_symbol(&cb->symbol_table, SYM_TYPEDEF, decl->name);
+        }
+        else {
+            sym = add_symbol(&cb->symbol_table, SYM_INSTANCE, decl->name);
+        }
         sym->type = decl;
     }
 }
