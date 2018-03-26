@@ -4,7 +4,8 @@
 
 
 enum TP {
-    TP_BASE_0 = 1   , /*void*/
+    TP_INVALID = 0  , /*invalid type...*/
+    TP_BASE_0       , /*void*/
     TP_BASE_1       , /*char*/
     TP_BASE_2       , /*short*/
     TP_BASE_4       , /*int*/

@@ -31,6 +31,7 @@ struct parse_stage {
 
 
 static void print_token(const char* parse_text);
+static struct token_list* alloc_token(void);
 static void free_token(struct token_list* tkn);
 static void dbg_print_token(struct token_list* tl);
 
@@ -58,14 +59,14 @@ void pre_shift_token(const char* parse_text, int token_num) {
     print_token(parse_text);
 
     struct token_list* tk;
-    tk = ker_malloc(sizeof(struct token_list));
-    memset(tk, 0, sizeof(struct token_list));
+    tk = alloc_token();
     tk->token = token_num;
     DL_APPEND(token_list_head, tk);
     cur_token = tk;
 
     switch (token_num) {
         case IDEN:
+        case TYPEDEF_NAME:
         tk->strval = ker_strdup(parse_text);
         //printf("dup %s...\n", parse_text);
         break;
@@ -209,6 +210,8 @@ struct type_definition* lookup_declaration(void) {
     struct token_list* prev;
     struct token_list* tmp;
     int name_cnt = 0;
+    struct symbol* sym;
+    struct code_block* cb;
 
     //printf("lookup decl...\n");
     /*lookup token history.*/
@@ -239,6 +242,15 @@ struct type_definition* lookup_declaration(void) {
             else if (name_cnt == 1)
                 decl->type_name = ker_strdup(prev->strval);
             name_cnt++;
+            break;
+
+        case TYPEDEF_NAME:
+            decl->type_name = ker_strdup(prev->strval);
+            cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
+            sym = lookup_symbol(cb->symbol_table, prev->strval);
+            decl->ref = sym->type;
+            decl->size = sym->type->size;
+            decl->type_id = sym->type->type_id;
             break;
 
         case CONST:
@@ -333,10 +345,17 @@ struct type_definition* lookup_declaration(void) {
     return decl;
 }
 
+static struct token_list* alloc_token(void) {
+    struct token_list* tk;
+    tk = ker_malloc(sizeof(struct token_list));
+    memset(tk, 0, sizeof(struct token_list));
+    return tk;
+}
+
 static void free_token(struct token_list* tkn) {
     //printf("delete token ");
     //dbg_print_token(tkn);
-    if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT) {
+    if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT || tkn->token == TYPEDEF_NAME) {
         ker_free(tkn->strval);
     }
     ker_free(tkn);

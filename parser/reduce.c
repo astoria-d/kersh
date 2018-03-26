@@ -3,7 +3,6 @@
 
 #include "idtbl.h"
 #include "parser.h"
-#include "symbols.h"
 #include "reduce.h"
 #include "code.h"
 

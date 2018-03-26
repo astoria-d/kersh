@@ -49,7 +49,8 @@ void print_typedef(struct type_definition** head, int indent) {
             }
         }
         else {
-            printf("- %-50s type:%s, size:%d", mem->name, tname_arr[mem->type_id], mem->size);
+            printf("- %-50s type:%s, size:%d", mem->name,
+                    mem->ref ? mem->ref->name : tname_arr[mem->type_id], mem->size);
             if (mem->type_id == TP_ENUM) {
                 printf(", value:%d", mem->value);
             }
