@@ -7,13 +7,18 @@
 #include "types.h"
 #include "util.h"
 
-struct type_definition* alloc_typedef(void) {
-    struct type_definition* td;
 
-    td = ker_malloc(sizeof(struct type_definition));
-    memset(td, 0, sizeof(struct type_definition));
-    //printf("alloc td: %08x\n", td);
-    return td;
+void copy_type(struct type_definition* src, struct type_definition* dst) {
+    dst->type_id = src->type_id;
+    if (src->type_name) dst->type_name = ker_strdup(src->type_name);
+    dst->size = src->size;
+    dst->value = src->value;
+    dst->pointer_cnt = src->pointer_cnt;
+    dst->array_cnt = src->array_cnt;
+    dst->ref = src->ref;
+    dst->ql = src->ql;
+
+    /*dst->name = ker_strdup(src->name);*/
 }
 
 static char* tname_arr[] = {
@@ -49,8 +54,10 @@ void print_typedef(struct type_definition** head, int indent) {
             }
         }
         else {
-            printf("- %-50s type:%s, size:%d", mem->name,
-                    mem->ref ? mem->ref->name : tname_arr[mem->type_id], mem->size);
+            printf("- %-50s type:%s%s, size:%d", mem->name,
+                    mem->ref ? mem->ref->name : tname_arr[mem->type_id],
+                    mem->ql.is_pointer ? "*" : "",
+                            mem->size);
             if (mem->type_id == TP_ENUM) {
                 printf(", value:%d", mem->value);
             }
@@ -60,6 +67,15 @@ void print_typedef(struct type_definition** head, int indent) {
             printf("\n");
         }
     }
+}
+
+struct type_definition* alloc_typedef(void) {
+    struct type_definition* td;
+
+    td = ker_malloc(sizeof(struct type_definition));
+    memset(td, 0, sizeof(struct type_definition));
+    //printf("alloc td: %08x\n", td);
+    return td;
 }
 
 void free_typedef(struct type_definition** head) {

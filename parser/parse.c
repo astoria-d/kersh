@@ -212,6 +212,8 @@ struct type_definition* lookup_declaration(void) {
     int name_cnt = 0;
     struct symbol* sym;
     struct code_block* cb;
+    struct type_definition *decl_prev, *tmp2;
+    int dcl_cnt = 0;
 
     //printf("lookup decl...\n");
     /*lookup token history.*/
@@ -325,6 +327,13 @@ struct type_definition* lookup_declaration(void) {
             decl->ql.is_typedef = 1;
             break;
 
+        case ',':
+            decl_prev = decl;
+            decl = alloc_typedef();
+            LL_CONCAT(decl, decl_prev);
+            name_cnt = 0;
+            break;
+
         default:
             printf("not handled!!!!\n");
         }
@@ -342,6 +351,20 @@ struct type_definition* lookup_declaration(void) {
         return NULL;
     }
 
+    LL_COUNT(decl, tmp2, dcl_cnt);
+    if (dcl_cnt > 1) {
+        LL_FOREACH(decl, tmp2) {
+            int ptr;
+            if (tmp2 == decl) continue;
+            ptr = tmp2->ql.is_pointer;
+            copy_type(decl, tmp2);
+            /*pointer is set for each declaration*/
+            tmp2->ql.is_pointer = ptr;
+            if (ptr) {
+                tmp2->size = sizeof(void*);
+            }
+        }
+    }
     return decl;
 }
 

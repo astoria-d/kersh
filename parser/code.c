@@ -132,17 +132,20 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
 }
 
 void cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
-    LL_APPEND(cb->types, decl);
+    struct type_definition* d;
+    LL_CONCAT(cb->types, decl);
 
-    if (decl->name) {
-        struct symbol* sym;
-        if (decl->ql.is_typedef) {
-            sym = add_symbol(&cb->symbol_table, SYM_TYPEDEF, decl->name);
+    LL_FOREACH(decl, d) {
+        if (d->name) {
+            struct symbol* sym;
+            if (d->ql.is_typedef) {
+                sym = add_symbol(&cb->symbol_table, SYM_TYPEDEF, d->name);
+            }
+            else {
+                sym = add_symbol(&cb->symbol_table, SYM_INSTANCE, d->name);
+            }
+            sym->type = d;
         }
-        else {
-            sym = add_symbol(&cb->symbol_table, SYM_INSTANCE, decl->name);
-        }
-        sym->type = decl;
     }
 }
 

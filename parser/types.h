@@ -44,6 +44,7 @@ struct type_definition {
 struct type_definition* alloc_typedef(void);
 void free_typedef(struct type_definition** head);
 void print_typedef(struct type_definition** head, int indent);
+void copy_type(struct type_definition* src, struct type_definition* dst);
 
 #endif /*__types_h__*/
 
