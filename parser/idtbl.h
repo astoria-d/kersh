@@ -52,11 +52,11 @@
 #define indx_shift_expression_0 48
 #define indx_shift_expression_1 49
 #define indx_shift_expression_2 50
-#define indx_retional_expression_0 51
-#define indx_retional_expression_1 52
-#define indx_retional_expression_2 53
-#define indx_retional_expression_3 54
-#define indx_retional_expression_4 55
+#define indx_relational_expression_0 51
+#define indx_relational_expression_1 52
+#define indx_relational_expression_2 53
+#define indx_relational_expression_3 54
+#define indx_relational_expression_4 55
 #define indx_equality_expression_0 56
 #define indx_equality_expression_1 57
 #define indx_equality_expression_2 58

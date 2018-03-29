@@ -203,16 +203,16 @@ shift_expression        :   additive_expression                                 
                         |   shift_expression RSHIFT additive_expression                                                             {post_reduce_action(indx_shift_expression_2); }
                         ;
 
-retional_expression     :   shift_expression                                                                                        {post_reduce_action(indx_retional_expression_0); }
-                        |   retional_expression '<' shift_expression                                                                {post_reduce_action(indx_retional_expression_1); }
-                        |   retional_expression '>' shift_expression                                                                {post_reduce_action(indx_retional_expression_2); }
-                        |   retional_expression LE shift_expression                                                                 {post_reduce_action(indx_retional_expression_3); }
-                        |   retional_expression GE shift_expression                                                                 {post_reduce_action(indx_retional_expression_4); }
+relational_expression   :   shift_expression                                                                                        {post_reduce_action(indx_relational_expression_0); }
+                        |   relational_expression '<' shift_expression                                                              {post_reduce_action(indx_relational_expression_1); }
+                        |   relational_expression '>' shift_expression                                                              {post_reduce_action(indx_relational_expression_2); }
+                        |   relational_expression LE shift_expression                                                               {post_reduce_action(indx_relational_expression_3); }
+                        |   relational_expression GE shift_expression                                                               {post_reduce_action(indx_relational_expression_4); }
                         ;
 
-equality_expression     :   retional_expression                                                                                     {post_reduce_action(indx_equality_expression_0); }
-                        |   equality_expression EQEQ retional_expression                                                            {post_reduce_action(indx_equality_expression_1); }
-                        |   equality_expression NE retional_expression                                                              {post_reduce_action(indx_equality_expression_2); }
+equality_expression     :   relational_expression                                                                                   {post_reduce_action(indx_equality_expression_0); }
+                        |   equality_expression EQEQ relational_expression                                                          {post_reduce_action(indx_equality_expression_1); }
+                        |   equality_expression NE relational_expression                                                            {post_reduce_action(indx_equality_expression_2); }
                         ;
 
 AND_expression          :   equality_expression                                                                                     {post_reduce_action(indx_AND_expression_0); }
