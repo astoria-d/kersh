@@ -50,6 +50,27 @@ static int declare_handled;
 
 /*kersh implementations...*/
 
+/*check input token is identifier or enum constant or typedef name*/
+int check_token_type(const char* parse_text) {
+    /*printf("ps_stage: %d\n", ps_stage);*/
+    if (cur_stage->start && cur_stage->start->token == ENUM &&
+        (cur_token->token == '{' || cur_token->token == ',') ) {
+        return ENUM_CONSTANT;
+    }
+    else {
+        /*check if the token is in the symbol table.*/
+        struct code_block* cb;
+        struct symbol* sym;
+
+        cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
+        if (cb->symbol_table == NULL) return IDEN;
+        sym = lookup_symbol(cb->symbol_table, parse_text);
+        if (sym == NULL) return IDEN;
+        if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF_NAME;
+        return IDEN;
+    }
+}
+
 void pre_shift_token(const char* parse_text, int token_num) {
     unsigned long const_int_val;
 
@@ -92,6 +113,11 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
         case HEX_CONSTANT:
         sscanf(parse_text, "%x", &const_int_val);
+        tk->lval = const_int_val;
+        break;
+
+        case C_CHAR:
+        sscanf(parse_text, "%c", &const_int_val);
         tk->lval = const_int_val;
         break;
 
@@ -139,27 +165,6 @@ void pre_shift_token(const char* parse_text, int token_num) {
         case ':':
         line_break();
         break;
-    }
-}
-
-/*check input token is identifier or enum constant or typedef name*/
-int check_token_type(const char* parse_text) {
-    /*printf("ps_stage: %d\n", ps_stage);*/
-    if (cur_stage->start && cur_stage->start->token == ENUM &&
-        (cur_token->token == '{' || cur_token->token == ',') ) {
-        return ENUM_CONSTANT;
-    }
-    else {
-        /*check if the token is in the symbol table.*/
-        struct code_block* cb;
-        struct symbol* sym;
-
-        cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
-        if (cb->symbol_table == NULL) return IDEN;
-        sym = lookup_symbol(cb->symbol_table, parse_text);
-        if (sym == NULL) return IDEN;
-        if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF_NAME;
-        return IDEN;
     }
 }
 
@@ -312,6 +317,10 @@ struct type_definition* lookup_declaration(void) {
         case DECIMAL_CONSTANT:
         case OCTAL_CONSTANT:
         case HEX_CONSTANT:
+        case C_CHAR:
+            if (decl->ql.is_array) {
+                add_array(decl, prev->lval);
+            }
             break;
 
         case '}':
@@ -344,7 +353,6 @@ struct type_definition* lookup_declaration(void) {
             break;
 
         case '[':
-            decl->ql.is_array = 1;
             break;
 
         default:
@@ -367,15 +375,9 @@ struct type_definition* lookup_declaration(void) {
     LL_COUNT(decl, tmp2, dcl_cnt);
     if (dcl_cnt > 1) {
         LL_FOREACH(decl, tmp2) {
-            int ptr, pcnt;
             if (tmp2 == decl) continue;
-            ptr = tmp2->ql.is_pointer;
-            pcnt = tmp2->pointer_cnt;
             copy_type(decl, tmp2);
-            /*pointer is set for each declaration*/
-            tmp2->ql.is_pointer = ptr;
-            tmp2->pointer_cnt = pcnt;
-            if (ptr) {
+            if (tmp2->ql.is_pointer) {
                 tmp2->size = sizeof(void*);
             }
         }

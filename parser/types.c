@@ -9,22 +9,31 @@
 
 
 void copy_type(struct type_definition* src, struct type_definition* dst) {
+    int ptr;
+    int ar;
+
+    /*pointer and array are not set for each declaration*/
+    ptr = dst->ql.is_pointer;
+    ar = dst->ql.is_array;
     dst->type_id = src->type_id;
     if (src->type_name) dst->type_name = ker_strdup(src->type_name);
     dst->size = src->size;
     dst->value = src->value;
-    dst->pointer_cnt = src->pointer_cnt;
     dst->ref = src->ref;
     dst->ql = src->ql;
+    dst->ql.is_pointer = ptr;
+    dst->ql.is_array = ar;
 
-    /*dst->name = ker_strdup(src->name);*/
+    /* pointer set is not copied.
+     * dst->pointer_cnt = src->pointer_cnt;
+     * dst->name = ker_strdup(src->name);*/
 }
 
 void add_array(struct type_definition* td, unsigned int size) {
     struct dimension *new_arr_dim;
     new_arr_dim = ker_malloc(sizeof(struct dimension));
     new_arr_dim->size = size;
-    LL_APPEND(td->array_size, new_arr_dim);
+    LL_PREPEND(td->array_size, new_arr_dim);
 }
 static char* tname_arr[] = {
                     "invalid"       ,
@@ -62,10 +71,19 @@ void print_typedef(struct type_definition** head, int indent) {
             char arr[100];
             char ptr[100], *p;
             int i;
+            struct dimension* dim;
+
+            /*create pointer type*/
             p = ptr;
             memset(ptr, 0, sizeof(ptr));
             for(i = 0; i < mem->pointer_cnt; i++) *p++ = '*';
-            sprintf(arr, "[%d]", 0);
+
+            /*create array*/
+            p = arr;
+            LL_FOREACH(mem->array_size, dim) {
+                p += sprintf(p, "[%d]", dim->size);
+            }
+
             printf("- %-50s type:%s%s%s, size:%d", mem->name,
                     mem->ref ? mem->ref->name : tname_arr[mem->type_id],
                     mem->ql.is_pointer ? ptr : "",
