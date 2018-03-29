@@ -360,6 +360,10 @@ struct type_definition* lookup_declaration(void) {
         }
         if (prev == token_list_head) {
             /*the head item is token_list_head*/
+            tmp = prev->prev;
+            DL_DELETE(token_list_head, prev);
+            free_token(prev);
+            prev = tmp;
             break;
         }
         tmp = prev->prev;
