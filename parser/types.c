@@ -14,13 +14,18 @@ void copy_type(struct type_definition* src, struct type_definition* dst) {
     dst->size = src->size;
     dst->value = src->value;
     dst->pointer_cnt = src->pointer_cnt;
-    dst->array_cnt = src->array_cnt;
     dst->ref = src->ref;
     dst->ql = src->ql;
 
     /*dst->name = ker_strdup(src->name);*/
 }
 
+void add_array(struct type_definition* td, unsigned int size) {
+    struct dimension *new_arr_dim;
+    new_arr_dim = ker_malloc(sizeof(struct dimension));
+    new_arr_dim->size = size;
+    LL_APPEND(td->array_size, new_arr_dim);
+}
 static char* tname_arr[] = {
                     "invalid"       ,
 /*TP_BASE_0   */    "void"          ,
@@ -54,9 +59,17 @@ void print_typedef(struct type_definition** head, int indent) {
             }
         }
         else {
-            printf("- %-50s type:%s%s, size:%d", mem->name,
+            char arr[100];
+            char ptr[100], *p;
+            int i;
+            p = ptr;
+            memset(ptr, 0, sizeof(ptr));
+            for(i = 0; i < mem->pointer_cnt; i++) *p++ = '*';
+            sprintf(arr, "[%d]", 0);
+            printf("- %-50s type:%s%s%s, size:%d", mem->name,
                     mem->ref ? mem->ref->name : tname_arr[mem->type_id],
-                    mem->ql.is_pointer ? "*" : "",
+                    mem->ql.is_pointer ? ptr : "",
+                    mem->ql.is_array ? arr : "",
                             mem->size);
             if (mem->type_id == TP_ENUM) {
                 printf(", value:%d", mem->value);
@@ -93,6 +106,13 @@ void free_typedef(struct type_definition** head) {
 
         if (df->name) ker_free (df->name);
         if (df->type_name) ker_free (df->type_name);
+        if (df->array_size) {
+            struct dimension *dim, *dtmp;
+            LL_FOREACH_SAFE(df->array_size, dim, dtmp) {
+                LL_DELETE(df->array_size, dim);
+                ker_free(dim);
+            }
+        }
 
         ker_free(df);
     }

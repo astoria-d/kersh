@@ -263,12 +263,6 @@ struct type_definition* lookup_declaration(void) {
             decl->ql.is_volatile = 1;
             break;
 
-        case '*':
-            decl->ql.is_pointer = 1;
-            decl->pointer_cnt++;
-            decl->size = sizeof(void*);
-            break;
-
         case VOID:
             decl->type_id = TP_BASE_0;
             decl->size = 0;
@@ -303,18 +297,6 @@ struct type_definition* lookup_declaration(void) {
             }
             break;
 
-        case '}':
-            pp = prev->prev;
-            if (pp->token == '{') {
-                tmp = prev->prev;
-                DL_DELETE(token_list_head, prev);
-                free_token(prev);
-                prev = tmp;
-                name_cnt++;
-                decl->ql.internal_def = 1;
-            }
-            break;
-
         case STRUCT:
             decl->type_id = TP_STRUCT;
             break;
@@ -327,11 +309,42 @@ struct type_definition* lookup_declaration(void) {
             decl->ql.is_typedef = 1;
             break;
 
+        case DECIMAL_CONSTANT:
+        case OCTAL_CONSTANT:
+        case HEX_CONSTANT:
+            break;
+
+        case '}':
+            pp = prev->prev;
+            if (pp->token == '{') {
+                tmp = prev->prev;
+                DL_DELETE(token_list_head, prev);
+                free_token(prev);
+                prev = tmp;
+                name_cnt++;
+                decl->ql.internal_def = 1;
+            }
+            break;
+
+        case '*':
+            decl->ql.is_pointer = 1;
+            decl->pointer_cnt++;
+            decl->size = sizeof(void*);
+            break;
+
         case ',':
             decl_prev = decl;
             decl = alloc_typedef();
             LL_CONCAT(decl, decl_prev);
             name_cnt = 0;
+            break;
+
+        case ']':
+            decl->ql.is_array = 1;
+            break;
+
+        case '[':
+            decl->ql.is_array = 1;
             break;
 
         default:
@@ -354,12 +367,14 @@ struct type_definition* lookup_declaration(void) {
     LL_COUNT(decl, tmp2, dcl_cnt);
     if (dcl_cnt > 1) {
         LL_FOREACH(decl, tmp2) {
-            int ptr;
+            int ptr, pcnt;
             if (tmp2 == decl) continue;
             ptr = tmp2->ql.is_pointer;
+            pcnt = tmp2->pointer_cnt;
             copy_type(decl, tmp2);
             /*pointer is set for each declaration*/
             tmp2->ql.is_pointer = ptr;
+            tmp2->pointer_cnt = pcnt;
             if (ptr) {
                 tmp2->size = sizeof(void*);
             }

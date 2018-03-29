@@ -17,6 +17,11 @@ enum TP {
     TP_UNION        , /*union field definition*/
 };
 
+struct dimension {
+    unsigned int size;
+    struct dimension *next;
+};
+
 struct type_definition {
     enum TP                     type_id;
     char*                       type_name;
@@ -34,7 +39,7 @@ struct type_definition {
         unsigned char       is_typedef      : 1;
     } ql;
     int                         pointer_cnt;
-    int                         array_cnt;
+    struct dimension*           array_size;
 
     struct type_definition*    members;
     struct type_definition*    next;
@@ -45,6 +50,7 @@ struct type_definition* alloc_typedef(void);
 void free_typedef(struct type_definition** head);
 void print_typedef(struct type_definition** head, int indent);
 void copy_type(struct type_definition* src, struct type_definition* dst);
+void add_array(struct type_definition* td, unsigned int size);
 
 #endif /*__types_h__*/
 
