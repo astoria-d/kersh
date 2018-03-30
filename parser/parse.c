@@ -228,6 +228,7 @@ struct type_definition* lookup_declaration(void) {
     prev = cur_token->prev;
     DL_DELETE(token_list_head, cur_token);
     free_token(cur_token);
+    cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
 
     while(prev) {
         struct token_list* pp;
@@ -246,14 +247,20 @@ struct type_definition* lookup_declaration(void) {
              * */
             if (name_cnt == 0)
                 decl->name = ker_strdup(prev->strval);
-            else if (name_cnt == 1)
+            else if (name_cnt == 1) {
+                /*case type name is identifier. that is struct.*/
                 decl->type_name = ker_strdup(prev->strval);
+                sym = lookup_symbol(cb->symbol_table, prev->strval);
+                if (sym) {
+                    decl->ref = sym->type;
+                    if (!decl->ql.is_pointer) decl->size = sym->type->size;
+                }
+            }
             name_cnt++;
             break;
 
         case TYPEDEF_NAME:
             decl->type_name = ker_strdup(prev->strval);
-            cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
             sym = lookup_symbol(cb->symbol_table, prev->strval);
             decl->ref = sym->type;
             decl->size = sym->type->size;

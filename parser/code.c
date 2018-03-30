@@ -92,6 +92,7 @@ void cb_close_struct_block(struct code_block* cb, struct type_definition* str_td
 
 void cb_add_struct_field(struct type_definition* parent, struct type_definition* field) {
     int free_fld;
+    unsigned int sz;
     //printf("add field %s\n", field->name);
 
     free_fld = 0;
@@ -109,6 +110,7 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
             }
             if (field->name) prev->name = ker_strdup (field->name);
             prev->ql.internal_def = 1;
+            field->size = prev->size;
             free_fld = 1;
         }
         else {
@@ -119,13 +121,15 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
     else {
         LL_APPEND(parent->members, field);
     }
+
+    sz = get_size(field);
     if (parent->type_id == TP_STRUCT) {
-        parent->size += field->size;
+        parent->size += sz;
     }
     else {
         /*case parent union.*/
-        if (parent->size < field->size) {
-            parent->size = field->size;
+        if (parent->size < sz) {
+            parent->size = sz;
         }
     }
     if (free_fld) free_typedef(&field);
