@@ -564,7 +564,7 @@ declaration_list        :   declaration                                         
 
 /*main func...*/
 
-int line_num;
+static int line_num;
 
 int main(int argc, char* argv[]) {
     int ret;
@@ -599,6 +599,10 @@ int main(int argc, char* argv[]) {
     return ret;
 }
 
+void line_inc(void) {
+    line_num++;
+}
+
 /*bison required functions...*/
 
 void yyerror (char const *s) {
@@ -608,4 +612,3 @@ void yyerror (char const *s) {
 int yywrap (void ) {
     return 1;
 }
-

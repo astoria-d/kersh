@@ -23,12 +23,6 @@ struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_na
     return sym;
 }
 
-struct symbol* lookup_symbol(struct symbol *head, const char* sym_name) {
-    struct symbol* ret;
-    HASH_FIND_STR(head, sym_name, ret);
-    return ret;
-}
-
 static int get_new_sym_id(void) {
     return sym_cnt++;
 }

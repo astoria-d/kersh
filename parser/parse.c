@@ -64,7 +64,7 @@ int check_token_type(const char* parse_text) {
 
         cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
         if (cb->symbol_table == NULL) return IDEN;
-        sym = lookup_symbol(cb->symbol_table, parse_text);
+        sym = lookup_symbol(cb, parse_text);
         if (sym == NULL) return IDEN;
         if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF_NAME;
         return IDEN;
@@ -130,7 +130,10 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
         case '{':
         if (!cur_stage->start) {
-            printf("new block...");
+            struct code_block* cb;
+            cb = cb_add_compound_block(&cur_stage->cb, 0, cur_stage->cb->level + 1);
+            enter_parse_stage('{');
+            cur_stage->cb = cb;
         }
         else if (cur_stage->start->token == ENUM) {
             struct type_definition* td;
@@ -250,7 +253,7 @@ struct type_definition* lookup_declaration(void) {
             else if (name_cnt == 1) {
                 /*case type name is identifier. that is struct.*/
                 decl->type_name = ker_strdup(prev->strval);
-                sym = lookup_symbol(cb->symbol_table, prev->strval);
+                sym = lookup_symbol(cb, prev->strval);
                 if (sym) {
                     decl->ref = sym->type;
                     if (!decl->ql.is_pointer) decl->size = sym->type->size;
@@ -261,7 +264,7 @@ struct type_definition* lookup_declaration(void) {
 
         case TYPEDEF_NAME:
             decl->type_name = ker_strdup(prev->strval);
-            sym = lookup_symbol(cb->symbol_table, prev->strval);
+            sym = lookup_symbol(cb, prev->strval);
             decl->ref = sym->type;
             decl->size = sym->type->size;
             decl->type_id = sym->type->type_id;

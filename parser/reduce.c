@@ -157,6 +157,11 @@ static void emumerator_1(void) {
     set_enum_index(val + 1);
 }
 
+static void compound_statement_1(void) {
+    printf("compound end.\n");
+    exit_parse_stage();
+}
+
 static void function_definition_0(void) {
     printf("func end.\n");
 }
@@ -394,7 +399,7 @@ reduce_hander reduce_hander_array [] = {
 /* 223 indx_labeled_statement_1                 */ NULL,
 /* 224 indx_labeled_statement_2                 */ NULL,
 /* 225 indx_compound_statement_0                */ NULL,
-/* 226 indx_compound_statement_1                */ NULL,
+/* 226 indx_compound_statement_1                */ compound_statement_1,
 /* 227 indx_block_item_list_0                   */ NULL,
 /* 228 indx_block_item_list_1                   */ NULL,
 /* 229 indx_block_item_0                        */ NULL,

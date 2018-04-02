@@ -34,7 +34,6 @@ void update_enum_val(struct symbol *sym, int val);
 */
 struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name);
 void free_symtable(struct symbol **head);
-struct symbol* lookup_symbol(struct symbol *head, const char* sym_name);
 
 #endif /*__symbols_h__*/
 

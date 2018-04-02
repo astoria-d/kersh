@@ -6,6 +6,21 @@
 #include "utlist.h"
 #include "util.h"
 
+struct symbol* lookup_symbol(struct code_block* cb, const char* sym_name) {
+    struct symbol* ret;
+    HASH_FIND_STR(cb->symbol_table, sym_name, ret);
+    return ret;
+}
+
+struct code_block* cb_add_compound_block
+                            (struct code_block** head, unsigned int line, unsigned int level) {
+    struct code_block* ret;
+    ret = create_code_block();
+    LL_APPEND((*head)->sub_block, ret);
+    ret->parent = *head;
+    return ret;
+}
+
 struct type_definition* cb_add_enum_block(struct type_definition** head) {
     struct type_definition* td;
 

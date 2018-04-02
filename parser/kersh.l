@@ -7,8 +7,6 @@
 #define     rtoken(name)    printf( "lex: " #name " %s	\n", yytext);   return(name)
 */
 
-extern int line_num;
-
 %}
 
 nondigit            [_a-zA-Z]
@@ -26,7 +24,7 @@ gcc_line_num        ^'#' *[^\n]*
 
 %%
 [ \t\r]+      ; /*ignore white spaces...*/
-\n          {   line_num++;     }
+\n          {   line_inc();     }
 
  /* gcc preprocessor outputs line number. skip it.*/
 #[^\n]*          {   /*printf("gcc line num [%s]..\n", yytext);*/}
