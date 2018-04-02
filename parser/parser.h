@@ -51,6 +51,7 @@ void line_break(void);
 void indent_inc(void);
 void indent_dec(void);
 void line_inc(void);
+unsigned int get_line_num();
 
 void init_parser(void);
 void exit_parser(void);

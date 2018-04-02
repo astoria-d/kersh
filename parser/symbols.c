@@ -9,7 +9,6 @@
 /*symbol unique id. (application specific id.)*/
 static unsigned int sym_cnt;
 
-static void print_symtable(struct symbol* sym);
 static struct symbol *alloc_sym(void);
 
 struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name) {
@@ -45,33 +44,33 @@ void free_symtable(struct symbol **head) {
     struct symbol *s1, *s2;
 
     //printf("head: %08x\n", *head);
-    printf("symbol table clean up...\n");
     HASH_ITER(hh, *head, s1, s2) {
-        print_symtable(s1);
         HASH_DEL(*head, s1);
         free_symbol(s1);
         //printf("s1: %08x\n", s1);
     }
 }
 
-static void print_symtable(struct symbol* sym) {
-    struct symbol *current_sym, *tmp;
+void print_symtable(struct symbol* sym) {
+    struct symbol *s1, *tmp;
     const char* p;
 
-    printf("[%50s ]: id:%d, ", sym->symbol_name, sym->id);
-    switch (sym->symbol_type) {
-    case SYM_ENUM        : p = "enum"; break;
-    case SYM_TYPEDEF     : p = "typedef"; break;
-    case SYM_STRUCT      : p = "struct"; break;
-    case SYM_UNION       : p = "union"; break;
-    case SYM_FUNC        : p = "func"; break;
-    case SYM_INSTANCE    : p = "instance"; break;
-      }
-    printf("type:%s", p);
-/*    if (sym->symbol_type == SYM_ENUM) {
-        printf(", value:%d", sym->symbol_value);
-    }*/
-    printf("\n");
+    HASH_ITER(hh, sym, s1, tmp) {
+        printf("[%50s ]: id:%d, ", s1->symbol_name, s1->id);
+        switch (s1->symbol_type) {
+        case SYM_ENUM        : p = "enum"; break;
+        case SYM_TYPEDEF     : p = "typedef"; break;
+        case SYM_STRUCT      : p = "struct"; break;
+        case SYM_UNION       : p = "union"; break;
+        case SYM_FUNC        : p = "func"; break;
+        case SYM_INSTANCE    : p = "instance"; break;
+          }
+        printf("type:%s", p);
+    /*    if (sym->symbol_type == SYM_ENUM) {
+            printf(", value:%d", sym->symbol_value);
+        }*/
+        printf("\n");
+    }
 }
 
 void init_symbols(void) {

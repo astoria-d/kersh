@@ -32,6 +32,8 @@ void sym_add_struct_def(const char* struct_name);
 void sym_add_enum(const char* enum_name, int val);
 void update_enum_val(struct symbol *sym, int val);
 */
+void print_symtable(struct symbol* sym);
+
 struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name);
 void free_symtable(struct symbol **head);
 

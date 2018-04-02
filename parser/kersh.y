@@ -564,7 +564,7 @@ declaration_list        :   declaration                                         
 
 /*main func...*/
 
-static int line_num;
+static unsigned int line_num;
 
 int main(int argc, char* argv[]) {
     int ret;
@@ -601,6 +601,10 @@ int main(int argc, char* argv[]) {
 
 void line_inc(void) {
     line_num++;
+}
+
+unsigned int get_line_num(void) {
+    return line_num;
 }
 
 /*bison required functions...*/

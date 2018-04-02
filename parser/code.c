@@ -18,6 +18,8 @@ struct code_block* cb_add_compound_block
     ret = create_code_block();
     LL_APPEND((*head)->sub_block, ret);
     ret->parent = *head;
+    ret->line = line;
+    ret->level = level;
     return ret;
 }
 
@@ -182,11 +184,15 @@ void free_code_block(struct code_block* cb) {
         free_code_block(cb->sub_block);
     }
 
+    printf("code block line: %d, %s > (%d) clean up...\n", cb->line, cb->func_name, cb->level);
     /*free siblings next.*/
-    printf("typedef clean up...\n");
     LL_FOREACH_SAFE(cb, next, tmp) {
+        printf("typedef list clean up...\n");
         print_typedef(&next->types, 0);
         free_typedef(&next->types);
+
+        printf("symbol table clean up...\n");
+        print_symtable(next->symbol_table);
         free_symtable(&next->symbol_table);
         ker_free(next);
     }

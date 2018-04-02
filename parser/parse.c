@@ -131,7 +131,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         case '{':
         if (!cur_stage->start) {
             struct code_block* cb;
-            cb = cb_add_compound_block(&cur_stage->cb, 0, cur_stage->cb->level + 1);
+            cb = cb_add_compound_block(&cur_stage->cb, get_line_num(), cur_stage->cb->level + 1);
             enter_parse_stage('{');
             cur_stage->cb = cb;
         }
