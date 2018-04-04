@@ -20,8 +20,6 @@ struct code_block* cb_add_compound_block
                             (struct code_block** head, unsigned int line, unsigned int level) {
     struct code_block* ret;
     ret = create_code_block();
-    //ret->types = alloc_typedef();
-    //ret->types->name = ker_strdup("null_type");
     LL_APPEND((*head)->sub_block, ret);
     ret->parent = *head;
     ret->line = line;

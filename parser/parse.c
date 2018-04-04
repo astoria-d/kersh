@@ -63,7 +63,6 @@ int check_token_type(const char* parse_text) {
         struct symbol* sym;
 
         cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
-        if (cb->symbol_table == NULL) return IDEN;
         sym = lookup_symbol(cb, parse_text);
         if (sym == NULL) return IDEN;
         if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF_NAME;
