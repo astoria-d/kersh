@@ -158,7 +158,6 @@ static void emumerator_1(void) {
 }
 
 static void compound_statement_1(void) {
-    printf("compound end.\n");
     exit_parse_stage();
 }
 

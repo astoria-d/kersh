@@ -73,6 +73,7 @@ int check_token_type(const char* parse_text) {
 
 void pre_shift_token(const char* parse_text, int token_num) {
     unsigned long const_int_val;
+    int create_block;
 
     if (token_num == '}') {
         indent_dec(); 
@@ -129,11 +130,9 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
 
         case '{':
+        create_block = 0;
         if (!cur_stage->start) {
-            struct code_block* cb;
-            cb = cb_add_compound_block(&cur_stage->cb, get_line_num(), cur_stage->cb->level + 1);
-            enter_parse_stage('{');
-            cur_stage->cb = cb;
+            create_block = 1;
         }
         else if (cur_stage->start->token == ENUM) {
             struct type_definition* td;
@@ -160,6 +159,17 @@ void pre_shift_token(const char* parse_text, int token_num) {
                 cur_stage->td = td;
             }
         }
+        else {
+            create_block = 1;
+        }
+
+        if (create_block) {
+            struct code_block* cb;
+            cb = cb_add_compound_block(&cur_stage->cb, get_line_num(), cur_stage->cb->level + 1);
+            enter_parse_stage('{');
+            cur_stage->cb = cb;
+        }
+
         line_break();
         indent_inc(); 
         break;
