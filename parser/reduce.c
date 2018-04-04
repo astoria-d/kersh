@@ -166,10 +166,6 @@ static void function_definition_0(void) {
     printf("func end.\n");
 }
 
-static void function_definition_1(void) {
-    printf("func end.\n");
-}
-
 typedef void (*reduce_hander)(void);
 
 reduce_hander reduce_hander_array [] = {
@@ -433,7 +429,7 @@ reduce_hander reduce_hander_array [] = {
 /* 257 indx_external_declaration_0              */ NULL,
 /* 258 indx_external_declaration_1              */ NULL,
 /* 259 indx_function_definition_0               */ function_definition_0,
-/* 260 indx_function_definition_1               */ function_definition_1,
+/* 260 indx_function_definition_1               */ NULL, /*legacy C style function definition not supported...*/
 /* 261 indx_declaration_list_0                  */ NULL,
 /* 262 indx_declaration_list_1                  */ NULL
 };
