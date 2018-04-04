@@ -162,7 +162,11 @@ static void compound_statement_1(void) {
 }
 
 static void function_definition_0(void) {
-    printf("func end.\n");
+    struct code_block* cb;
+    struct type_definition* td;
+
+    cb = get_current_cb();
+    td = consume_function();
 }
 
 typedef void (*reduce_hander)(void);

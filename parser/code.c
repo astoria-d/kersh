@@ -17,13 +17,13 @@ struct symbol* lookup_symbol(struct code_block* cb, const char* sym_name) {
 }
 
 struct code_block* cb_add_compound_block
-                            (struct code_block** head, unsigned int line, unsigned int level) {
+                            (struct code_block* parent, unsigned int line, unsigned int level) {
     struct code_block* ret;
     ret = create_code_block();
-    LL_APPEND((*head)->sub_block, ret);
-    ret->parent = *head;
+    ret->parent = parent;
     ret->line = line;
     ret->level = level;
+    LL_APPEND(parent->sub_block, ret);
     return ret;
 }
 
@@ -181,16 +181,18 @@ struct code_block* create_code_block(void) {
 }
 
 void free_code_block(struct code_block* cb) {
-    struct code_block *next, *tmp;
+    struct code_block *child, *next, *tmp;
+    printf("code block line: %d, %s > (%d) clean up...\n", cb->line, cb->func_name, cb->level);
 
     /*free child blocks first.*/
-    if (cb->sub_block) {
-        free_code_block(cb->sub_block);
+    LL_FOREACH_SAFE(cb->sub_block, child, tmp) {
+        LL_DELETE(cb->sub_block, child);
+        free_code_block(child);
     }
 
-    printf("code block line: %d, %s > (%d) clean up...\n", cb->line, cb->func_name, cb->level);
     /*free siblings next.*/
     LL_FOREACH_SAFE(cb, next, tmp) {
+        LL_DELETE(cb, next);
         printf("typedef list clean up...\n");
         print_typedef(&next->types, 0);
         free_typedef(&next->types);
@@ -198,6 +200,7 @@ void free_code_block(struct code_block* cb) {
         printf("symbol table clean up...\n");
         print_symtable(next->symbol_table);
         free_symtable(&next->symbol_table);
+        if (!next->sub_block)
         ker_free(next);
     }
 }

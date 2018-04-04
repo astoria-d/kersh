@@ -164,7 +164,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
 
         if (create_block) {
             struct code_block* cb;
-            cb = cb_add_compound_block(&cur_stage->cb, get_line_num(), cur_stage->cb->level + 1);
+            cb = cb_add_compound_block(cur_stage->cb, get_line_num(), cur_stage->cb->level + 1);
             enter_parse_stage('{');
             cur_stage->cb = cb;
         }
@@ -173,6 +173,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         indent_inc(); 
         break;
 
+        case '}':
         case ';':
         case ':':
         line_break();
@@ -408,6 +409,20 @@ struct type_definition* lookup_declaration(void) {
     return decl;
 }
 
+struct type_definition* consume_function(void) {
+    struct token_list *tk, *tmp2;
+
+    printf("clean up function tokens.\n");
+    DL_FOREACH_SAFE(token_list_head, tk, tmp2) {
+        printf("*");
+        LL_DELETE(token_list_head, tk);
+        if (tk) free_token(tk);
+    }
+    printf("\n");
+    token_list_head = NULL;
+    return NULL;
+}
+
 static struct token_list* alloc_token(void) {
     struct token_list* tk;
     tk = ker_malloc(sizeof(struct token_list));
@@ -627,17 +642,17 @@ void exit_parser(void) {
     struct parse_stage *stg, *tmp1;
     struct token_list *tk, *tmp2;
 
-    printf("deleting stages");
+    printf("clean up remaining stages.\n");
     DL_FOREACH_SAFE(head_stage, stg, tmp1) {
-        printf(".");
-        LL_DELETE(head_stage, stg);
+        printf("*");
+        DL_DELETE(head_stage, stg);
         ker_free(stg);
     }
     printf("\n");
-    printf("deleting tokens");
+    printf("clean up remaining tokens.\n");
     DL_FOREACH_SAFE(token_list_head, tk, tmp2) {
-        printf(".");
-        LL_DELETE(token_list_head, tk);
+        printf("*");
+        DL_DELETE(token_list_head, tk);
         if (tk) free_token(tk);
     }
     printf("\n");

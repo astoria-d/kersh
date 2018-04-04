@@ -27,7 +27,7 @@ struct code_block {
 struct symbol* lookup_symbol(struct code_block* cb, const char* sym_name);
 
 struct code_block* cb_add_compound_block
-                            (struct code_block** head, unsigned int line, unsigned int level);
+                            (struct code_block* parent, unsigned int line, unsigned int level);
 
 struct type_definition* cb_add_enum_block (struct type_definition** head);
 void cb_add_enum_elm        (struct type_definition** head, const char* elm_name, int val);

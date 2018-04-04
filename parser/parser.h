@@ -31,15 +31,15 @@ void pre_shift_token(const char* parse_text, int token_num);
 int check_token_type(const char* parse_text);
 void enter_parse_stage(int stage);
 void exit_parse_stage(void);
-void free_identifer(void);
+
+struct type_definition* lookup_declaration(void);
+struct type_definition* consume_function(void);
 
 int get_current_stage(void);
 struct code_block* get_current_cb(void);
 struct type_definition* get_current_td(void);
 int get_const_val(void);
 char* get_old_identifer(void);
-
-struct type_definition* lookup_declaration(void);
 
 int get_enum_index();
 void set_enum_index(int val);
