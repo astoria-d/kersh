@@ -187,6 +187,7 @@ void free_code_block(struct code_block* cb) {
     /*free child blocks first.*/
     LL_FOREACH_SAFE(cb->sub_block, child, tmp) {
         LL_DELETE(cb->sub_block, child);
+        child->parent = NULL;
         free_code_block(child);
     }
 
@@ -200,7 +201,7 @@ void free_code_block(struct code_block* cb) {
         printf("symbol table clean up...\n");
         print_symtable(next->symbol_table);
         free_symtable(&next->symbol_table);
-        if (!next->sub_block)
+        if (!next->parent)
         ker_free(next);
     }
 }

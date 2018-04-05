@@ -101,6 +101,7 @@ tk_enum(RSHIFT_EQ)
 tk_enum(AMP_EQ)
 tk_enum(HAT_EQ)
 tk_enum(OR_EQ)
+tk_enum(ATTRIBUTE)
 };
 
 #endif /*__util_h__*/
