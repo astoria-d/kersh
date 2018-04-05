@@ -225,56 +225,60 @@ void exit_parse_stage(void) {
 
 struct type_definition* lookup_declaration(void) {
     struct type_definition* decl;
-    struct token_list* prev;
+    struct token_list* tk;
     struct token_list* tmp;
     int name_cnt = 0;
     struct symbol* sym;
     struct code_block* cb;
-    struct type_definition *decl_prev, *tmp2;
-    int dcl_cnt = 0;
+    struct type_definition *decl_head, *tmp2;
+    int dcl_cnt = 1;
 
     //printf("lookup decl...\n");
     /*lookup token history.*/
     decl = alloc_typedef();
 
     /*cur token is ';'*/
-    prev = cur_token->prev;
-    DL_DELETE(token_list_head, cur_token);
-    free_token(cur_token);
+    tk = cur_token->prev;
+
+    /*rewind to declaration top*/
+    while (1) {
+        if (tk->token == '}' && tk->prev->token == '{') {
+            tk = tk->prev->prev;
+            continue;
+        }
+        if (!tk->prev || (tk->prev->token == ';' || tk->prev->token == '{')) {
+            break;
+        }
+        tk = tk->prev;
+    }
+
     cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
+    decl_head = decl;
 
-    while(prev) {
-        struct token_list* pp;
-
-        //dbg_print_token(prev);
-        if (prev->token == ';') {
-            break;
-        }
-        if (prev->token == '{') {
-            break;
-        }
-        switch (prev->token) {
+    while(tk != cur_token) {
+        switch (tk->token) {
         case IDEN:
             /*struct case declaration is like this.
              * struct type_name str_name;
              * */
-            if (name_cnt == 0)
-                decl->name = ker_strdup(prev->strval);
-            else if (name_cnt == 1) {
+            if (name_cnt == 0 && (decl->type_id == TP_STRUCT || decl->type_id == TP_UNION)) {
                 /*case type name is identifier. that is struct.*/
-                decl->type_name = ker_strdup(prev->strval);
-                sym = lookup_symbol(cb, prev->strval);
+                decl->type_name = ker_strdup(tk->strval);
+                sym = lookup_symbol(cb, tk->strval);
                 if (sym) {
                     decl->ref = sym->type;
                     if (!decl->ql.is_pointer) decl->size = sym->type->size;
                 }
             }
+            else {
+                decl->name = ker_strdup(tk->strval);
+            }
             name_cnt++;
             break;
 
         case TYPEDEF_NAME:
-            decl->type_name = ker_strdup(prev->strval);
-            sym = lookup_symbol(cb, prev->strval);
+            decl->type_name = ker_strdup(tk->strval);
+            sym = lookup_symbol(cb, tk->strval);
             decl->ref = sym->type;
             decl->size = sym->type->size;
             decl->type_id = sym->type->type_id;
@@ -339,20 +343,16 @@ struct type_definition* lookup_declaration(void) {
         case HEX_CONSTANT:
         case C_CHAR:
             if (decl->ql.is_array) {
-                add_array(decl, prev->lval);
+                add_array(decl, tk->lval);
             }
             break;
 
-        case '}':
-            pp = prev->prev;
-            if (pp->token == '{') {
-                tmp = prev->prev;
-                DL_DELETE(token_list_head, prev);
-                free_token(prev);
-                prev = tmp;
+        case '{':
+            if (tk->next->token == '}') {
                 name_cnt++;
                 decl->ql.internal_def = 1;
             }
+        case '}':
             break;
 
         case '*':
@@ -362,49 +362,43 @@ struct type_definition* lookup_declaration(void) {
             break;
 
         case ',':
-            decl_prev = decl;
             decl = alloc_typedef();
-            LL_CONCAT(decl, decl_prev);
-            name_cnt = 0;
-            break;
-
-        case ']':
-            decl->ql.is_array = 1;
+            LL_APPEND(decl_head, decl);
+            dcl_cnt++;
             break;
 
         case '[':
+            decl->ql.is_array = 1;
+            break;
+
+        case '=':
+            decl->ql.has_init_val = 1;
+            break;
+
+        case ']':
             break;
 
         default:
             printf("not handled!!!!\n");
         }
-        if (prev == token_list_head) {
-            /*the head item is token_list_head*/
-            tmp = prev->prev;
-            DL_DELETE(token_list_head, prev);
-            free_token(prev);
-            prev = tmp;
-            break;
-        }
-        tmp = prev->prev;
-        DL_DELETE(token_list_head, prev);
-        free_token(prev);
-        prev = tmp;
+        tmp = tk->next;
+        DL_DELETE(token_list_head, tk);
+        free_token(tk);
+        tk = tmp;
     }
-    cur_token = prev;
-    if (!prev) {
-        return NULL;
-    }
+    cur_token = tk->next;
+    DL_DELETE(token_list_head, tk);
+    free_token(tk);
 
-    LL_COUNT(decl, tmp2, dcl_cnt);
     if (dcl_cnt > 1) {
-        LL_FOREACH(decl, tmp2) {
-            if (tmp2 == decl) continue;
-            copy_type(decl, tmp2);
+        LL_FOREACH(decl_head, tmp2) {
+            if (tmp2 == decl_head) continue;
+            copy_type(decl_head, tmp2);
             if (tmp2->ql.is_pointer) {
                 tmp2->size = sizeof(void*);
             }
         }
+        decl = decl_head;
     }
     return decl;
 }

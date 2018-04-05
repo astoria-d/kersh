@@ -37,7 +37,7 @@ void add_array(struct type_definition* td, unsigned int size) {
     struct dimension *new_arr_dim;
     new_arr_dim = ker_malloc(sizeof(struct dimension));
     new_arr_dim->size = size;
-    LL_PREPEND(td->array_size, new_arr_dim);
+    LL_APPEND(td->array_size, new_arr_dim);
 }
 
 unsigned int get_size(struct type_definition* td) {
