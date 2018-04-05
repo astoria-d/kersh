@@ -37,6 +37,7 @@ struct type_definition {
         unsigned char       is_volatile     : 1;
         unsigned char       internal_def    : 1;
         unsigned char       is_typedef      : 1;
+        unsigned char       has_init_val    : 1;
     } ql;
     int                         pointer_cnt;
     struct dimension*           array_size;

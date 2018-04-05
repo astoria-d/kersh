@@ -11,18 +11,22 @@
 void copy_type(struct type_definition* src, struct type_definition* dst) {
     int ptr;
     int ar;
+    int init_val;
 
     /*pointer and array are not set for each declaration*/
     ptr = dst->ql.is_pointer;
     ar = dst->ql.is_array;
+    init_val = dst->ql.has_init_val;
     dst->type_id = src->type_id;
     if (src->type_name) dst->type_name = ker_strdup(src->type_name);
     dst->size = src->size;
     dst->value = src->value;
     dst->ref = src->ref;
     dst->ql = src->ql;
+
     dst->ql.is_pointer = ptr;
     dst->ql.is_array = ar;
+    dst->ql.has_init_val = init_val;
 
     /* pointer set is not copied.
      * dst->pointer_cnt = src->pointer_cnt;
