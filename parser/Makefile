@@ -46,6 +46,9 @@ xsl:
 %.d: %.c
 	$(CC) $(CFLAGS) -M $<  >  $@
 
+test: all
+	./test.sh
+
 
 include $(SOURCES:.c=.d)
 

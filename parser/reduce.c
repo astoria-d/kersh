@@ -438,6 +438,7 @@ reduce_hander reduce_hander_array [] = {
 };
 
 void post_reduce_action(int rule_index) {
+    init_semantic_check();
     if (reduce_hander_array[rule_index] != NULL) {
         (*reduce_hander_array[rule_index])();
     }

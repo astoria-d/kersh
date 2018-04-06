@@ -158,11 +158,28 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
 
 void cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
     struct type_definition* d;
+    struct symbol* sym;
+
+    /*identifier name check*/
+    if (!decl->name) {
+        semantic_err("identifier name not specified.\n");
+        free_typedef(&decl);
+        return ;
+    }
+    /*symbol check*/
+    HASH_FIND_STR(cb->symbol_table, decl->name, sym);
+    if (sym) {
+        char msg[100];
+        sprintf(msg, "duplicated symbol name [%s].\n", decl->name);
+        semantic_err(msg);
+        free_typedef(&decl);
+        return ;
+    }
+
     LL_CONCAT(cb->types, decl);
 
     LL_FOREACH(decl, d) {
         if (d->name) {
-            struct symbol* sym;
             if (d->ql.is_typedef) {
                 sym = add_symbol(&cb->symbol_table, SYM_TYPEDEF, d->name);
             }
