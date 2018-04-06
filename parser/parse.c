@@ -242,11 +242,19 @@ struct type_definition* lookup_declaration(void) {
 
     /*rewind to declaration top*/
     while (1) {
+        /*case sub struct declaration
+         * struct parent {
+         *  struct {
+         *      ....
+         *      } fld;
+         * */
         if (tk->token == '}' && tk->prev->token == '{') {
             tk = tk->prev->prev;
             continue;
         }
-        if (!tk->prev || (tk->prev->token == ';' || tk->prev->token == '{')) {
+
+        /*token_list_head->prev always point to the list end, that is ';'*/
+        if (tk->prev->token == ';' || tk->prev->token == '{') {
             break;
         }
         tk = tk->prev;
