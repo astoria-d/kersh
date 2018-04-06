@@ -70,65 +70,65 @@ static char* tname_arr[] = {
 /*TP_UNION    */    "union"         ,
 };
 
-void print_typedef(struct type_definition** head, int indent) {
-    struct type_definition *mem;
+void print_typedef(struct type_definition** head, int level) {
+    struct type_definition *tp;
     int i;
 
-    LL_FOREACH(*head, mem) {
+    LL_FOREACH(*head, tp) {
         char arr[100];
         char ptr[100], *p;
         struct dimension* dim;
 
-        for (i = 0; i < indent; i++) printf("  ");
+        for (i = 0; i < level; i++) printf("  ");
 
         /*create pointer type*/
         p = ptr;
         memset(ptr, 0, sizeof(ptr));
-        for(i = 0; i < mem->pointer_cnt; i++) *p++ = '*';
+        for(i = 0; i < tp->pointer_cnt; i++) *p++ = '*';
 
         /*create array*/
         p = arr;
-        LL_FOREACH(mem->array_size, dim) {
+        LL_FOREACH(tp->array_size, dim) {
             p += sprintf(p, "[%d]", dim->size);
         }
 
-        if (mem->type_id == TP_STRUCT || mem->type_id == TP_UNION) {
+        if (tp->type_id == TP_STRUCT || tp->type_id == TP_UNION) {
             char str_ty[100];
 
-            if (mem->name) {
-                sprintf(str_ty, "%s %s", tname_arr[mem->type_id], mem->type_name);
+            if (tp->name || level > 0) {
+                sprintf(str_ty, "%s %s", tname_arr[tp->type_id], tp->type_name);
                 printf("- %-50s type:%s%s%s, size:%d\n",
-                        mem->name, str_ty,
-                        mem->ql.is_pointer ? ptr : "",
-                        mem->ql.is_array ? arr : "",
-                        mem->size);
+                        tp->name, str_ty,
+                        tp->ql.is_pointer ? ptr : "",
+                        tp->ql.is_array ? arr : "",
+                        tp->size);
             }
             else {
-                sprintf(str_ty, "%s %s", tname_arr[mem->type_id], mem->type_name);
+                sprintf(str_ty, "%s %s", tname_arr[tp->type_id], tp->type_name);
                 printf("- %-50s type:%s def, size:%d\n",
-                        mem->type_name, tname_arr[mem->type_id], mem->size);
+                        tp->type_name, tname_arr[tp->type_id], tp->size);
             }
-            if (mem->members) {
-                print_typedef(&mem->members, indent + 1);
+            if (tp->members) {
+                print_typedef(&tp->members, level + 1);
             }
         }
-        else if (mem->type_id == TP_ENUM_DEF) {
-            printf("- %-50s type:%s def\n", mem->name, tname_arr[mem->type_id], mem->size);
-            if (mem->members) {
-                print_typedef(&mem->members, indent + 1);
+        else if (tp->type_id == TP_ENUM_DEF) {
+            printf("- %-50s type:%s def\n", tp->name, tname_arr[tp->type_id], tp->size);
+            if (tp->members) {
+                print_typedef(&tp->members, level + 1);
             }
         }
         else {
 
-            printf("- %-50s type:%s%s%s, size:%d", mem->name,
-                    mem->ref ? mem->ref->name : tname_arr[mem->type_id],
-                    mem->ql.is_pointer ? ptr : "",
-                    mem->ql.is_array ? arr : "",
-                            mem->size);
-            if (mem->type_id == TP_ENUM) {
-                printf(", value:%d", mem->value);
+            printf("- %-50s type:%s%s%s, size:%d", tp->name,
+                    tp->ref ? tp->ref->name : tname_arr[tp->type_id],
+                    tp->ql.is_pointer ? ptr : "",
+                    tp->ql.is_array ? arr : "",
+                            tp->size);
+            if (tp->type_id == TP_ENUM) {
+                printf(", value:%d", tp->value);
             }
-            if (mem->ql.is_typedef) {
+            if (tp->ql.is_typedef) {
                 printf(", typedef");
             }
             printf("\n");

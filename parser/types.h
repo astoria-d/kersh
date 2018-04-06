@@ -51,7 +51,7 @@ void copy_type(struct type_definition* src, struct type_definition* dst);
 void add_array(struct type_definition* td, unsigned int size);
 unsigned int get_size(struct type_definition* td);
 
-void print_typedef(struct type_definition** head, int indent);
+void print_typedef(struct type_definition** head, int level);
 
 struct type_definition* alloc_typedef(void);
 void free_typedef(struct type_definition** head);
