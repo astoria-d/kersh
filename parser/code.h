@@ -3,16 +3,12 @@
 #define __code_h__
 
 #include "types.h"
+#include "statements.h"
 #include "symbols.h"
-
-struct code_list {
-    unsigned char       asm_code;
-    struct code_list    *next;
-};
 
 struct code_block {
     struct type_definition*     types;
-    struct code_list*           code;
+    struct statement*           statements;
     struct symbol*              symbol_table;
     struct code_block*          parent;
     struct code_block*          sub_block;

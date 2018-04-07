@@ -32,7 +32,7 @@ int check_token_type(const char* parse_text);
 void enter_parse_stage(int stage);
 void exit_parse_stage(void);
 
-struct type_definition* lookup_declaration(void);
+struct type_definition* consume_declaration(void);
 struct type_definition* consume_function(void);
 
 int get_current_stage(void);

@@ -13,7 +13,7 @@ static void declaration_0(void) {
 
     if (!get_decl_handled()) {
         cb = get_current_cb();
-        decl = lookup_declaration();
+        decl = consume_declaration();
         cb_add_declaration(cb, decl);
     }
     else {
@@ -28,7 +28,7 @@ static void declaration_1(void) {
 
     if (!get_decl_handled()) {
         cb = get_current_cb();
-        decl = lookup_declaration();
+        decl = consume_declaration();
         cb_add_declaration(cb, decl);
     }
     else {
@@ -78,7 +78,7 @@ static void struct_declaration_0(void) {
     struct type_definition* fld;
 
     td = get_current_td();
-    fld = lookup_declaration();
+    fld = consume_declaration();
     cb_add_struct_field(td, fld);
 }
 
@@ -87,7 +87,7 @@ static void struct_declaration_1(void) {
     struct type_definition* fld;
 
     td = get_current_td();
-    fld = lookup_declaration();
+    fld = consume_declaration();
     cb_add_struct_field(td, fld);
 }
 
@@ -167,6 +167,10 @@ static void function_definition_0(void) {
 
     cb = get_current_cb();
     td = consume_function();
+}
+
+static void not_supported_syntax(void) {
+    semantic_err("this syntax is not supported.\n");
 }
 
 typedef void (*reduce_hander)(void);
@@ -438,7 +442,7 @@ reduce_hander reduce_hander_array [] = {
 /* 263 indx_external_declaration_0              */ NULL,
 /* 264 indx_external_declaration_1              */ NULL,
 /* 265 indx_function_definition_0               */ function_definition_0,
-/* 266 indx_function_definition_1               */ NULL, /*legacy C style function definition not supported...*/
+/* 266 indx_function_definition_1               */ not_supported_syntax, /*legacy C style function definition not supported...*/
 /* 267 indx_declaration_list_0                  */ NULL,
 /* 268 indx_declaration_list_1                  */ NULL
 };

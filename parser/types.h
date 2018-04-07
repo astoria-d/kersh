@@ -27,7 +27,7 @@ struct type_definition {
     char*                       type_name;
     char*                       name;
     unsigned int                size;
-    int                         value;
+    long                        value;
 
     struct qualifier {
         unsigned char       is_unsigned     : 1;

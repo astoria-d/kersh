@@ -223,7 +223,7 @@ void exit_parse_stage(void) {
     //printf("stage %d exite, %08x\n", ps->stage, ps);
 }
 
-struct type_definition* lookup_declaration(void) {
+struct type_definition* consume_declaration(void) {
     struct type_definition* decl;
     struct token_list* tk;
     struct token_list* tmp;
