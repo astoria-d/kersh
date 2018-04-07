@@ -371,17 +371,17 @@ type_qualifier      :   CONST                                                   
 
  /* gcc function attributes...*/
 
-attribute_param_list    :   identifier
-                        |   attribute_param_list ',' identifier
+attribute_param_list    :   identifier                                                                                              {POST_REDUCE(indx_attribute_param_list_0) }
+                        |   attribute_param_list ',' identifier                                                                     {POST_REDUCE(indx_attribute_param_list_1) }
                         ;
 
-attribute_list          :   ATTRIBUTE '(' '(' ')' ')'
-                        |   ATTRIBUTE '(' '(' IDEN ')' ')'
-                        |   ATTRIBUTE '(' '(' IDEN ','  attribute_param_list ')' ')'
+attribute_list          :   ATTRIBUTE '(' '(' ')' ')'                                                                               {POST_REDUCE(indx_attribute_list_0) }
+                        |   ATTRIBUTE '(' '(' IDEN ')' ')'                                                                          {POST_REDUCE(indx_attribute_list_1) }
+                        |   ATTRIBUTE '(' '(' IDEN ','  attribute_param_list ')' ')'                                                {POST_REDUCE(indx_attribute_list_2) }
                         ;
 
 function_speficier  :   INLINE                                                                                                      {POST_REDUCE(indx_function_speficier_0) }
-                    |   attribute_list
+                    |   attribute_list                                                                                              {POST_REDUCE(indx_function_speficier_1) }
                     ;
 
 declarator      :   direct_declarator                                                                                               {POST_REDUCE(indx_declarator_0) }
