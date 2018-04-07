@@ -200,27 +200,16 @@ void enter_parse_stage(int stage) {
 
 void exit_parse_stage(void) {
     struct parse_stage* ps;
-/*
-*/
-    //printf("exit stage...\n");
-    struct token_list *prev, *t1;
 
-    prev = cur_token;
     cur_token = cur_stage->start->prev;
+    //printf("exit stage...\n");
     //printf("cur_token:%08x, prev:%08x\n", cur_token, prev);
     //dbg_print_token(cur_token);
-    while(prev != cur_token) {
-//        DL_DELETE(token_list_head, prev);
-//        t1 = prev;
-        prev = prev->prev;
-//        free_token(t1);
-    }
 
     ps = cur_stage;
     cur_stage = cur_stage->prev;
     DL_DELETE(head_stage, ps);
     ker_free(ps);
-    //printf("stage %d exite, %08x\n", ps->stage, ps);
 }
 
 struct type_definition* consume_declaration(void) {
