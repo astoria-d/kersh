@@ -121,6 +121,19 @@ tk_enum(OR_EQ)
 tk_enum(ATTRIBUTE)
 };
 
+#define START_TOKEN 0
+
+struct token_list {
+    enum tk_type token;
+    union {
+        unsigned long   lval;
+        char*           strval;
+    };
+    struct token_list *prev;
+    struct token_list *next;
+};
+
+
 void pre_shift_token(const char* parse_text, int token_num);
 int check_token_type(const char* parse_text);
 void enter_parse_stage(int stage);
@@ -128,6 +141,9 @@ void exit_parse_stage(void);
 
 struct type_definition* consume_declaration(void);
 struct type_definition* consume_function(void);
+
+struct token_list* pop_token_tail(void);
+void push_token_tail(struct token_list* tk);
 
 int get_current_stage(void);
 struct code_block* get_current_cb(void);

@@ -5,6 +5,7 @@
 #include "code.h"
 #include "utlist.h"
 #include "util.h"
+#include "parser.h"
 
 struct symbol* lookup_symbol(struct code_block* cb, const char* sym_name) {
     struct symbol* ret;

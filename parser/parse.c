@@ -8,18 +8,6 @@
 #include "utlist.h"
 #include "util.h"
 
-#define START_TOKEN 0
-
-struct token_list {
-    enum tk_type token;
-    union {
-        unsigned long   lval;
-        char*           strval;
-    };
-    struct token_list *prev;
-    struct token_list *next;
-};
-
 /*  nested code block main data  */
 struct parse_stage {
     struct token_list* start;
@@ -406,12 +394,26 @@ struct type_definition* consume_function(void) {
     printf("clean up function tokens.\n");
     DL_FOREACH_SAFE(token_list_head, tk, tmp2) {
         printf("*");
-        LL_DELETE(token_list_head, tk);
+        DL_DELETE(token_list_head, tk);
         if (tk) free_token(tk);
     }
     printf("\n");
     token_list_head = NULL;
     return NULL;
+}
+
+struct token_list* pop_token_tail(void) {
+    struct token_list *tk;
+
+    /*list tail is at head->prev.*/
+    tk = token_list_head->prev;
+    /*remove tail and return.*/
+    DL_DELETE(token_list_head, tk);
+    return tk;
+}
+
+void push_token_tail(struct token_list* tk) {
+    DL_APPEND(token_list_head, tk);
 }
 
 static struct token_list* alloc_token(void) {
@@ -620,6 +622,7 @@ void init_parser(void) {
     declare_handled = 0;
     init_utils();
     init_symbols();
+    init_expression();
 
     root_code_block = create_code_block();
     root_code_block->types = alloc_typedef();

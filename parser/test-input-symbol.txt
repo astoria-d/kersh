@@ -1,27 +1,154 @@
 
+void exp_test(int aaa, int bbb) {
+	int ret;
+	
+	ret = aaa * bbb / (aaa + bbb + 100 / aaa) / ( (unsigned char)bbb % aaa);
+	return ret;
+}
+
+cccc
+
 typedef int INTEGER;
+
+int test () {
+	int aaa,bbb;
+    aaa = test24;
+    return 1;
+}
+
+
+union utest1 {
+	int fld1;
+	char fld2;
+	INTEGER fld3;
+	unsigned long fld4;
+	struct {
+	    unsigned int size;
+	    struct dimension *next;
+	} fld5;
+	unsigned long fld6[2];
+
+};
+
+
+struct chk {
+    unsigned int size;
+    struct dimension *next;
+    struct chks {
+    	int ccc;
+    };
+} ;
+
+struct dimension {
+    unsigned int size;
+    struct dimension *next;
+} ;
+
+
+typedef unsigned char __u8;
+typedef unsigned short __u16;
+typedef unsigned int __u32;
+__extension__ typedef unsigned long long __u64;
+
+
+
+typedef int (*test22) () ;
+int (*test24) () ;
+
+test22 aaa = 0L;
+
+test22 bbb = 1+3*4;
+
+
+
+static inline __attribute__((always_inline,unused)) __attribute__((no_instrument_function)) __attribute__((always_inline))
+void __read_once_size(const volatile void *p, void *res, int size)
+{
+	int a, c;
+	c = a;
+ { 
+ 	switch (size) { 
+ 		case 1: *(int *)res = *(volatile int *)p; break; 
+ 		case 1: *(__u8 *)res = *(volatile __u8 *)p; break; 
+ 	} 
+ }
+}
+
+int func2(void) {
+	int a, c;
+	char* p;
+	a = c + 1;
+
+ 	switch (a) { 
+ 		case 1: p = p + 1; break; 
+ 		default: p = p + 3; break; 
+ 	} 
+
+	return;
+}
+
+typedef INTEGER INT;
+typedef unsigned short ushort;
 
 int func(void) {
 	int a;
 	INTEGER bb;
+	INT cc;
+	INT c;
+	ushort d;
+	INT e[10], f, *g, **i, j;
+	char* pt;
+	int h[7][10][5];
+
+	char *p2[10];
+
 	a = c + 1;
 	return;
 }
 
-///////////
 
 
-typedef int aaa;
+struct ftrace_branch_data {
+ const char *func;
+ const char *file;
+ unsigned line;
+ union {
+  struct ddd {
+   unsigned long correct;
+   unsigned long incorrect;
+  } ;
+  struct ee {
+   unsigned long miss;
+   unsigned long hit;
+  } sss;
+  unsigned long miss_hit[2];
+ } eec;
+ int aaa;
+};
+
+
+
+
+struct dimension d1;
+
+
+int test1;
+
+struct dimension *p_dm;
+
+enum BOOL {
+ FALSE = 5,
+ TRUE,
+};
+
+
 
 struct ftrace_likely_data {
  struct ftrace_branch_data data;
  unsigned long constant;
 };
 
-typedef unsigned char __u8;
-typedef unsigned short __u16;
-typedef unsigned int __u32;
-__extension__ typedef unsigned long long __u64;
+
 
 static inline __attribute__((always_inline,unused)) __attribute__((no_instrument_function)) __attribute__((always_inline))
 void __read_once_size(const volatile void *p, void *res, int size)
@@ -38,23 +165,7 @@ void __read_once_size(const volatile void *p, void *res, int size)
  }
 }
 
-void __read_once_size(const volatile void *p, void *res, int size)
-{
- (
- { 
- 	switch (size) { 
- 		case 1: *(__u8 *)res = *(volatile __u8 *)p; break; 
- 		case 2: *(__u16 *)res = *(volatile __u16 *)p; break; 
- 		case 4: *(__u32 *)res = *(volatile __u32 *)p; break; 
- 		case 8: *(__u64 *)res = *(volatile __u64 *)p; break; 
- 		default: __asm__ __volatile__("": : :"memory"); __builtin_memcpy((void *)res, (const void *)p, size); __asm__ __volatile__("": : :"memory"); 
- 	} 
- }
- );
-}
-
-
-//////////////////////
+///
 
 void __read_once_size(const volatile void *p, void *res, int size)
 {
@@ -72,28 +183,21 @@ void __read_once_size(const volatile void *p, void *res, int size)
 }
 
 
-enum BOOL {
- FALSE = 5,
- TRUE,
-};
 
-struct ftrace_branch_data {
- const char *func;
- const char *file;
- unsigned line;
- union {
-  struct ddd {
-   unsigned long correct;
-   unsigned long incorrect;
-  } ;
-  struct ee {
-   unsigned long miss;
-   unsigned long hit;
-  } sss;
-  unsigned long miss_hit[2];
- } ee;
- int aaa;
-};
+void __read_once_size(const volatile void *p, void *res, int size)
+{
+ (
+ { 
+ 	switch (size) { 
+ 		case 1: *(__u8 *)res = *(volatile __u8 *)p; break; 
+ 		case 2: *(__u16 *)res = *(volatile __u16 *)p; break; 
+ 		case 4: *(__u32 *)res = *(volatile __u32 *)p; break; 
+ 		case 8: *(__u64 *)res = *(volatile __u64 *)p; break; 
+ 		default: __asm__ __volatile__("": : :"memory"); __builtin_memcpy((void *)res, (const void *)p, size); __asm__ __volatile__("": : :"memory"); 
+ 	} 
+ }
+ );
+}
 
 
 
