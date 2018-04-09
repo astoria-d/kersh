@@ -154,6 +154,11 @@ void cb_add_struct_field(struct type_definition* parent, struct type_definition*
         }
     }
     if (free_fld) free_typedef(&field);
+
+    /*size check*/
+    if (sz == 0) {
+        semantic_err("declaration failure. invalide data size.\n");
+    }
 }
 
 void cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
@@ -172,6 +177,12 @@ void cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
         char msg[100];
         sprintf(msg, "duplicated symbol name [%s].\n", decl->name);
         semantic_err(msg);
+        free_typedef(&decl);
+        return ;
+    }
+    /*size check*/
+    if (decl->size == 0) {
+        semantic_err("declaration failure. invalide data size.\n");
         free_typedef(&decl);
         return ;
     }
