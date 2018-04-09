@@ -2,7 +2,7 @@
 #define __idtbl_h__
 
 #define null_index 0
-#define identifier_0 1
+#define indx_identifier_0 1
 #define indx_constant_0 2
 #define indx_constant_1 3
 #define indx_constant_2 4

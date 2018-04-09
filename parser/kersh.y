@@ -65,7 +65,7 @@ ATTRIBUTE
 %%
 
  /*A.1.3 Identifiers*/
-identifier  :   IDEN                                                                                                                {POST_REDUCE(identifier_0) }
+identifier  :   IDEN                                                                                                                {POST_REDUCE(indx_identifier_0) }
             ;
  /*
  A.1.4
