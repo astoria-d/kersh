@@ -8,6 +8,7 @@
 #include "utlist.h"
 
 static struct expression* alloc_expression(void);
+static void pop_operator(void);
 
 struct expression* exp_head;
 
@@ -17,19 +18,54 @@ void identifier_0(void) {
 }*/
 
 void primary_expression_0(void) {
-    struct expression* e;
-    struct token_list* tk;
+    struct expression *e1, *e2;
+    struct token_list *tk1, *tk2;
 
-    printf(" <primary_expression_0> ");
-    /*
-    tk = pop_token_tail();
-    e = alloc_expression();
-    LL_APPEND(exp_head, e);
-    */
+    printf(".");
+    tk1 = pop_token_tail();
+    e1 = alloc_expression();
+
+    if (tk1->token != tk_IDEN) {
+        tk2 = pop_token_tail();
+        e1->token = tk2;
+
+        e2 = alloc_expression();
+        e2->token = tk1;
+
+        DL_APPEND(exp_head, e2);
+        DL_APPEND(exp_head, e1);
+    }
+    else {
+        e1->token = tk1;
+        DL_APPEND(exp_head, e1);
+    }
 }
 
 void primary_expression_1(void) {
-    printf(" <primary_expression_1> ");
+    struct expression *e1, *e2, *e;
+    struct token_list *tk1, *tk2;
+
+    printf(".");
+    tk1 = pop_token_tail();
+    e1 = alloc_expression();
+
+    if (tk1->token != tk_IDEN) {
+        tk2 = pop_token_tail();
+        e1->token = tk2;
+
+        e2 = alloc_expression();
+        e2->token = tk1;
+
+        DL_APPEND(exp_head, e2);
+        DL_APPEND(exp_head, e1);
+        e = e2;
+    }
+    else {
+        e1->token = tk1;
+        DL_APPEND(exp_head, e1);
+        e = e1;
+    }
+    e->lr = TP_RVAL;
 }
 
 void primary_expression_2(void) {
@@ -37,7 +73,8 @@ void primary_expression_2(void) {
 }
 
 void primary_expression_3(void) {
-    printf(" <primary_expression_3> ");
+    /*do nothing.*/
+    printf(".");
 }
 
 void postfix_expression_0(void) {
@@ -107,11 +144,53 @@ void cast_expression_1(void) {
 }
 
 void multipricative_expression_1(void) {
-    printf(" <multipricative_expression_1> ");
+    struct expression *op1, *op2, *e_new;
+    struct expression *e1;
+    struct token_list *tk1;
+
+    printf(".");
+
+    /*pop the two operands*/
+    op2 = exp_head->prev;
+    DL_DELETE(exp_head, op2);
+    op1 = exp_head->prev;
+    DL_DELETE(exp_head, op1);
+    e_new = alloc_expression();
+    e_new->sub_exp1 = op1;
+    e_new->sub_exp2 = op2;
+    e_new->op = OP_MUL;
+    DL_APPEND(exp_head, e_new);
+
+    tk1 = pop_token_tail();
+    e1 = alloc_expression();
+
+    e1->token = tk1;
+    DL_APPEND(exp_head, e1);
 }
 
 void multipricative_expression_2(void) {
-    printf(" <multipricative_expression_2> ");
+    struct expression *op1, *op2, *e_new;
+    struct expression *e1;
+    struct token_list *tk1;
+
+    printf(".");
+
+    /*pop the two operands*/
+    op2 = exp_head->prev;
+    DL_DELETE(exp_head, op2);
+    op1 = exp_head->prev;
+    DL_DELETE(exp_head, op1);
+    e_new = alloc_expression();
+    e_new->sub_exp1 = op1;
+    e_new->sub_exp2 = op2;
+    e_new->op = OP_DIV;
+    DL_APPEND(exp_head, e_new);
+
+    tk1 = pop_token_tail();
+    e1 = alloc_expression();
+
+    e1->token = tk1;
+    DL_APPEND(exp_head, e1);
 }
 
 void multipricative_expression_3(void) {
@@ -119,7 +198,28 @@ void multipricative_expression_3(void) {
 }
 
 void additive_expression_1(void) {
-    printf(" <additive_expression_1> ");
+    struct expression *op1, *op2, *e_new;
+    struct expression *e1;
+    struct token_list *tk1;
+
+    printf(".");
+
+    /*pop the two operands*/
+    op2 = exp_head->prev;
+    DL_DELETE(exp_head, op2);
+    op1 = exp_head->prev;
+    DL_DELETE(exp_head, op1);
+    e_new = alloc_expression();
+    e_new->sub_exp1 = op1;
+    e_new->sub_exp2 = op2;
+    e_new->op = OP_PLUS;
+    DL_APPEND(exp_head, e_new);
+
+    tk1 = pop_token_tail();
+    e1 = alloc_expression();
+
+    e1->token = tk1;
+    DL_APPEND(exp_head, e1);
 }
 
 void additive_expression_2(void) {
@@ -184,6 +284,15 @@ void conditional_expression_1(void) {
 
 void assignment_expression_1(void) {
     printf(" <assignment_expression_1> ");
+}
+
+static void pop_operator(void) {
+    struct token_list *tk1;
+
+    printf(".");
+
+    tk1 = pop_token_tail();
+    free_token(tk1);
 }
 
 static struct expression* alloc_expression(void) {

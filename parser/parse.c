@@ -20,7 +20,6 @@ struct parse_stage {
 
 static void print_token(const char* parse_text);
 static struct token_list* alloc_token(void);
-static void free_token(struct token_list* tkn);
 static void dbg_print_token(struct token_list* tl);
 
 static unsigned int pr_indent;
@@ -423,7 +422,7 @@ static struct token_list* alloc_token(void) {
     return tk;
 }
 
-static void free_token(struct token_list* tkn) {
+void free_token(struct token_list* tkn) {
     //printf("delete token ");
     //dbg_print_token(tkn);
     if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT || tkn->token == TYPEDEF_NAME) {

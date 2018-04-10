@@ -1,8 +1,16 @@
+void exp_test1() {
+	int a, b;
+	a = 1;
+	b = 2*a;
+	return a + b;
+}
 
-void exp_test(int aaa, int bbb) {
+cccc
+
+void exp_test2(int aaa, int bbb) {
 	int ret;
 	
-	ret = aaa * bbb / (aaa + bbb + 100 / aaa) / ( (unsigned char)bbb % aaa);
+	ret = aaa * bbb / (ccc + ddd + 100 / eee) / ( (unsigned char)fff % ggg);
 	return ret;
 }
 

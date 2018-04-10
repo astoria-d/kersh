@@ -144,6 +144,7 @@ struct type_definition* consume_function(void);
 
 struct token_list* pop_token_tail(void);
 void push_token_tail(struct token_list* tk);
+void free_token(struct token_list* tkn);
 
 int get_current_stage(void);
 struct code_block* get_current_cb(void);

@@ -83,16 +83,14 @@ enum OP_TYPE {
 
 
 struct expression {
-    struct type_definition*     inst;
     enum TP_VAL                 lr;
     enum OP_TYPE                op;
     long                        value;
-    struct token_list*          operand1;
-    struct token_list*          operand2;
-    struct token_list*          operand3;
+    struct token_list*          token;
     struct expression*          sub_exp1;
     struct expression*          sub_exp2;
     struct expression*          sub_exp3;
+    struct expression*          prev;
     struct expression*          next;
 };
 
