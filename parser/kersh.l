@@ -20,8 +20,6 @@ simple_escape       \\['"\\abfnrtv]
 octal_escape        \\{octaldigit}{octaldigit}?{octaldigit}?
 hex_escape          \\x{hexdigit}*
 
-gcc_line_num        ^'#' *[^\n]*
-
 %%
 [ \t\r]+      ; /*ignore white spaces...*/
 \n          {   line_inc();     }
@@ -32,91 +30,7 @@ gcc_line_num        ^'#' *[^\n]*
 
  /*keywords*/
 
-"typedef"   { rtoken(TYPEDEF); }
-"sizeof"    { rtoken(SIZEOF); }
-"enum"      { rtoken(ENUM);   }
-"struct"    { rtoken(STRUCT); }
-"union"     { rtoken(UNION); }
-
-"auto"      { rtoken(AUTO); }
-"const"     { rtoken(CONST); }
-"static"    { rtoken(STATIC); }
-"extern"    { rtoken(EXTERN); }
-"volatile"  { rtoken(VOLATILE); }
-
-"inline"    { rtoken(INLINE); }
-
-"do"        { rtoken(DO); }
-"while"     { rtoken(WHILE); }
-"for"       { rtoken(FOR); }
-"continue"  { rtoken(CONTINUE); }
-"break"     { rtoken(BREAK); }
-
-"goto"      { rtoken(GOTO); }
-"return"    { rtoken(RETURN); }
-
-"switch"    { rtoken(SWITCH); }
-"case"      { rtoken(CASE); }
-"default"   { rtoken(DEFAULT); }
-
-"if"        { rtoken(IF); }
-"else"      { rtoken(ELSE); }
-
-
-"void"      { rtoken(VOID); }
-"int"       { rtoken(INT); }
-"char"      { rtoken(CHAR); }
-"short"     { rtoken(SHORT); }
-"long"      { rtoken(LONG); }
-"signed"    { rtoken(SIGNED); }
-"unsigned"  { rtoken(UNSIGNED); }
-
- /* https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
-GNU extensions add these keywords:
-__FUNCTION__ __PRETTY_FUNCTION__ __alignof __alignof__ __asm
-__asm__ __attribute __attribute__ __builtin_offsetof __builtin_va_arg
-__complex __complex__ __const __extension__ __func__ __imag __imag__ 
-__inline __inline__ __label__ __null __real __real__ 
-__restrict __restrict__ __signed __signed__ __thread __typeof
-__volatile __volatile__ 
- */
-
-"__inline"      { rtoken(INLINE); }
-"__inline__"    { rtoken(INLINE); }
-"__signed"      { rtoken(SIGNED); }
-"__signed__"    { rtoken(SIGNED); }
-"__volatile"    { rtoken(VOLATILE); }
-"__volatile__"  { rtoken(VOLATILE); }
-
- /*don't know how to handle this key word...*/
-"__extension__"  ;
-
-"__attribute"       { rtoken(ATTRIBUTE); }
-"__attribute__"     { rtoken(ATTRIBUTE); }
-
-
-{nondigit}({nondigit}|{digit})*     {   /*identifier or enum or typename*/
-                                        int token = check_token_type(yytext);
-                                        rtoken(token);
-                                    }
-
-{nonzerodigit}{digit}*(u|U)?(l|L|ll|LL)?       { rtoken(DECIMAL_CONSTANT); }
-{nonzerodigit}{digit}*(l|L|ll|LL)?(u|U)?       { rtoken(DECIMAL_CONSTANT); }
-
-0{octaldigit}*(u|U)?(l|L|ll|LL)?              { rtoken(OCTAL_CONSTANT); }
-0{octaldigit}*(l|L|ll|LL)?(u|U)?              { rtoken(OCTAL_CONSTANT); }
-
-0[xX]{hexdigit}*(u|U)?(l|L|ll|LL)?            { rtoken(HEX_CONSTANT); }
-0[xX]{hexdigit}*(l|L|ll|LL)?(u|U)?            { rtoken(HEX_CONSTANT); }
-
-\'({cchar}|{simple_escape}|{octal_escape}|{hex_escape})*\'          { rtoken(C_CHAR); }
-
-
-\"({schar}|{simple_escape}|{octal_escape}|{hex_escape})*\"          { rtoken(S_CHAR); }
-
-
-
-
+ /*operator*/
 "["         { rtoken(LBRACKET); }
 "]"         { rtoken(RBRACKET); }
 "("         { rtoken(LPAR); }
@@ -171,9 +85,105 @@ __volatile __volatile__
 "^="        { rtoken(HAT_EQ); }
 "|="        { rtoken(OR_EQ); }
 
-
 ","         { rtoken(COMMA); }
 
+"sizeof"    { rtoken(SIZEOF); }
+
+ /*strage_class_specifier*/
+"typedef"   { rtoken(TYPEDEF); }
+"extern"    { rtoken(EXTERN); }
+"static"    { rtoken(STATIC); }
+"auto"      { rtoken(AUTO); }
+
+ /*type_specifier*/
+"void"      { rtoken(VOID); }
+"char"      { rtoken(CHAR); }
+"short"     { rtoken(SHORT); }
+"int"       { rtoken(INT); }
+"long"      { rtoken(LONG); }
+"signed"    { rtoken(SIGNED); }
+"unsigned"  { rtoken(UNSIGNED); }
+
+"struct"    { rtoken(STRUCT); }
+"union"     { rtoken(UNION); }
+"enum"      { rtoken(ENUM);   }
+
+ /*type_qualifier*/
+"const"     { rtoken(CONST); }
+"volatile"  { rtoken(VOLATILE); }
+
+
+ /*function_speficier*/
+"inline"    { rtoken(INLINE); }
+
+
+ /*labeled_statement*/
+"switch"    { rtoken(SWITCH); }
+"case"      { rtoken(CASE); }
+"default"   { rtoken(DEFAULT); }
+
+ /*selection_statement*/
+"if"        { rtoken(IF); }
+"else"      { rtoken(ELSE); }
+
+ /*iteration_statement*/
+"do"        { rtoken(DO); }
+"while"     { rtoken(WHILE); }
+"for"       { rtoken(FOR); }
+
+
+ /*jump_statement*/
+"goto"      { rtoken(GOTO); }
+"continue"  { rtoken(CONTINUE); }
+"break"     { rtoken(BREAK); }
+"return"    { rtoken(RETURN); }
+
+
+ /* https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+GNU extensions add these keywords:
+__FUNCTION__ __PRETTY_FUNCTION__ __alignof __alignof__ __asm
+__asm__ __attribute __attribute__ __builtin_offsetof __builtin_va_arg
+__complex __complex__ __const __extension__ __func__ __imag __imag__ 
+__inline __inline__ __label__ __null __real __real__ 
+__restrict __restrict__ __signed __signed__ __thread __typeof
+__volatile __volatile__ 
+ */
+
+"__inline"      { rtoken(INLINE); }
+"__inline__"    { rtoken(INLINE); }
+"__signed"      { rtoken(SIGNED); }
+"__signed__"    { rtoken(SIGNED); }
+"__volatile"    { rtoken(VOLATILE); }
+"__volatile__"  { rtoken(VOLATILE); }
+
+ /*don't know how to handle this key word...*/
+"__extension__"  ;
+
+"__attribute"       { rtoken(ATTRIBUTE); }
+"__attribute__"     { rtoken(ATTRIBUTE); }
+
+
+ /*constant*/
+{nonzerodigit}{digit}*(u|U)?(l|L|ll|LL)?       { rtoken(DECIMAL_CONSTANT); }
+{nonzerodigit}{digit}*(l|L|ll|LL)?(u|U)?       { rtoken(DECIMAL_CONSTANT); }
+
+0{octaldigit}*(u|U)?(l|L|ll|LL)?              { rtoken(OCTAL_CONSTANT); }
+0{octaldigit}*(l|L|ll|LL)?(u|U)?              { rtoken(OCTAL_CONSTANT); }
+
+0[xX]{hexdigit}*(u|U)?(l|L|ll|LL)?            { rtoken(HEX_CONSTANT); }
+0[xX]{hexdigit}*(l|L|ll|LL)?(u|U)?            { rtoken(HEX_CONSTANT); }
+
+\'({cchar}|{simple_escape}|{octal_escape}|{hex_escape})*\'          { rtoken(C_CHAR); }
+
+
+\"({schar}|{simple_escape}|{octal_escape}|{hex_escape})*\"          { rtoken(S_CHAR); }
+
+
+ /*identifier*/
+{nondigit}({nondigit}|{digit})*     {   /*identifier or enum or typename*/
+                                        int token = check_token_type(yytext);
+                                        rtoken(token);
+                                    }
 
  /*error case...*/
 

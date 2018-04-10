@@ -205,7 +205,6 @@ void cb_add_declaration(struct code_block* cb, struct type_definition* decl) {
 
 struct code_block* create_code_block(void) {
     struct code_block* cb = ker_malloc(sizeof (struct code_block));
-    memset(cb, 0, sizeof (struct code_block));
     return cb;
 }
 
