@@ -30,7 +30,6 @@ static struct symbol *alloc_sym(void) {
     struct symbol *ret;
 
     ret = ker_malloc(sizeof(struct symbol));
-    memset(ret, 0, sizeof(struct symbol));
     ret->id = get_new_sym_id();
     return ret;
 }

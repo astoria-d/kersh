@@ -140,7 +140,6 @@ struct type_definition* alloc_typedef(void) {
     struct type_definition* td;
 
     td = ker_malloc(sizeof(struct type_definition));
-    memset(td, 0, sizeof(struct type_definition));
     //printf("alloc td: %08x\n", td);
     return td;
 }

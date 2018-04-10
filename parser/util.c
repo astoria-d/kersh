@@ -22,8 +22,11 @@ void exit_utils(void) {
 }
 
 void *ker_malloc(size_t size) {
+    void *ret;
     alloc_cnt++;
-    return malloc(size);
+    ret = malloc(size);
+    memset(ret, 0, size);
+    return ret;
 }
 
 void ker_free(void *ptr) {

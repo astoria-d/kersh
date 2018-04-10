@@ -166,6 +166,9 @@ void pre_shift_token(const char* parse_text, int token_num) {
         line_break();
         break;
     }
+
+    /*set token object.*/
+    yylval.tk = tk;
 }
 
 void enter_parse_stage(int stage) {
@@ -176,7 +179,6 @@ void enter_parse_stage(int stage) {
         enum_index = 0;
     }
     ps = ker_malloc(sizeof(struct parse_stage));
-    memset(ps, 0, sizeof(struct parse_stage));
     ps->start = cur_token;
     ps->cb = cur_stage != NULL ? cur_stage->cb : root_code_block;
     ps->td = cur_stage != NULL ? cur_stage->td : root_code_block->types;
@@ -418,7 +420,6 @@ void push_token_tail(struct token_list* tk) {
 static struct token_list* alloc_token(void) {
     struct token_list* tk;
     tk = ker_malloc(sizeof(struct token_list));
-    memset(tk, 0, sizeof(struct token_list));
     return tk;
 }
 

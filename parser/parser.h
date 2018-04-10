@@ -133,7 +133,6 @@ struct token_list {
     struct token_list *next;
 };
 
-
 void pre_shift_token(const char* parse_text, int token_num);
 int check_token_type(const char* parse_text);
 void enter_parse_stage(int stage);
