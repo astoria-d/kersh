@@ -43,22 +43,24 @@ ATTRIBUTE
 %union {
     struct token_list* tk;
     struct abs_syntax_tree* ast;
+    struct expression* exp;
 }
 
 %token <tk> IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT C_CHAR S_CHAR
-%type <ast> identifier constant integer_constant emumeration_constant character_constant string_literal
-            primary_expression argument_expression_list assignment_expression postfix_expression
+
+%type <tk>  identifier constant integer_constant emumeration_constant character_constant string_literal
+%type <exp> primary_expression argument_expression_list assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
             shift_expression relational_expression equality_expression AND_expression
             exclusive_OR_expression inclusive_OR_expression logical_AND_expression
-            logical_OR_expression conditional_expression expression
+            logical_OR_expression conditional_expression expression constant_expression
 
 %start translation_unit
 
 %%
 
  /*A.1.3 Identifiers*/
-identifier  :   IDEN                                                                                                                {$$ = alloc_term_node($1); POST_REDUCE(indx_identifier_0) }
+identifier  :   IDEN                                                                                                                {$$ = $1; POST_REDUCE(indx_identifier_0) }
             ;
  /*
  A.1.4
@@ -73,28 +75,28 @@ constant    :   integer_constant                                                
             |   character_constant                                                                                                  {$$ = $1; POST_REDUCE(indx_constant_2) }
             ;
 
-integer_constant    :   DECIMAL_CONSTANT                                                                                            {$$ = alloc_term_node($1); POST_REDUCE(indx_integer_constant_0) }
-                    |   OCTAL_CONSTANT                                                                                              {$$ = alloc_term_node($1); POST_REDUCE(indx_integer_constant_1) }
-                    |   HEX_CONSTANT                                                                                                {$$ = alloc_term_node($1); POST_REDUCE(indx_integer_constant_2) }
+integer_constant    :   DECIMAL_CONSTANT                                                                                            {$$ = $1; POST_REDUCE(indx_integer_constant_0) }
+                    |   OCTAL_CONSTANT                                                                                              {$$ = $1; POST_REDUCE(indx_integer_constant_1) }
+                    |   HEX_CONSTANT                                                                                                {$$ = $1; POST_REDUCE(indx_integer_constant_2) }
                     ;
 
  /*kersh original. can't solve the conflicts.*/
-emumeration_constant    :   ENUM_CONSTANT                                                                                           {$$ = alloc_term_node($1); POST_REDUCE(indx_emumeration_constant_0) }
+emumeration_constant    :   ENUM_CONSTANT                                                                                           {$$ = $1; POST_REDUCE(indx_emumeration_constant_0) }
                         ;
 
-character_constant      :   C_CHAR                                                                                                  {$$ = alloc_term_node($1); POST_REDUCE(indx_character_constant_0) }
+character_constant      :   C_CHAR                                                                                                  {$$ = $1; POST_REDUCE(indx_character_constant_0) }
                         ;
 
 
  /*A.1.6 String literals*/
-string_literal          :   S_CHAR                                                                                                  {$$ = alloc_term_node($1); POST_REDUCE(indx_string_literal_0) }
+string_literal          :   S_CHAR                                                                                                  {$$ = $1; POST_REDUCE(indx_string_literal_0) }
                         ;
 
  /*A2.1 Expressions*/
-primary_expression  :   identifier                                                                                                  {$$ = $1; POST_REDUCE(indx_primary_expression_0) }
-                    |   constant                                                                                                    {$$ = $1; POST_REDUCE(indx_primary_expression_1) }
-                    |   string_literal                                                                                              {$$ = $1; POST_REDUCE(indx_primary_expression_2) }
-                    |   '(' expression ')'                                                                                          {$$ = alloc_nested_node($2); POST_REDUCE(indx_primary_expression_3) }
+primary_expression  :   identifier                                                                                                  {$$ = alloc_term_exp($1); POST_REDUCE(indx_primary_expression_0) }
+                    |   constant                                                                                                    {$$ = alloc_term_exp($1); POST_REDUCE(indx_primary_expression_1) }
+                    |   string_literal                                                                                              {$$ = alloc_term_exp($1); POST_REDUCE(indx_primary_expression_2) }
+                    |   '(' expression ')'                                                                                          {$$ = alloc_nested_exp($2); POST_REDUCE(indx_primary_expression_3) }
                     ;
 
 postfix_expression  :   primary_expression                                                                                          {$$ = $1; POST_REDUCE(indx_postfix_expression_0) }
@@ -134,14 +136,14 @@ cast_expression     :   unary_expression                                        
                     ;
 
 multipricative_expression   :   cast_expression                                                                                     {$$ = $1; POST_REDUCE(indx_multipricative_expression_0) }
-                            |   multipricative_expression '*' cast_expression                                                       {$$ = alloc_2op_node(OP_MUL, $1, $3); POST_REDUCE(indx_multipricative_expression_1) }
-                            |   multipricative_expression '/' cast_expression                                                       {$$ = alloc_2op_node(OP_DIV, $1, $3); POST_REDUCE(indx_multipricative_expression_2) }
-                            |   multipricative_expression '%' cast_expression                                                       {$$ = alloc_2op_node(OP_MOD, $1, $3); POST_REDUCE(indx_multipricative_expression_3) }
+                            |   multipricative_expression '*' cast_expression                                                       {$$ = alloc_2op_exp(OP_MUL, $1, $3); POST_REDUCE(indx_multipricative_expression_1) }
+                            |   multipricative_expression '/' cast_expression                                                       {$$ = alloc_2op_exp(OP_DIV, $1, $3); POST_REDUCE(indx_multipricative_expression_2) }
+                            |   multipricative_expression '%' cast_expression                                                       {$$ = alloc_2op_exp(OP_MOD, $1, $3); POST_REDUCE(indx_multipricative_expression_3) }
                             ;
 
 additive_expression     :   multipricative_expression                                                                               {$$ = $1; POST_REDUCE(indx_additive_expression_0) }
-                        |   additive_expression '+' multipricative_expression                                                       {$$ = alloc_2op_node(OP_PLUS, $1, $3); POST_REDUCE(indx_additive_expression_1) }
-                        |   additive_expression '-' multipricative_expression                                                       {$$ = alloc_2op_node(OP_MINUS, $1, $3); POST_REDUCE(indx_additive_expression_2) }
+                        |   additive_expression '+' multipricative_expression                                                       {$$ = alloc_2op_exp(OP_PLUS, $1, $3); POST_REDUCE(indx_additive_expression_1) }
+                        |   additive_expression '-' multipricative_expression                                                       {$$ = alloc_2op_exp(OP_MINUS, $1, $3); POST_REDUCE(indx_additive_expression_2) }
                         ;
 
 shift_expression        :   additive_expression                                                                                     {$$ = $1; POST_REDUCE(indx_shift_expression_0) }
@@ -206,7 +208,7 @@ expression      :   assignment_expression                                       
                 |   expression ',' assignment_expression                                                                            {POST_REDUCE(indx_expression_1) }
                 ;
 
-constant_expression :   conditional_expression                                                                                      {POST_REDUCE(indx_constant_expression_0) }
+constant_expression :   conditional_expression                                                                                      {$$ = $1; POST_REDUCE(indx_constant_expression_0) }
                     ;
 
 
