@@ -7,7 +7,7 @@
 #include "kersh.tab.h"
 #include "idtbl.h"
 #include "reduce.h"
-#include "abs_syntax_tree.h"
+#include "statements.h"
 
 #define SEM_OK 0
 #define SEM_NG 1
@@ -35,7 +35,7 @@ TYPEDEF_NAME
 
 %token
 ARROW INC DEC LSHIFT RSHIFT LE GE EQEQ NE L_AND L_OR DOT3
-ASTR_EQ DASH_EQ PERC_EQ PLUS_EQ MINUS_EQ LSHIFT_EQ RSHIFT_EQ AMP_EQ HAT_EQ OR_EQ
+
 
 %token
 ATTRIBUTE
@@ -44,16 +44,23 @@ ATTRIBUTE
     struct token_list* tk;
     struct abs_syntax_tree* ast;
     struct expression* exp;
+    struct statement* stm;
 }
 
 %token <tk> IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT C_CHAR S_CHAR
+            '=' ASTR_EQ DASH_EQ PERC_EQ PLUS_EQ MINUS_EQ LSHIFT_EQ RSHIFT_EQ AMP_EQ HAT_EQ OR_EQ
 
 %type <tk>  identifier constant integer_constant emumeration_constant character_constant string_literal
+            assignment_operator
+
 %type <exp> primary_expression argument_expression_list assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
             shift_expression relational_expression equality_expression AND_expression
             exclusive_OR_expression inclusive_OR_expression logical_AND_expression
             logical_OR_expression conditional_expression expression constant_expression
+
+%type <stm> statement labeled_statement compound_statement block_item_list block_item
+            expression_statement selection_statement iteration_statement jump_statement
 
 %start translation_unit
 
@@ -188,20 +195,20 @@ conditional_expression      :   logical_OR_expression                           
                             ;
 
 assignment_expression       :   conditional_expression                                                                              {$$ = $1; POST_REDUCE(indx_assignment_expression_0) }
-                            |   unary_expression assignment_operator assignment_expression                                          {POST_REDUCE(indx_assignment_expression_1) }
+                            |   unary_expression assignment_operator assignment_expression                                          {$$ = alloc_2op_exp(get_exp_op($2), $1, $3); POST_REDUCE(indx_assignment_expression_1) }
                             ;
 
-assignment_operator         :   '='                                                                                                 {POST_REDUCE(indx_assignment_operator_0) }
-                            |   ASTR_EQ                                                                                             {POST_REDUCE(indx_assignment_operator_1) }
-                            |   DASH_EQ                                                                                             {POST_REDUCE(indx_assignment_operator_2) }
-                            |   PERC_EQ                                                                                             {POST_REDUCE(indx_assignment_operator_3) }
-                            |   PLUS_EQ                                                                                             {POST_REDUCE(indx_assignment_operator_4) }
-                            |   MINUS_EQ                                                                                            {POST_REDUCE(indx_assignment_operator_5) }
-                            |   LSHIFT_EQ                                                                                           {POST_REDUCE(indx_assignment_operator_6) }
-                            |   RSHIFT_EQ                                                                                           {POST_REDUCE(indx_assignment_operator_7) }
-                            |   AMP_EQ                                                                                              {POST_REDUCE(indx_assignment_operator_8) }
-                            |   HAT_EQ                                                                                              {POST_REDUCE(indx_assignment_operator_9) }
-                            |   OR_EQ                                                                                               {POST_REDUCE(indx_assignment_operator_10) }
+assignment_operator         :   '='                                                                                                 {$$ = $1; POST_REDUCE(indx_assignment_operator_0) }
+                            |   ASTR_EQ                                                                                             {$$ = $1; POST_REDUCE(indx_assignment_operator_1) }
+                            |   DASH_EQ                                                                                             {$$ = $1; POST_REDUCE(indx_assignment_operator_2) }
+                            |   PERC_EQ                                                                                             {$$ = $1; POST_REDUCE(indx_assignment_operator_3) }
+                            |   PLUS_EQ                                                                                             {$$ = $1; POST_REDUCE(indx_assignment_operator_4) }
+                            |   MINUS_EQ                                                                                            {$$ = $1; POST_REDUCE(indx_assignment_operator_5) }
+                            |   LSHIFT_EQ                                                                                           {$$ = $1; POST_REDUCE(indx_assignment_operator_6) }
+                            |   RSHIFT_EQ                                                                                           {$$ = $1; POST_REDUCE(indx_assignment_operator_7) }
+                            |   AMP_EQ                                                                                              {$$ = $1; POST_REDUCE(indx_assignment_operator_8) }
+                            |   HAT_EQ                                                                                              {$$ = $1; POST_REDUCE(indx_assignment_operator_9) }
+                            |   OR_EQ                                                                                               {$$ = $1; POST_REDUCE(indx_assignment_operator_10) }
                             ;
 
 expression      :   assignment_expression                                                                                           {$$ = $1; POST_REDUCE(indx_expression_0) }
@@ -431,12 +438,12 @@ designator      :   '[' constant_expression ']'                                 
                 ;
 
  /*A2.3 Statements*/
-statement   :   labeled_statement                                                                                                   {POST_REDUCE(indx_statement_0) }
-            |   compound_statement                                                                                                  {POST_REDUCE(indx_statement_1) }
-            |   expression_statement                                                                                                {POST_REDUCE(indx_statement_2) }
-            |   selection_statement                                                                                                 {POST_REDUCE(indx_statement_3) }
-            |   iteration_statement                                                                                                 {POST_REDUCE(indx_statement_4) }
-            |   jump_statement                                                                                                      {POST_REDUCE(indx_statement_5) }
+statement   :   labeled_statement                                                                                                   {$$ = $1; POST_REDUCE(indx_statement_0) }
+            |   compound_statement                                                                                                  {$$ = $1; POST_REDUCE(indx_statement_1) }
+            |   expression_statement                                                                                                {$$ = $1; POST_REDUCE(indx_statement_2) }
+            |   selection_statement                                                                                                 {$$ = $1; POST_REDUCE(indx_statement_3) }
+            |   iteration_statement                                                                                                 {$$ = $1; POST_REDUCE(indx_statement_4) }
+            |   jump_statement                                                                                                      {$$ = $1; POST_REDUCE(indx_statement_5) }
             ;
 
 labeled_statement   :   identifier ':' statement                                                                                    {POST_REDUCE(indx_labeled_statement_0) }
@@ -445,19 +452,19 @@ labeled_statement   :   identifier ':' statement                                
                     ;
 
 compound_statement  :   '{' '}'                                                                                                     {POST_REDUCE(indx_compound_statement_0) }
-                    |   '{' block_item_list '}'                                                                                     {POST_REDUCE(indx_compound_statement_1) }
+                    |   '{' block_item_list '}'                                                                                     {$$ = alloc_cmp_statement($2); POST_REDUCE(indx_compound_statement_1) }
                     ;
 
-block_item_list     :   block_item                                                                                                  {POST_REDUCE(indx_block_item_list_0) }
-                    |   block_item_list block_item                                                                                  {POST_REDUCE(indx_block_item_list_1) }
+block_item_list     :   block_item                                                                                                  {$$ = $1; printf("block_item: %x\n", $1); POST_REDUCE(indx_block_item_list_0) }
+                    |   block_item_list block_item                                                                                  {$$ = append_block_item($1, $2); POST_REDUCE(indx_block_item_list_1) }
                     ;
 
 block_item      :   declaration                                                                                                     {POST_REDUCE(indx_block_item_0) }
-                |   statement                                                                                                       {POST_REDUCE(indx_block_item_1) }
+                |   statement                                                                                                       {$$ = $1; printf("statement: %x\n", $1); POST_REDUCE(indx_block_item_1) }
                 ;
 
 expression_statement    :   ';'                                                                                                     {POST_REDUCE(indx_expression_statement_0) }
-                        |   expression ';'                                                                                          {POST_REDUCE(indx_expression_statement_1) }
+                        |   expression ';'                                                                                          {$$ = alloc_exp_statement($1); POST_REDUCE(indx_expression_statement_1) }
                         ;
 
 selection_statement     :   IF '(' expression ')' statement %prec LOWER_THAN_ELSE                                                   {POST_REDUCE(indx_selection_statement_0) }
@@ -481,11 +488,11 @@ iteration_statement     :   WHILE '(' expression ')' statement                  
                         |   FOR '(' declaration expression ';' expression ')' statement                                             {POST_REDUCE(indx_iteration_statement_13) }
                         ;
 
-jump_statement      :   GOTO identifier ';'                                                                                         {POST_REDUCE(indx_jump_statement_0) }
-                    |   CONTINUE ';'                                                                                                {POST_REDUCE(indx_jump_statement_1) }
-                    |   BREAK ';'                                                                                                   {POST_REDUCE(indx_jump_statement_2) }
-                    |   RETURN ';'                                                                                                  {POST_REDUCE(indx_jump_statement_3) }
-                    |   RETURN expression ';'                                                                                       {POST_REDUCE(indx_jump_statement_4) }
+jump_statement      :   GOTO identifier ';'                                                                                         {$$ = alloc_jmp_statement(ST_JP_GOTO, NULL, $2);        POST_REDUCE(indx_jump_statement_0) }
+                    |   CONTINUE ';'                                                                                                {$$ = alloc_jmp_statement(ST_JP_CONTINUE, NULL, NULL);  POST_REDUCE(indx_jump_statement_1) }
+                    |   BREAK ';'                                                                                                   {$$ = alloc_jmp_statement(ST_JP_BREAK, NULL, NULL);     POST_REDUCE(indx_jump_statement_2) }
+                    |   RETURN ';'                                                                                                  {$$ = alloc_jmp_statement(ST_JP_RETURN, NULL, NULL);    POST_REDUCE(indx_jump_statement_3) }
+                    |   RETURN expression ';'                                                                                       {$$ = alloc_jmp_statement(ST_JP_RETURN, $2, NULL);      POST_REDUCE(indx_jump_statement_4) }
                     ;
 
 

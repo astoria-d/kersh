@@ -101,6 +101,8 @@ struct expression* alloc_term_exp(struct token_list* tk);
 struct expression* alloc_nested_exp(struct expression* exp);
 struct expression* alloc_2op_exp(enum OP_TYPE ot, struct expression* op1, struct expression* op2);
 
+void print_exp(struct expression* exp);
+
 void primary_expression_0(void);
 void primary_expression_1(void);
 void primary_expression_2(void);

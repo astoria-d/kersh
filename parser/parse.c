@@ -389,6 +389,23 @@ struct type_definition* consume_declaration(void) {
     return decl;
 }
 
+enum OP_TYPE get_exp_op(struct token_list* tk) {
+    switch (tk->token) {
+    case '='        : return OP_EQ         ;
+    case ASTR_EQ    : return OP_ASTR_EQ    ;
+    case DASH_EQ    : return OP_DASH_EQ    ;
+    case PERC_EQ    : return OP_PERC_EQ    ;
+    case PLUS_EQ    : return OP_PLUS_EQ    ;
+    case MINUS_EQ   : return OP_MINUS_EQ   ;
+    case LSHIFT_EQ  : return OP_LSHIFT_EQ  ;
+    case RSHIFT_EQ  : return OP_RSHIFT_EQ  ;
+    case AMP_EQ     : return OP_AMP_EQ     ;
+    case HAT_EQ     : return OP_HAT_EQ     ;
+    case OR_EQ      : return OP_OR_EQ      ;
+    default         : return OP_INVALID    ;
+    }
+}
+
 struct type_definition* consume_function(void) {
     struct token_list *tk, *tmp2;
 

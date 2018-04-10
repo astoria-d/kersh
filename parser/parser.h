@@ -3,6 +3,7 @@
 #define __parser_h__
 
 #include "kersh.tab.h"
+#include "expressions.h"
 
 #define     LBRACKET    '['
 #define     RBRACKET    ']'
@@ -29,8 +30,8 @@
 #define     EQ          '='
 #define     COMMA       ','
 
-#define tk_enum(enum_entry) tk_##enum_entry = enum_entry,
-enum tk_type {
+#define tk_enum(enum_entry) TK_##enum_entry = enum_entry,
+enum TK_TYPE {
 tk_enum(LBRACKET)
 tk_enum(RBRACKET)
 tk_enum(LPAR)
@@ -124,7 +125,7 @@ tk_enum(ATTRIBUTE)
 #define START_TOKEN 0
 
 struct token_list {
-    enum tk_type token;
+    enum TK_TYPE token;
     union {
         unsigned long   lval;
         char*           strval;
@@ -140,6 +141,7 @@ void exit_parse_stage(void);
 
 struct type_definition* consume_declaration(void);
 struct type_definition* consume_function(void);
+enum OP_TYPE get_exp_op(struct token_list* tk);
 
 struct token_list* pop_token_tail(void);
 void push_token_tail(struct token_list* tk);

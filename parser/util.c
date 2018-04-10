@@ -26,6 +26,7 @@ void *ker_malloc(size_t size) {
     alloc_cnt++;
     ret = malloc(size);
     memset(ret, 0, size);
+    //printf("ker_malloc %x\n", ret);
     return ret;
 }
 
