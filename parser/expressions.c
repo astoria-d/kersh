@@ -7,303 +7,168 @@
 #include "expressions.h"
 #include "utlist.h"
 
-static struct expression* alloc_expression(void);
-static void pop_operator(void);
-
-struct expression* exp_head;
-
-/*
 void identifier_0(void) {
-    printf(" <identifier_0> ");
-}*/
+}
 
 void primary_expression_0(void) {
-    struct expression *e1, *e2;
-    struct token_list *tk1, *tk2;
-
-    printf(".");
-    tk1 = pop_token_tail();
-    e1 = alloc_expression();
-
-    if (tk1->token != tk_IDEN) {
-        tk2 = pop_token_tail();
-        e1->token = tk2;
-
-        e2 = alloc_expression();
-        e2->token = tk1;
-
-        DL_APPEND(exp_head, e2);
-        DL_APPEND(exp_head, e1);
-    }
-    else {
-        e1->token = tk1;
-        DL_APPEND(exp_head, e1);
-    }
 }
 
 void primary_expression_1(void) {
-    struct expression *e1, *e2, *e;
-    struct token_list *tk1, *tk2;
-
-    printf(".");
-    tk1 = pop_token_tail();
-    e1 = alloc_expression();
-
-    if (tk1->token != tk_IDEN) {
-        tk2 = pop_token_tail();
-        e1->token = tk2;
-
-        e2 = alloc_expression();
-        e2->token = tk1;
-
-        DL_APPEND(exp_head, e2);
-        DL_APPEND(exp_head, e1);
-        e = e2;
-    }
-    else {
-        e1->token = tk1;
-        DL_APPEND(exp_head, e1);
-        e = e1;
-    }
-    e->lr = TP_RVAL;
 }
 
 void primary_expression_2(void) {
-    printf(" <primary_expression_2> ");
+//    printf(" <primary_expression_2> ");
 }
 
 void primary_expression_3(void) {
     /*do nothing.*/
-    printf(".");
+    //    printf(".");
 }
 
 void postfix_expression_0(void) {
 }
 
 void postfix_expression_1(void) {
-    printf(" <postfix_expression_1> ");
+    //    printf(" <postfix_expression_1> ");
 }
 
 void postfix_expression_2(void) {
-    printf(" <postfix_expression_2> ");
+    //    printf(" <postfix_expression_2> ");
 }
 
 void postfix_expression_3(void) {
-    printf(" <postfix_expression_3> ");
+    //    printf(" <postfix_expression_3> ");
 }
 
 void postfix_expression_4(void) {
-    printf(" <postfix_expression_4> ");
+    //    printf(" <postfix_expression_4> ");
 }
 
 void postfix_expression_5(void) {
-    printf(" <postfix_expression_5> ");
+    //    printf(" <postfix_expression_5> ");
 }
 
 void postfix_expression_6(void) {
-    printf(" <postfix_expression_6> ");
+    //    printf(" <postfix_expression_6> ");
 }
 
 void postfix_expression_7(void) {
-    printf(" <postfix_expression_7> ");
+    //    printf(" <postfix_expression_7> ");
 }
 
 void postfix_expression_8(void) {
-    printf(" <postfix_expression_8> ");
+    //    printf(" <postfix_expression_8> ");
 }
 
 void postfix_expression_9(void) {
-    printf(" <postfix_expression_9> ");
+    //    printf(" <postfix_expression_9> ");
 }
 
 void unary_expression_0(void) {
 }
 
 void unary_expression_1(void) {
-    printf(" <unary_expression_1> ");
+    //    printf(" <unary_expression_1> ");
 }
 
 void unary_expression_2(void) {
-    printf(" <unary_expression_2> ");
+    //    printf(" <unary_expression_2> ");
 }
 
 void unary_expression_3(void) {
-    printf(" <unary_expression_3> ");
+    //    printf(" <unary_expression_3> ");
 }
 
 void unary_expression_4(void) {
-    printf(" <unary_expression_4> ");
+    //    printf(" <unary_expression_4> ");
 }
 
 void unary_expression_5(void) {
-    printf(" <unary_expression_5> ");
+    //    printf(" <unary_expression_5> ");
 }
 
 void cast_expression_1(void) {
-    printf(" <cast_expression_1> ");
+    //    printf(" <cast_expression_1> ");
 }
 
 void multipricative_expression_1(void) {
-    struct expression *op1, *op2, *e_new;
-    struct expression *e1;
-    struct token_list *tk1;
-
-    printf(".");
-
-    /*pop the two operands*/
-    op2 = exp_head->prev;
-    DL_DELETE(exp_head, op2);
-    op1 = exp_head->prev;
-    DL_DELETE(exp_head, op1);
-    e_new = alloc_expression();
-    e_new->sub_exp1 = op1;
-    e_new->sub_exp2 = op2;
-    e_new->op = OP_MUL;
-    DL_APPEND(exp_head, e_new);
-
-    tk1 = pop_token_tail();
-    e1 = alloc_expression();
-
-    e1->token = tk1;
-    DL_APPEND(exp_head, e1);
 }
 
 void multipricative_expression_2(void) {
-    struct expression *op1, *op2, *e_new;
-    struct expression *e1;
-    struct token_list *tk1;
-
-    printf(".");
-
-    /*pop the two operands*/
-    op2 = exp_head->prev;
-    DL_DELETE(exp_head, op2);
-    op1 = exp_head->prev;
-    DL_DELETE(exp_head, op1);
-    e_new = alloc_expression();
-    e_new->sub_exp1 = op1;
-    e_new->sub_exp2 = op2;
-    e_new->op = OP_DIV;
-    DL_APPEND(exp_head, e_new);
-
-    tk1 = pop_token_tail();
-    e1 = alloc_expression();
-
-    e1->token = tk1;
-    DL_APPEND(exp_head, e1);
 }
 
 void multipricative_expression_3(void) {
-    printf(" <multipricative_expression_3> ");
+    //    printf(" <multipricative_expression_3> ");
 }
 
 void additive_expression_1(void) {
-    struct expression *op1, *op2, *e_new;
-    struct expression *e1;
-    struct token_list *tk1;
-
-    printf(".");
-
-    /*pop the two operands*/
-    op2 = exp_head->prev;
-    DL_DELETE(exp_head, op2);
-    op1 = exp_head->prev;
-    DL_DELETE(exp_head, op1);
-    e_new = alloc_expression();
-    e_new->sub_exp1 = op1;
-    e_new->sub_exp2 = op2;
-    e_new->op = OP_PLUS;
-    DL_APPEND(exp_head, e_new);
-
-    tk1 = pop_token_tail();
-    e1 = alloc_expression();
-
-    e1->token = tk1;
-    DL_APPEND(exp_head, e1);
 }
 
 void additive_expression_2(void) {
-    printf(" <additive_expression_2> ");
+    //    printf(" <additive_expression_2> ");
 }
 
 void shift_expression_1(void) {
-    printf(" <shift_expression_1> ");
+    //    printf(" <shift_expression_1> ");
 }
 
 void shift_expression_2(void) {
-    printf(" <shift_expression_2> ");
+    //    printf(" <shift_expression_2> ");
 }
 
 void relational_expression_1(void) {
-    printf(" <relational_expression_1> ");
+    //    printf(" <relational_expression_1> ");
 }
 
 void relational_expression_2(void) {
-    printf(" <relational_expression_2> ");
+    //    printf(" <relational_expression_2> ");
 }
 
 void relational_expression_3(void) {
-    printf(" <relational_expression_3> ");
+    //    printf(" <relational_expression_3> ");
 }
 
 void relational_expression_4(void) {
-    printf(" <relational_expression_4> ");
+    //    printf(" <relational_expression_4> ");
 }
 
 void equality_expression_1(void) {
-    printf(" <equality_expression_1> ");
+    //    printf(" <equality_expression_1> ");
 }
 
 void equality_expression_2(void) {
-    printf(" <equality_expression_2> ");
+    //    printf(" <equality_expression_2> ");
 }
 
 void AND_expression_1(void) {
-    printf(" <AND_expression_1> ");
+    //    printf(" <AND_expression_1> ");
 }
 
 void exclusive_OR_expression_1(void) {
-    printf(" <exclusive_OR_expression_1> ");
+    //    printf(" <exclusive_OR_expression_1> ");
 }
 
 void inclusive_OR_expression_1(void) {
-    printf(" <inclusive_OR_expression_1> ");
+    //    printf(" <inclusive_OR_expression_1> ");
 }
 
 void logical_AND_expression_1(void) {
-    printf(" <logical_AND_expression_1> ");
+    //    printf(" <logical_AND_expression_1> ");
 }
 
 void logical_OR_expression_1(void) {
-    printf(" <logical_OR_expression_1> ");
+    //    printf(" <logical_OR_expression_1> ");
 }
 
 void conditional_expression_1(void) {
-    printf(" <conditional_expression_1> ");
+    //    printf(" <conditional_expression_1> ");
 }
 
 void assignment_expression_1(void) {
-    printf(" <assignment_expression_1> ");
-}
-
-static void pop_operator(void) {
-    struct token_list *tk1;
-
-    printf(".");
-
-    tk1 = pop_token_tail();
-    free_token(tk1);
-}
-
-static struct expression* alloc_expression(void) {
-    struct expression* exp;
-    exp = ker_malloc(sizeof(struct expression));
-    memset(exp, 0, sizeof (struct expression));
-    return exp;
+    //    printf(" <assignment_expression_1> ");
 }
 
 void init_expression(void) {
-    exp_head = NULL;
 }
 
 

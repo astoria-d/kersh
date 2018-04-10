@@ -7,12 +7,14 @@
 #include "kersh.tab.h"
 #include "idtbl.h"
 #include "reduce.h"
+#include "abs_syntax_tree.h"
 
 #define SEM_OK 0
 #define SEM_NG 1
 static unsigned int semantic_check;
 
 #define     dprint(msg)    printf("  << %s...\n", msg)
+
 #define     POST_REDUCE(rule_id)   post_reduce_action(rule_id);\
                                    if (semantic_check == SEM_NG) YYABORT;
 
@@ -25,47 +27,38 @@ void yyerror (char const *s);
 AUTO BREAK CASE CHAR CONST CONTINUE DEFAULT DO ELSE ENUM EXTERN
 FOR GOTO IF INLINE INT LONG REGISTER RETURN SHORT SIGNED SIZEOF STATIC STRUCT
 SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE
-IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT
 INVALID
-C_CHAR S_CHAR
 TYPEDEF_NAME
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
 
 %token
-ARROW
-INC
-DEC
-LSHIFT
-RSHIFT
-LE
-GE
-EQEQ
-NE
-L_AND
-L_OR
-DOT3
-ASTR_EQ
-DASH_EQ
-PERC_EQ
-PLUS_EQ
-MINUS_EQ
-LSHIFT_EQ
-RSHIFT_EQ
-AMP_EQ
-HAT_EQ
-OR_EQ
+ARROW INC DEC LSHIFT RSHIFT LE GE EQEQ NE L_AND L_OR DOT3
+ASTR_EQ DASH_EQ PERC_EQ PLUS_EQ MINUS_EQ LSHIFT_EQ RSHIFT_EQ AMP_EQ HAT_EQ OR_EQ
 
 %token
 ATTRIBUTE
+
+%union {
+    struct token_list* tk;
+    struct abs_syntax_tree* ast;
+}
+
+%token <tk> IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT C_CHAR S_CHAR
+%type <ast> identifier constant integer_constant emumeration_constant character_constant string_literal
+            primary_expression argument_expression_list assignment_expression postfix_expression
+            unary_expression cast_expression multipricative_expression additive_expression
+            shift_expression relational_expression equality_expression AND_expression
+            exclusive_OR_expression inclusive_OR_expression logical_AND_expression
+            logical_OR_expression conditional_expression expression
 
 %start translation_unit
 
 %%
 
  /*A.1.3 Identifiers*/
-identifier  :   IDEN                                                                                                                {POST_REDUCE(indx_identifier_0) }
+identifier  :   IDEN                                                                                                                {$$ = alloc_term_node($1); POST_REDUCE(indx_identifier_0) }
             ;
  /*
  A.1.4
@@ -75,89 +68,36 @@ identifier  :   IDEN                                                            
 
 
  /*A.1.5 Constants*/
-constant    :   integer_constant                                                                                                    {POST_REDUCE(indx_constant_0) }
-            |   emumeration_constant                                                                                                {POST_REDUCE(indx_constant_1) }
-            |   character_constant                                                                                                  {POST_REDUCE(indx_constant_2) }
+constant    :   integer_constant                                                                                                    {$$ = $1; POST_REDUCE(indx_constant_0) }
+            |   emumeration_constant                                                                                                {$$ = $1; POST_REDUCE(indx_constant_1) }
+            |   character_constant                                                                                                  {$$ = $1; POST_REDUCE(indx_constant_2) }
             ;
 
-integer_constant    :   DECIMAL_CONSTANT                                                                                            {POST_REDUCE(indx_integer_constant_0) }
-                    |   OCTAL_CONSTANT                                                                                              {POST_REDUCE(indx_integer_constant_1) }
-                    |   HEX_CONSTANT                                                                                                {POST_REDUCE(indx_integer_constant_2) }
+integer_constant    :   DECIMAL_CONSTANT                                                                                            {$$ = alloc_term_node($1); POST_REDUCE(indx_integer_constant_0) }
+                    |   OCTAL_CONSTANT                                                                                              {$$ = alloc_term_node($1); POST_REDUCE(indx_integer_constant_1) }
+                    |   HEX_CONSTANT                                                                                                {$$ = alloc_term_node($1); POST_REDUCE(indx_integer_constant_2) }
                     ;
 
  /*kersh original. can't solve the conflicts.*/
-emumeration_constant    :   ENUM_CONSTANT                                                                                           {POST_REDUCE(indx_emumeration_constant_0) }
+emumeration_constant    :   ENUM_CONSTANT                                                                                           {$$ = alloc_term_node($1); POST_REDUCE(indx_emumeration_constant_0) }
                         ;
 
-character_constant      :   C_CHAR                                                                                                  {POST_REDUCE(indx_character_constant_0) }
+character_constant      :   C_CHAR                                                                                                  {$$ = alloc_term_node($1); POST_REDUCE(indx_character_constant_0) }
                         ;
 
 
  /*A.1.6 String literals*/
-string_literal          :   S_CHAR                                                                                                  {POST_REDUCE(indx_string_literal_0) }
+string_literal          :   S_CHAR                                                                                                  {$$ = alloc_term_node($1); POST_REDUCE(indx_string_literal_0) }
                         ;
 
-
- /*A.1.7 Punctuators
-punctuator  :   LBRACKET
-            |   RBRACKET
-            |   LPAR
-            |   RPAR
-            |   LBRACE
-            |   RBRACE
-            |   DOT
-            |   ARROW
-            |   INC
-            |   DEC
-            |   AMP
-            |   ASTR
-            |   PLUS
-            |   MINUS
-            |   TILDA
-            |   EXQL
-            |   DASH
-            |   PERCENT
-            |   LSHIFT
-            |   RSHIFT
-            |   LT
-            |   GT
-            |   LE
-            |   GE
-            |   EQEQ
-            |   NE
-            |   HAT
-            |   OR
-            |   L_AND
-            |   L_OR
-            |   QUESTION
-            |   COLON
-            |   SEMI_COLON
-            |   DOT3
-            |   EQ
-            |   ASTR_EQ
-            |   DASH_EQ
-            |   PERC_EQ
-            |   PLUS_EQ
-            |   MINUS_EQ
-            |   LSHIFT_EQ
-            |   RSHIFT_EQ
-            |   AMP_EQ
-            |   HAT_EQ
-            |   OR_EQ
-            |   COMMA
-            ;
- */
-
-
-
  /*A2.1 Expressions*/
-primary_expression  :   identifier                                                                                                  {POST_REDUCE(indx_primary_expression_0) }
-                    |   constant                                                                                                    {POST_REDUCE(indx_primary_expression_1) }
-                    |   string_literal                                                                                              {POST_REDUCE(indx_primary_expression_2) }
-                    |   '(' expression ')'                                                                                          {POST_REDUCE(indx_primary_expression_3) }
+primary_expression  :   identifier                                                                                                  {$$ = $1; POST_REDUCE(indx_primary_expression_0) }
+                    |   constant                                                                                                    {$$ = $1; POST_REDUCE(indx_primary_expression_1) }
+                    |   string_literal                                                                                              {$$ = $1; POST_REDUCE(indx_primary_expression_2) }
+                    |   '(' expression ')'                                                                                          {$$ = alloc_nested_node($2); POST_REDUCE(indx_primary_expression_3) }
                     ;
 
-postfix_expression  :   primary_expression                                                                                          {POST_REDUCE(indx_postfix_expression_0) }
+postfix_expression  :   primary_expression                                                                                          {$$ = $1; POST_REDUCE(indx_postfix_expression_0) }
                     |   postfix_expression '[' expression ']'                                                                       {POST_REDUCE(indx_postfix_expression_1) }
                     |   postfix_expression '(' argument_expression_list ')'                                                         {POST_REDUCE(indx_postfix_expression_2) }
                     |   postfix_expression '(' ')'                                                                                  {POST_REDUCE(indx_postfix_expression_3) }
@@ -169,11 +109,11 @@ postfix_expression  :   primary_expression                                      
                     |   '(' type_name ')' '{' initializer_list ',' '}'                                                              {POST_REDUCE(indx_postfix_expression_9) }
                     ;
 
-argument_expression_list    :   assignment_expression                                                                               {POST_REDUCE(indx_argument_expression_list_0) }
+argument_expression_list    :   assignment_expression                                                                               {$$ = $1; POST_REDUCE(indx_argument_expression_list_0) }
                             |   argument_expression_list ',' assignment_expression                                                  {POST_REDUCE(indx_argument_expression_list_1) }
                             ;
 
-unary_expression    :   postfix_expression                                                                                          {POST_REDUCE(indx_unary_expression_0) }
+unary_expression    :   postfix_expression                                                                                          {$$ = $1; POST_REDUCE(indx_unary_expression_0) }
                     |   INC unary_expression                                                                                        {POST_REDUCE(indx_unary_expression_1) }
                     |   DEC unary_expression                                                                                        {POST_REDUCE(indx_unary_expression_2) }
                     |   unary_operator cast_expression                                                                              {POST_REDUCE(indx_unary_expression_3) }
@@ -189,63 +129,63 @@ unary_operator      :   '&'                                                     
                     |   '!'                                                                                                         {POST_REDUCE(indx_unary_operator_5) }
                     ;
 
-cast_expression     :   unary_expression                                                                                            {POST_REDUCE(indx_cast_expression_0) }
+cast_expression     :   unary_expression                                                                                            {$$ = $1; POST_REDUCE(indx_cast_expression_0) }
                     |   '(' type_name ')' cast_expression                                                                           {POST_REDUCE(indx_cast_expression_1) }
                     ;
 
-multipricative_expression   :   cast_expression                                                                                     {POST_REDUCE(indx_multipricative_expression_0) }
-                            |   multipricative_expression '*' cast_expression                                                       {POST_REDUCE(indx_multipricative_expression_1) }
-                            |   multipricative_expression '/' cast_expression                                                       {POST_REDUCE(indx_multipricative_expression_2) }
-                            |   multipricative_expression '%' cast_expression                                                       {POST_REDUCE(indx_multipricative_expression_3) }
+multipricative_expression   :   cast_expression                                                                                     {$$ = $1; POST_REDUCE(indx_multipricative_expression_0) }
+                            |   multipricative_expression '*' cast_expression                                                       {$$ = alloc_2op_node(OP_MUL, $1, $3); POST_REDUCE(indx_multipricative_expression_1) }
+                            |   multipricative_expression '/' cast_expression                                                       {$$ = alloc_2op_node(OP_DIV, $1, $3); POST_REDUCE(indx_multipricative_expression_2) }
+                            |   multipricative_expression '%' cast_expression                                                       {$$ = alloc_2op_node(OP_MOD, $1, $3); POST_REDUCE(indx_multipricative_expression_3) }
                             ;
 
-additive_expression     :   multipricative_expression                                                                               {POST_REDUCE(indx_additive_expression_0) }
-                        |   additive_expression '+' multipricative_expression                                                       {POST_REDUCE(indx_additive_expression_1) }
-                        |   additive_expression '-' multipricative_expression                                                       {POST_REDUCE(indx_additive_expression_2) }
+additive_expression     :   multipricative_expression                                                                               {$$ = $1; POST_REDUCE(indx_additive_expression_0) }
+                        |   additive_expression '+' multipricative_expression                                                       {$$ = alloc_2op_node(OP_PLUS, $1, $3); POST_REDUCE(indx_additive_expression_1) }
+                        |   additive_expression '-' multipricative_expression                                                       {$$ = alloc_2op_node(OP_MINUS, $1, $3); POST_REDUCE(indx_additive_expression_2) }
                         ;
 
-shift_expression        :   additive_expression                                                                                     {POST_REDUCE(indx_shift_expression_0) }
+shift_expression        :   additive_expression                                                                                     {$$ = $1; POST_REDUCE(indx_shift_expression_0) }
                         |   shift_expression LSHIFT additive_expression                                                             {POST_REDUCE(indx_shift_expression_1) }
                         |   shift_expression RSHIFT additive_expression                                                             {POST_REDUCE(indx_shift_expression_2) }
                         ;
 
-relational_expression   :   shift_expression                                                                                        {POST_REDUCE(indx_relational_expression_0) }
+relational_expression   :   shift_expression                                                                                        {$$ = $1; POST_REDUCE(indx_relational_expression_0) }
                         |   relational_expression '<' shift_expression                                                              {POST_REDUCE(indx_relational_expression_1) }
                         |   relational_expression '>' shift_expression                                                              {POST_REDUCE(indx_relational_expression_2) }
                         |   relational_expression LE shift_expression                                                               {POST_REDUCE(indx_relational_expression_3) }
                         |   relational_expression GE shift_expression                                                               {POST_REDUCE(indx_relational_expression_4) }
                         ;
 
-equality_expression     :   relational_expression                                                                                   {POST_REDUCE(indx_equality_expression_0) }
+equality_expression     :   relational_expression                                                                                   {$$ = $1; POST_REDUCE(indx_equality_expression_0) }
                         |   equality_expression EQEQ relational_expression                                                          {POST_REDUCE(indx_equality_expression_1) }
                         |   equality_expression NE relational_expression                                                            {POST_REDUCE(indx_equality_expression_2) }
                         ;
 
-AND_expression          :   equality_expression                                                                                     {POST_REDUCE(indx_AND_expression_0) }
+AND_expression          :   equality_expression                                                                                     {$$ = $1; POST_REDUCE(indx_AND_expression_0) }
                         |   AND_expression '&' equality_expression                                                                  {POST_REDUCE(indx_AND_expression_1) }
                         ;
 
-exclusive_OR_expression     :   AND_expression                                                                                      {POST_REDUCE(indx_exclusive_OR_expression_0) }
+exclusive_OR_expression     :   AND_expression                                                                                      {$$ = $1; POST_REDUCE(indx_exclusive_OR_expression_0) }
                             |   exclusive_OR_expression '^' AND_expression                                                          {POST_REDUCE(indx_exclusive_OR_expression_1) }
                             ;
 
-inclusive_OR_expression     :   exclusive_OR_expression                                                                             {POST_REDUCE(indx_inclusive_OR_expression_0) }
+inclusive_OR_expression     :   exclusive_OR_expression                                                                             {$$ = $1; POST_REDUCE(indx_inclusive_OR_expression_0) }
                             |   inclusive_OR_expression '|' exclusive_OR_expression                                                 {POST_REDUCE(indx_inclusive_OR_expression_1) }
                             ;
 
-logical_AND_expression      :   inclusive_OR_expression                                                                             {POST_REDUCE(indx_logical_AND_expression_0) }
+logical_AND_expression      :   inclusive_OR_expression                                                                             {$$ = $1; POST_REDUCE(indx_logical_AND_expression_0) }
                             |   logical_AND_expression L_AND inclusive_OR_expression                                                {POST_REDUCE(indx_logical_AND_expression_1) }
                             ;
 
-logical_OR_expression       :   logical_AND_expression                                                                              {POST_REDUCE(indx_logical_OR_expression_0) }
+logical_OR_expression       :   logical_AND_expression                                                                              {$$ = $1; POST_REDUCE(indx_logical_OR_expression_0) }
                             |   logical_OR_expression L_OR logical_AND_expression                                                   {POST_REDUCE(indx_logical_OR_expression_1) }
                             ;
 
-conditional_expression      :   logical_OR_expression                                                                               {POST_REDUCE(indx_conditional_expression_0) }
+conditional_expression      :   logical_OR_expression                                                                               {$$ = $1; POST_REDUCE(indx_conditional_expression_0) }
                             |   logical_OR_expression '?' expression ':' conditional_expression                                     {POST_REDUCE(indx_conditional_expression_1) }
                             ;
 
-assignment_expression       :   conditional_expression                                                                              {POST_REDUCE(indx_assignment_expression_0) }
+assignment_expression       :   conditional_expression                                                                              {$$ = $1; POST_REDUCE(indx_assignment_expression_0) }
                             |   unary_expression assignment_operator assignment_expression                                          {POST_REDUCE(indx_assignment_expression_1) }
                             ;
 
@@ -262,7 +202,7 @@ assignment_operator         :   '='                                             
                             |   OR_EQ                                                                                               {POST_REDUCE(indx_assignment_operator_10) }
                             ;
 
-expression      :   assignment_expression                                                                                           {POST_REDUCE(indx_expression_0) }
+expression      :   assignment_expression                                                                                           {$$ = $1; POST_REDUCE(indx_expression_0) }
                 |   expression ',' assignment_expression                                                                            {POST_REDUCE(indx_expression_1) }
                 ;
 

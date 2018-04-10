@@ -4,13 +4,13 @@
 
 #include "types.h"
 
-enum TP_VAL {
-    TP_LVAL,
-    TP_RVAL,
-};
-
 enum OP_TYPE {
     OP_INVALID,
+
+    /*no operation*/
+    OP_TERMINAL,
+    /*case '(' expression ')' */
+    OP_COMPOUND,
 
     /*postfix_expression*/
     OP_ARRAY_ELM,
@@ -81,18 +81,6 @@ enum OP_TYPE {
     OP_OR_EQ,
 };
 
-
-struct expression {
-    enum TP_VAL                 lr;
-    enum OP_TYPE                op;
-    long                        value;
-    struct token_list*          token;
-    struct expression*          sub_exp1;
-    struct expression*          sub_exp2;
-    struct expression*          sub_exp3;
-    struct expression*          prev;
-    struct expression*          next;
-};
 
 void primary_expression_0(void);
 void primary_expression_1(void);
