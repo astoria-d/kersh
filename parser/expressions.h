@@ -2,13 +2,12 @@
 #ifndef __expressions_h__
 #define __expressions_h__
 
-#include "types.h"
-
 enum OP_TYPE {
     OP_INVALID,
 
     /*no operation*/
     OP_TERMINAL,
+
     /*case '(' expression ')' */
     OP_COMPOUND,
 
@@ -81,6 +80,26 @@ enum OP_TYPE {
     OP_OR_EQ,
 };
 
+struct expression {
+    enum OP_TYPE type;
+    union {
+        /*terminal node*/
+        struct {
+            struct token_list * tk;
+        };
+
+        /*non terminal node*/
+        struct {
+            struct expression * operand1;
+            struct expression * operand2;
+            struct expression * operand3;
+        };
+    };
+};
+
+struct expression* alloc_term_exp(struct token_list* tk);
+struct expression* alloc_nested_exp(struct expression* exp);
+struct expression* alloc_2op_exp(enum OP_TYPE ot, struct expression* op1, struct expression* op2);
 
 void primary_expression_0(void);
 void primary_expression_1(void);

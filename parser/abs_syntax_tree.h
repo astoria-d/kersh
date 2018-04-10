@@ -16,41 +16,22 @@ struct abs_syntax_tree {
     enum SYNTAX_NODE_TYPE node_type;
 
     union {
-        struct {
-            enum OP_TYPE type;
-            union {
-                /*terminal node*/
-                struct {
-                    struct token_list * tk;
-                };
+        struct expression exp;
 
-                /*non terminal node*/
-                struct {
-                    struct abs_syntax_tree * operand1;
-                    struct abs_syntax_tree * operand2;
-                    struct abs_syntax_tree * operand3;
-                };
-            };
-        } exp;
-
-        struct {
+        struct sentence{
             int dummy;
-        } sentence;
+        } snt;
 
-        struct {
+        struct declaration {
             int dummy;
-        } declaration;
+        } decl;
 
-        struct {
+        struct function {
             int dummy;
-        } function;
+        } fnc;
     };
 };
 
-struct abs_syntax_tree* alloc_term_node(struct token_list* tk);
-struct abs_syntax_tree* alloc_nested_node(struct abs_syntax_tree* ast);
-struct abs_syntax_tree* alloc_2op_node
-        (enum OP_TYPE ot, struct abs_syntax_tree* op1, struct abs_syntax_tree* op2);
 
 
 #endif /*__abs_syntax_tree_h__*/
