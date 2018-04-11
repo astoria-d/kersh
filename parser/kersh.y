@@ -51,9 +51,10 @@ ATTRIBUTE
 
 %token <tk> IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT C_CHAR S_CHAR
             '=' ASTR_EQ DASH_EQ PERC_EQ PLUS_EQ MINUS_EQ LSHIFT_EQ RSHIFT_EQ AMP_EQ HAT_EQ OR_EQ
+            '&' '*' '+' '-' '~' '!'
 
 %type <tk>  identifier constant integer_constant emumeration_constant character_constant string_literal
-            assignment_operator
+            unary_operator assignment_operator
 
 %type <exp> primary_expression argument_expression_list assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
@@ -64,7 +65,7 @@ ATTRIBUTE
 %type <stm> statement labeled_statement compound_statement
             expression_statement selection_statement iteration_statement jump_statement
 
-%type <dcl> declaration direct_declarator
+%type <dcl> declaration declarator direct_declarator init_declarator init_declarator_list
 
 %type <blk> block_item block_item_list
 
@@ -136,12 +137,12 @@ unary_expression    :   postfix_expression                                      
                     |   SIZEOF '(' type_name ')'                                                                                    {POST_REDUCE(indx_unary_expression_5) }
                     ;
 
-unary_operator      :   '&'                                                                                                         {POST_REDUCE(indx_unary_operator_0) }
-                    |   '*'                                                                                                         {POST_REDUCE(indx_unary_operator_1) }
-                    |   '+'                                                                                                         {POST_REDUCE(indx_unary_operator_2) }
-                    |   '-'                                                                                                         {POST_REDUCE(indx_unary_operator_3) }
-                    |   '~'                                                                                                         {POST_REDUCE(indx_unary_operator_4) }
-                    |   '!'                                                                                                         {POST_REDUCE(indx_unary_operator_5) }
+unary_operator      :   '&'                                                                                                         {$$ = $1; POST_REDUCE(indx_unary_operator_0) }
+                    |   '*'                                                                                                         {$$ = $1; POST_REDUCE(indx_unary_operator_1) }
+                    |   '+'                                                                                                         {$$ = $1; POST_REDUCE(indx_unary_operator_2) }
+                    |   '-'                                                                                                         {$$ = $1; POST_REDUCE(indx_unary_operator_3) }
+                    |   '~'                                                                                                         {$$ = $1; POST_REDUCE(indx_unary_operator_4) }
+                    |   '!'                                                                                                         {$$ = $1; POST_REDUCE(indx_unary_operator_5) }
                     ;
 
 cast_expression     :   unary_expression                                                                                            {$$ = $1; POST_REDUCE(indx_cast_expression_0) }
@@ -160,40 +161,40 @@ additive_expression     :   multipricative_expression                           
                         ;
 
 shift_expression        :   additive_expression                                                                                     {$$ = $1; POST_REDUCE(indx_shift_expression_0) }
-                        |   shift_expression LSHIFT additive_expression                                                             {POST_REDUCE(indx_shift_expression_1) }
-                        |   shift_expression RSHIFT additive_expression                                                             {POST_REDUCE(indx_shift_expression_2) }
+                        |   shift_expression LSHIFT additive_expression                                                             {$$ = alloc_2op_exp(OP_LSHIFT, $1, $3); POST_REDUCE(indx_shift_expression_1) }
+                        |   shift_expression RSHIFT additive_expression                                                             {$$ = alloc_2op_exp(OP_RSHIFT, $1, $3); POST_REDUCE(indx_shift_expression_2) }
                         ;
 
 relational_expression   :   shift_expression                                                                                        {$$ = $1; POST_REDUCE(indx_relational_expression_0) }
-                        |   relational_expression '<' shift_expression                                                              {POST_REDUCE(indx_relational_expression_1) }
-                        |   relational_expression '>' shift_expression                                                              {POST_REDUCE(indx_relational_expression_2) }
-                        |   relational_expression LE shift_expression                                                               {POST_REDUCE(indx_relational_expression_3) }
-                        |   relational_expression GE shift_expression                                                               {POST_REDUCE(indx_relational_expression_4) }
+                        |   relational_expression '<' shift_expression                                                              {$$ = alloc_2op_exp(OP_LT, $1, $3); POST_REDUCE(indx_relational_expression_1) }
+                        |   relational_expression '>' shift_expression                                                              {$$ = alloc_2op_exp(OP_GT, $1, $3); POST_REDUCE(indx_relational_expression_2) }
+                        |   relational_expression LE shift_expression                                                               {$$ = alloc_2op_exp(OP_LE, $1, $3); POST_REDUCE(indx_relational_expression_3) }
+                        |   relational_expression GE shift_expression                                                               {$$ = alloc_2op_exp(OP_GE, $1, $3); POST_REDUCE(indx_relational_expression_4) }
                         ;
 
 equality_expression     :   relational_expression                                                                                   {$$ = $1; POST_REDUCE(indx_equality_expression_0) }
-                        |   equality_expression EQEQ relational_expression                                                          {POST_REDUCE(indx_equality_expression_1) }
-                        |   equality_expression NE relational_expression                                                            {POST_REDUCE(indx_equality_expression_2) }
+                        |   equality_expression EQEQ relational_expression                                                          {$$ = alloc_2op_exp(OP_EQEQ, $1, $3); POST_REDUCE(indx_equality_expression_1) }
+                        |   equality_expression NE relational_expression                                                            {$$ = alloc_2op_exp(OP_NE, $1, $3); POST_REDUCE(indx_equality_expression_2) }
                         ;
 
 AND_expression          :   equality_expression                                                                                     {$$ = $1; POST_REDUCE(indx_AND_expression_0) }
-                        |   AND_expression '&' equality_expression                                                                  {POST_REDUCE(indx_AND_expression_1) }
+                        |   AND_expression '&' equality_expression                                                                  {$$ = alloc_2op_exp(OP_AND, $1, $3); POST_REDUCE(indx_AND_expression_1) }
                         ;
 
 exclusive_OR_expression     :   AND_expression                                                                                      {$$ = $1; POST_REDUCE(indx_exclusive_OR_expression_0) }
-                            |   exclusive_OR_expression '^' AND_expression                                                          {POST_REDUCE(indx_exclusive_OR_expression_1) }
+                            |   exclusive_OR_expression '^' AND_expression                                                          {$$ = alloc_2op_exp(OP_XOR, $1, $3); POST_REDUCE(indx_exclusive_OR_expression_1) }
                             ;
 
 inclusive_OR_expression     :   exclusive_OR_expression                                                                             {$$ = $1; POST_REDUCE(indx_inclusive_OR_expression_0) }
-                            |   inclusive_OR_expression '|' exclusive_OR_expression                                                 {POST_REDUCE(indx_inclusive_OR_expression_1) }
+                            |   inclusive_OR_expression '|' exclusive_OR_expression                                                 {$$ = alloc_2op_exp(OP_OR, $1, $3); POST_REDUCE(indx_inclusive_OR_expression_1) }
                             ;
 
 logical_AND_expression      :   inclusive_OR_expression                                                                             {$$ = $1; POST_REDUCE(indx_logical_AND_expression_0) }
-                            |   logical_AND_expression L_AND inclusive_OR_expression                                                {POST_REDUCE(indx_logical_AND_expression_1) }
+                            |   logical_AND_expression L_AND inclusive_OR_expression                                                {$$ = alloc_2op_exp(OP_LAND, $1, $3); POST_REDUCE(indx_logical_AND_expression_1) }
                             ;
 
 logical_OR_expression       :   logical_AND_expression                                                                              {$$ = $1; POST_REDUCE(indx_logical_OR_expression_0) }
-                            |   logical_OR_expression L_OR logical_AND_expression                                                   {POST_REDUCE(indx_logical_OR_expression_1) }
+                            |   logical_OR_expression L_OR logical_AND_expression                                                   {$$ = alloc_2op_exp(OP_LOR, $1, $3); POST_REDUCE(indx_logical_OR_expression_1) }
                             ;
 
 conditional_expression      :   logical_OR_expression                                                                               {$$ = $1; POST_REDUCE(indx_conditional_expression_0) }
@@ -227,7 +228,7 @@ constant_expression :   conditional_expression                                  
 
  /*A2.2 Declarations*/
 declaration     :   declaration_specifiers ';'                                                                                      {POST_REDUCE(indx_declaration_0) }
-                |   declaration_specifiers init_declarator_list ';'                                                                 {POST_REDUCE(indx_declaration_1) }
+                |   declaration_specifiers init_declarator_list ';'                                                                 {$$ = $2; POST_REDUCE(indx_declaration_1) }
                 ;
 
 declaration_specifiers  :   storage_class_specifier                                                                                 {POST_REDUCE(indx_declaration_specifiers_0) }
@@ -245,11 +246,11 @@ declaration_specifiers  :   storage_class_specifier                             
                         |   alignment_specifier
  */
 
-init_declarator_list    :   init_declarator                                                                                         {POST_REDUCE(indx_init_declarator_list_0) }
-                        |   init_declarator_list ',' init_declarator                                                                {POST_REDUCE(indx_init_declarator_list_1) }
+init_declarator_list    :   init_declarator                                                                                         {$$ = $1; POST_REDUCE(indx_init_declarator_list_0) }
+                        |   init_declarator_list ',' init_declarator                                                                {$$ = append_declarator($1, $3); POST_REDUCE(indx_init_declarator_list_1) }
                         ;
 
-init_declarator         :   declarator                                                                                              {POST_REDUCE(indx_init_declarator_0) }
+init_declarator         :   declarator                                                                                              {$$= $1; POST_REDUCE(indx_init_declarator_0) }
                         |   declarator '=' initializer                                                                              {POST_REDUCE(indx_init_declarator_1) }
                         ;
 
@@ -339,7 +340,7 @@ function_speficier  :   INLINE                                                  
                     |   attribute_list                                                                                              {POST_REDUCE(indx_function_speficier_1) }
                     ;
 
-declarator      :   direct_declarator                                                                                               {POST_REDUCE(indx_declarator_0) }
+declarator      :   direct_declarator                                                                                               {$$ = $1; POST_REDUCE(indx_declarator_0) }
                 |   pointer direct_declarator                                                                                       {POST_REDUCE(indx_declarator_1) }
                 ;
 

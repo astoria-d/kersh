@@ -30,7 +30,7 @@ struct declaration {
         struct declaration*         ref;        /* pointer to typedef org */
     };
 
-    struct token_list*          name;
+    struct token_list*          identifer;
 
     unsigned int                size;
     long                        value;          /*enum value*/
@@ -52,6 +52,7 @@ struct declaration {
 };
 
 struct declaration* alloc_declarator(struct token_list* tk);
+struct declaration* append_declarator(struct declaration* d1, struct declaration* d2);
 
 void dump_declaration(struct declaration* decl);
 

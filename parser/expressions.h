@@ -56,6 +56,9 @@ enum OP_TYPE {
     /*AND_expression*/
     OP_AND,
 
+    /*XOR expression*/
+    OP_XOR,
+
     /*inclusive_OR_expression*/
     OP_OR,
 
