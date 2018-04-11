@@ -3,7 +3,6 @@
 #define __symbols_h__
 
 #include "uthash.h"
-#include "types.h"
 
 
 enum SYM_TYPE {
@@ -19,7 +18,6 @@ struct symbol {
     int                     id;
     enum SYM_TYPE           symbol_type;
     char *                  symbol_name;
-    struct type_definition* type;
 
     /*hash table handle.*/
     UT_hash_handle  hh;
@@ -27,11 +25,6 @@ struct symbol {
 
 void init_symbols(void);
 
-/*
-void sym_add_struct_def(const char* struct_name);
-void sym_add_enum(const char* enum_name, int val);
-void update_enum_val(struct symbol *sym, int val);
-*/
 void print_symtable(struct symbol* sym);
 
 struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name);

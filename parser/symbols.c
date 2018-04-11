@@ -65,9 +65,6 @@ void print_symtable(struct symbol* sym) {
         case SYM_INSTANCE    : p = "instance"; break;
           }
         printf("type:%s", p);
-    /*    if (sym->symbol_type == SYM_ENUM) {
-            printf(", value:%d", sym->symbol_value);
-        }*/
         printf("\n");
     }
 }

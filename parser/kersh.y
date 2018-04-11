@@ -26,8 +26,7 @@ void yyerror (char const *s);
 
 %token
 BREAK CASE CONTINUE DEFAULT DO ELSE ENUM
-FOR GOTO IF RETURN SIZEOF STRUCT
-SWITCH UNION WHILE
+FOR GOTO IF RETURN SIZEOF SWITCH WHILE
 INVALID
 TYPEDEF_NAME
 
@@ -55,9 +54,11 @@ ATTRIBUTE
             '&' '*' '+' '-' '~' '!'
             TYPEDEF EXTERN STATIC AUTO REGISTER CONST VOLATILE INLINE
             VOID CHAR SHORT INT LONG SIGNED UNSIGNED
+            STRUCT UNION
 
 %type <tk>  identifier constant integer_constant emumeration_constant character_constant string_literal
             unary_operator assignment_operator storage_class_specifier type_qualifier function_speficier
+            struct_or_union
 
 %type <exp> primary_expression argument_expression_list assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
@@ -284,8 +285,8 @@ struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}' 
                             |   struct_or_union identifier                                                                          {POST_REDUCE(indx_struct_or_union_specifier_2) }
                             ;
 
-struct_or_union     :   STRUCT                                                                                                      {POST_REDUCE(indx_struct_or_union_0) }
-                    |   UNION                                                                                                       {POST_REDUCE(indx_struct_or_union_1) }
+struct_or_union     :   STRUCT                                                                                                      {$$= $1; POST_REDUCE(indx_struct_or_union_0) }
+                    |   UNION                                                                                                       {$$= $1; POST_REDUCE(indx_struct_or_union_1) }
                     ;
 
 struct_declaration_list     :   struct_declaration                                                                                  {POST_REDUCE(indx_struct_declaration_list_0) }

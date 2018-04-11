@@ -4,171 +4,8 @@
 #include "idtbl.h"
 #include "parser.h"
 #include "reduce.h"
-#include "code.h"
-#include "expressions.h"
 
 
-static void declaration_0(void) {
-    struct code_block* cb;
-    struct type_definition* decl;
-
-    if (!get_decl_handled()) {
-        cb = get_current_cb();
-        decl = consume_declaration();
-        cb_add_declaration(cb, decl);
-    }
-    else {
-        /*enum, struct are already there. reset the flag.*/
-        set_decl_handled(0);
-    }
-}
-
-static void declaration_1(void) {
-    struct code_block* cb;
-    struct type_definition* decl;
-
-    if (!get_decl_handled()) {
-        cb = get_current_cb();
-        decl = consume_declaration();
-        cb_add_declaration(cb, decl);
-    }
-    else {
-        /*enum, struct are already there. reset the flag.*/
-        set_decl_handled(0);
-    }
-}
-
-static void declarator_0(void) {
-}
-
-static void declarator_1(void) {
-}
-
-static void struct_or_union_specifier_0(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = get_current_td();
-    cb_close_struct_block(cb, td);
-    exit_parse_stage();
-}
-
-static void struct_or_union_specifier_1(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = get_current_td();
-    cb_close_struct_block(cb, td);
-    exit_parse_stage();
-}
-
-static void struct_or_union_specifier_2(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = get_current_td();
-//    cb_close_struct_block(cb, td);
-    exit_parse_stage();
-}
-
-static void struct_declaration_0(void) {
-    struct type_definition* td;
-    struct type_definition* fld;
-
-    td = get_current_td();
-    fld = consume_declaration();
-    cb_add_struct_field(td, fld);
-}
-
-static void struct_declaration_1(void) {
-    struct type_definition* td;
-    struct type_definition* fld;
-
-    td = get_current_td();
-    fld = consume_declaration();
-    cb_add_struct_field(td, fld);
-}
-
-static void struct_declarator_0(void) {
-}
-
-static void enum_specifier_0(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = get_current_td();
-    cb_close_enum_block(cb, td);
-    exit_parse_stage();
-}
-
-static void enum_specifier_1(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = get_current_td();
-    cb_close_enum_block(cb, td);
-    exit_parse_stage();
-}
-
-static void enum_specifier_2(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = get_current_td();
-    cb_close_enum_block(cb, td);
-    exit_parse_stage();
-}
-
-static void enum_specifier_3(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = get_current_td();
-    cb_close_enum_block(cb, td);
-    exit_parse_stage();
-}
-
-static void enum_specifier_4(void) {
-    exit_parse_stage();
-}
-
-
-static void emumerator_0(void) {
-    int val = get_enum_index();
-    struct type_definition* td;
-
-    td = get_current_td();
-    cb_add_enum_elm(&td->members, get_old_identifer(), val);
-    set_enum_index(val + 1);
-}
-
-static void emumerator_1(void) {
-    int val = get_const_val();
-    struct type_definition* td;
-
-    td = get_current_td();
-    cb_add_enum_elm(&td->members, get_old_identifer(), val);
-    set_enum_index(val + 1);
-}
-
-static void compound_statement_1(void) {
-    exit_parse_stage();
-}
-
-static void function_definition_0(void) {
-    struct code_block* cb;
-    struct type_definition* td;
-
-    cb = get_current_cb();
-    td = consume_function();
-}
 
 static void not_supported_syntax(void) {
     semantic_err("this syntax is not supported.\n");
@@ -188,28 +25,28 @@ reduce_hander reduce_hander_array [] = {
 /*   8 indx_emumeration_constant_0              */ NULL,
 /*   9 indx_character_constant_0                */ NULL,
 /*  10 indx_string_literal_0                    */ NULL,
-/*  11 indx_primary_expression_0                */ primary_expression_0,
-/*  12 indx_primary_expression_1                */ primary_expression_1,
-/*  13 indx_primary_expression_2                */ primary_expression_2,
-/*  14 indx_primary_expression_3                */ primary_expression_3,
-/*  15 indx_postfix_expression_0                */ postfix_expression_0,
-/*  16 indx_postfix_expression_1                */ postfix_expression_1,
-/*  17 indx_postfix_expression_2                */ postfix_expression_2,
-/*  18 indx_postfix_expression_3                */ postfix_expression_3,
-/*  19 indx_postfix_expression_4                */ postfix_expression_4,
-/*  20 indx_postfix_expression_5                */ postfix_expression_5,
-/*  21 indx_postfix_expression_6                */ postfix_expression_6,
-/*  22 indx_postfix_expression_7                */ postfix_expression_7,
-/*  23 indx_postfix_expression_8                */ postfix_expression_8,
-/*  24 indx_postfix_expression_9                */ postfix_expression_9,
+/*  11 indx_primary_expression_0                */ NULL,
+/*  12 indx_primary_expression_1                */ NULL,
+/*  13 indx_primary_expression_2                */ NULL,
+/*  14 indx_primary_expression_3                */ NULL,
+/*  15 indx_postfix_expression_0                */ NULL,
+/*  16 indx_postfix_expression_1                */ NULL,
+/*  17 indx_postfix_expression_2                */ NULL,
+/*  18 indx_postfix_expression_3                */ NULL,
+/*  19 indx_postfix_expression_4                */ NULL,
+/*  20 indx_postfix_expression_5                */ NULL,
+/*  21 indx_postfix_expression_6                */ NULL,
+/*  22 indx_postfix_expression_7                */ NULL,
+/*  23 indx_postfix_expression_8                */ NULL,
+/*  24 indx_postfix_expression_9                */ NULL,
 /*  25 indx_argument_expression_list_0          */ NULL,
 /*  26 indx_argument_expression_list_1          */ NULL,
-/*  27 indx_unary_expression_0                  */ unary_expression_0,
-/*  28 indx_unary_expression_1                  */ unary_expression_1,
-/*  29 indx_unary_expression_2                  */ unary_expression_2,
-/*  30 indx_unary_expression_3                  */ unary_expression_3,
-/*  31 indx_unary_expression_4                  */ unary_expression_4,
-/*  32 indx_unary_expression_5                  */ unary_expression_5,
+/*  27 indx_unary_expression_0                  */ NULL,
+/*  28 indx_unary_expression_1                  */ NULL,
+/*  29 indx_unary_expression_2                  */ NULL,
+/*  30 indx_unary_expression_3                  */ NULL,
+/*  31 indx_unary_expression_4                  */ NULL,
+/*  32 indx_unary_expression_5                  */ NULL,
 /*  33 indx_unary_operator_0                    */ NULL,
 /*  34 indx_unary_operator_1                    */ NULL,
 /*  35 indx_unary_operator_2                    */ NULL,
@@ -217,39 +54,39 @@ reduce_hander reduce_hander_array [] = {
 /*  37 indx_unary_operator_4                    */ NULL,
 /*  38 indx_unary_operator_5                    */ NULL,
 /*  39 indx_cast_expression_0                   */ NULL,
-/*  40 indx_cast_expression_1                   */ cast_expression_1,
+/*  40 indx_cast_expression_1                   */ NULL,
 /*  41 indx_multipricative_expression_0         */ NULL,
-/*  42 indx_multipricative_expression_1         */ multipricative_expression_1,
-/*  43 indx_multipricative_expression_2         */ multipricative_expression_2,
-/*  44 indx_multipricative_expression_3         */ multipricative_expression_3,
+/*  42 indx_multipricative_expression_1         */ NULL,
+/*  43 indx_multipricative_expression_2         */ NULL,
+/*  44 indx_multipricative_expression_3         */ NULL,
 /*  45 indx_additive_expression_0               */ NULL,
-/*  46 indx_additive_expression_1               */ additive_expression_1,
-/*  47 indx_additive_expression_2               */ additive_expression_2,
+/*  46 indx_additive_expression_1               */ NULL,
+/*  47 indx_additive_expression_2               */ NULL,
 /*  48 indx_shift_expression_0                  */ NULL,
-/*  49 indx_shift_expression_1                  */ shift_expression_1,
-/*  50 indx_shift_expression_2                  */ shift_expression_2,
+/*  49 indx_shift_expression_1                  */ NULL,
+/*  50 indx_shift_expression_2                  */ NULL,
 /*  51 indx_relational_expression_0             */ NULL,
-/*  52 indx_relational_expression_1             */ relational_expression_1,
-/*  53 indx_relational_expression_2             */ relational_expression_2,
-/*  54 indx_relational_expression_3             */ relational_expression_3,
-/*  55 indx_relational_expression_4             */ relational_expression_4,
+/*  52 indx_relational_expression_1             */ NULL,
+/*  53 indx_relational_expression_2             */ NULL,
+/*  54 indx_relational_expression_3             */ NULL,
+/*  55 indx_relational_expression_4             */ NULL,
 /*  56 indx_equality_expression_0               */ NULL,
-/*  57 indx_equality_expression_1               */ equality_expression_1,
-/*  58 indx_equality_expression_2               */ equality_expression_2,
+/*  57 indx_equality_expression_1               */ NULL,
+/*  58 indx_equality_expression_2               */ NULL,
 /*  59 indx_AND_expression_0                    */ NULL,
-/*  60 indx_AND_expression_1                    */ AND_expression_1,
+/*  60 indx_AND_expression_1                    */ NULL,
 /*  61 indx_exclusive_OR_expression_0           */ NULL,
-/*  62 indx_exclusive_OR_expression_1           */ exclusive_OR_expression_1,
+/*  62 indx_exclusive_OR_expression_1           */ NULL,
 /*  63 indx_inclusive_OR_expression_0           */ NULL,
-/*  64 indx_inclusive_OR_expression_1           */ inclusive_OR_expression_1,
+/*  64 indx_inclusive_OR_expression_1           */ NULL,
 /*  65 indx_logical_AND_expression_0            */ NULL,
-/*  66 indx_logical_AND_expression_1            */ logical_AND_expression_1,
+/*  66 indx_logical_AND_expression_1            */ NULL,
 /*  67 indx_logical_OR_expression_0             */ NULL,
-/*  68 indx_logical_OR_expression_1             */ logical_OR_expression_1,
+/*  68 indx_logical_OR_expression_1             */ NULL,
 /*  69 indx_conditional_expression_0            */ NULL,
-/*  70 indx_conditional_expression_1            */ conditional_expression_1,
+/*  70 indx_conditional_expression_1            */ NULL,
 /*  71 indx_assignment_expression_0             */ NULL,
-/*  72 indx_assignment_expression_1             */ assignment_expression_1,
+/*  72 indx_assignment_expression_1             */ NULL,
 /*  73 indx_assignment_operator_0               */ NULL,
 /*  74 indx_assignment_operator_1               */ NULL,
 /*  75 indx_assignment_operator_2               */ NULL,
@@ -264,8 +101,8 @@ reduce_hander reduce_hander_array [] = {
 /*  84 indx_expression_0                        */ NULL,
 /*  85 indx_expression_1                        */ NULL,
 /*  86 indx_constant_expression_0               */ NULL,
-/*  87 indx_declaration_0                       */ declaration_0,
-/*  88 indx_declaration_1                       */ declaration_1,
+/*  87 indx_declaration_0                       */ NULL,
+/*  88 indx_declaration_1                       */ NULL,
 /*  89 indx_declaration_specifiers_0            */ NULL,
 /*  90 indx_declaration_specifiers_1            */ NULL,
 /*  91 indx_declaration_specifiers_2            */ NULL,
@@ -293,33 +130,33 @@ reduce_hander reduce_hander_array [] = {
 /* 113 indx_type_specifier_7                    */ NULL,
 /* 114 indx_type_specifier_8                    */ NULL,
 /* 115 indx_type_specifier_9                    */ NULL,
-/* 116 indx_struct_or_union_specifier_0         */ struct_or_union_specifier_0,
-/* 117 indx_struct_or_union_specifier_1         */ struct_or_union_specifier_1,
-/* 118 indx_struct_or_union_specifier_2         */ struct_or_union_specifier_2,
+/* 116 indx_struct_or_union_specifier_0         */ NULL,
+/* 117 indx_struct_or_union_specifier_1         */ NULL,
+/* 118 indx_struct_or_union_specifier_2         */ NULL,
 /* 119 indx_struct_or_union_0                   */ NULL,
 /* 120 indx_struct_or_union_1                   */ NULL,
 /* 121 indx_struct_declaration_list_0           */ NULL,
 /* 122 indx_struct_declaration_list_1           */ NULL,
-/* 123 indx_struct_declaration_0                */ struct_declaration_0,
-/* 124 indx_struct_declaration_1                */ struct_declaration_1,
+/* 123 indx_struct_declaration_0                */ NULL,
+/* 124 indx_struct_declaration_1                */ NULL,
 /* 125 indx_specifier_qualifier_list_0          */ NULL,
 /* 126 indx_specifier_qualifier_list_1          */ NULL,
 /* 127 indx_specifier_qualifier_list_2          */ NULL,
 /* 128 indx_specifier_qualifier_list_3          */ NULL,
 /* 129 indx_struct_declarator_list_0            */ NULL,
 /* 130 indx_struct_declarator_list_1            */ NULL,
-/* 131 indx_struct_declarator_0                 */ struct_declarator_0,
+/* 131 indx_struct_declarator_0                 */ NULL,
 /* 132 indx_struct_declarator_1                 */ NULL,
 /* 133 indx_struct_declarator_2                 */ NULL,
-/* 134 indx_enum_specifier_0                    */ enum_specifier_0,
-/* 135 indx_enum_specifier_1                    */ enum_specifier_1,
-/* 136 indx_enum_specifier_2                    */ enum_specifier_2,
-/* 137 indx_enum_specifier_3                    */ enum_specifier_3,
-/* 138 indx_enum_specifier_4                    */ enum_specifier_4,
+/* 134 indx_enum_specifier_0                    */ NULL,
+/* 135 indx_enum_specifier_1                    */ NULL,
+/* 136 indx_enum_specifier_2                    */ NULL,
+/* 137 indx_enum_specifier_3                    */ NULL,
+/* 138 indx_enum_specifier_4                    */ NULL,
 /* 139 indx_emumerator_list_0                   */ NULL,
 /* 140 indx_emumerator_list_1                   */ NULL,
-/* 141 indx_emumerator_0                        */ emumerator_0,
-/* 142 indx_emumerator_1                        */ emumerator_1,
+/* 141 indx_emumerator_0                        */ NULL,
+/* 142 indx_emumerator_1                        */ NULL,
 /* 143 indx_type_qualifier_0                    */ NULL,
 /* 144 indx_type_qualifier_1                    */ NULL,
 /* 145 indx_attribute_param_list_0              */ NULL,
@@ -329,8 +166,8 @@ reduce_hander reduce_hander_array [] = {
 /* 149 indx_attribute_list_2                    */ NULL,
 /* 150 indx_function_speficier_0                */ NULL,
 /* 151 indx_function_speficier_1                */ NULL,
-/* 152 indx_declarator_0                        */ declarator_0,
-/* 153 indx_declarator_1                        */ declarator_1,
+/* 152 indx_declarator_0                        */ NULL,
+/* 153 indx_declarator_1                        */ NULL,
 /* 154 indx_direct_declarator_0                 */ NULL,
 /* 155 indx_direct_declarator_1                 */ NULL,
 /* 156 indx_direct_declarator_2                 */ NULL,
@@ -409,7 +246,7 @@ reduce_hander reduce_hander_array [] = {
 /* 229 indx_labeled_statement_1                 */ NULL,
 /* 230 indx_labeled_statement_2                 */ NULL,
 /* 231 indx_compound_statement_0                */ NULL,
-/* 232 indx_compound_statement_1                */ compound_statement_1,
+/* 232 indx_compound_statement_1                */ NULL,
 /* 233 indx_block_item_list_0                   */ NULL,
 /* 234 indx_block_item_list_1                   */ NULL,
 /* 235 indx_block_item_0                        */ NULL,
@@ -442,7 +279,7 @@ reduce_hander reduce_hander_array [] = {
 /* 262 indx_translation_unit_1                  */ NULL,
 /* 263 indx_external_declaration_0              */ NULL,
 /* 264 indx_external_declaration_1              */ NULL,
-/* 265 indx_function_definition_0               */ function_definition_0,
+/* 265 indx_function_definition_0               */ NULL,
 /* 266 indx_function_definition_1               */ not_supported_syntax, /*legacy C style function definition not supported...*/
 /* 267 indx_declaration_list_0                  */ NULL,
 /* 268 indx_declaration_list_1                  */ NULL
@@ -451,7 +288,7 @@ reduce_hander reduce_hander_array [] = {
 void post_reduce_action(int rule_index) {
     init_semantic_check();
     if (reduce_hander_array[rule_index] != NULL) {
-        //(*reduce_hander_array[rule_index])();
+        (*reduce_hander_array[rule_index])();
     }
 }
 
