@@ -8,6 +8,7 @@
 #include "idtbl.h"
 #include "reduce.h"
 #include "statements.h"
+#include "declaration.h"
 
 #define SEM_OK 0
 #define SEM_NG 1
@@ -41,10 +42,11 @@ ARROW INC DEC LSHIFT RSHIFT LE GE EQEQ NE L_AND L_OR DOT3
 ATTRIBUTE
 
 %union {
-    struct token_list* tk;
-    struct abs_syntax_tree* ast;
-    struct expression* exp;
-    struct statement* stm;
+    struct token_list*      tk;
+    struct expression*      exp;
+    struct statement*       stm;
+    struct declaration*     dcl;
+    struct block_item*      blk;
 }
 
 %token <tk> IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT C_CHAR S_CHAR
@@ -59,8 +61,12 @@ ATTRIBUTE
             exclusive_OR_expression inclusive_OR_expression logical_AND_expression
             logical_OR_expression conditional_expression expression constant_expression
 
-%type <stm> statement labeled_statement compound_statement block_item_list block_item
+%type <stm> statement labeled_statement compound_statement
             expression_statement selection_statement iteration_statement jump_statement
+
+%type <dcl> declaration direct_declarator
+
+%type <blk> block_item block_item_list
 
 %start translation_unit
 
@@ -337,7 +343,7 @@ declarator      :   direct_declarator                                           
                 |   pointer direct_declarator                                                                                       {POST_REDUCE(indx_declarator_1) }
                 ;
 
-direct_declarator   :   identifier                                                                                                  {POST_REDUCE(indx_direct_declarator_0) }
+direct_declarator   :   identifier                                                                                                  {$$ = alloc_declarator($1); POST_REDUCE(indx_direct_declarator_0) }
                     |   '(' declarator ')'                                                                                          {POST_REDUCE(indx_direct_declarator_1) }
                     |   direct_declarator '[' ']'                                                                                   {POST_REDUCE(indx_direct_declarator_2) }
                     |   direct_declarator '[' assignment_expression ']'                                                             {POST_REDUCE(indx_direct_declarator_3) }
@@ -455,12 +461,12 @@ compound_statement  :   '{' '}'                                                 
                     |   '{' block_item_list '}'                                                                                     {$$ = alloc_cmp_statement($2); POST_REDUCE(indx_compound_statement_1) }
                     ;
 
-block_item_list     :   block_item                                                                                                  {$$ = $1; printf("block_item: %x\n", $1); POST_REDUCE(indx_block_item_list_0) }
+block_item_list     :   block_item                                                                                                  {$$ = $1; POST_REDUCE(indx_block_item_list_0) }
                     |   block_item_list block_item                                                                                  {$$ = append_block_item($1, $2); POST_REDUCE(indx_block_item_list_1) }
                     ;
 
-block_item      :   declaration                                                                                                     {POST_REDUCE(indx_block_item_0) }
-                |   statement                                                                                                       {$$ = $1; printf("statement: %x\n", $1); POST_REDUCE(indx_block_item_1) }
+block_item      :   declaration                                                                                                     {$$ = alloc_decl_block($1); POST_REDUCE(indx_block_item_0) }
+                |   statement                                                                                                       {$$ = alloc_stm_block($1); POST_REDUCE(indx_block_item_1) }
                 ;
 
 expression_statement    :   ';'                                                                                                     {POST_REDUCE(indx_expression_statement_0) }
@@ -505,7 +511,7 @@ external_declaration    :   function_definition                                 
                         |   declaration                                                                                             {POST_REDUCE(indx_external_declaration_1) }
                         ;
 
-function_definition     :   declaration_specifiers declarator compound_statement                                                    {POST_REDUCE(indx_function_definition_0) }
+function_definition     :   declaration_specifiers declarator compound_statement                                                    {dump_statement($3); POST_REDUCE(indx_function_definition_0) }
                         |   declaration_specifiers declarator declaration_list compound_statement                                   {POST_REDUCE(indx_function_definition_1) }
                         ;
 

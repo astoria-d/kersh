@@ -2,8 +2,8 @@
 #ifndef __statements_h__
 #define __statements_h__
 
-#include "code.h"
 #include "expressions.h"
+#include "declaration.h"
 
 enum ST_TYPE {
     ST_INVALID = 0  , /*invalid type...*/
@@ -36,6 +36,20 @@ enum ST_TYPE {
     ST_JP_RETURN,
 };
 
+enum BI_TYPE {
+    BI_DECLARATION,
+    BI_STATEMENT,
+};
+
+struct block_item {
+    enum BI_TYPE                type;
+    union {
+        struct statement*       stm;
+        struct declaration*     decl;
+    };
+    struct block_item*          next;
+};
+
 struct statement {
     enum ST_TYPE                    type;
 
@@ -47,10 +61,7 @@ struct statement {
         } lb;
 
         /*for compound statement*/
-        struct {
-            struct statement*           sub_stm;
-            struct statement*           next;
-        } cp;
+        struct block_item*          blk;
 
         /*for expression statement*/
         struct expression*          exp;
@@ -75,9 +86,14 @@ struct statement {
 };
 
 struct statement* alloc_exp_statement(struct expression* exp);
-struct statement* alloc_cmp_statement(struct statement* stm);
-struct statement* append_block_item(struct statement* s1, struct statement* s2);
 struct statement* alloc_jmp_statement(enum ST_TYPE tp, struct expression* exp, struct token_list* tk);
+
+struct block_item* alloc_decl_block(struct declaration* decl);
+struct block_item* alloc_stm_block(struct statement* stm);
+struct block_item* append_block_item(struct block_item* bl1, struct block_item* bl2);
+struct statement* alloc_cmp_statement(struct block_item* blk);
+
+void dump_statement(struct statement* stm);
 
 #endif /*__statements_h__*/
 
