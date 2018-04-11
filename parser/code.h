@@ -3,7 +3,6 @@
 #define __code_h__
 
 #include "types.h"
-#include "statements.h"
 #include "symbols.h"
 
 struct code_block {

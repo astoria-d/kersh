@@ -2,6 +2,8 @@
 #ifndef __expressions_h__
 #define __expressions_h__
 
+#include "parser.h"
+
 enum OP_TYPE {
     OP_INVALID,
 
