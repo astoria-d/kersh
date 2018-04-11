@@ -72,6 +72,9 @@ void pre_shift_token(const char* parse_text, int token_num) {
     DL_APPEND(token_list_head, tk);
     cur_token = tk;
 
+    /*set token object.*/
+    yylval.tk = tk;
+
     switch (token_num) {
         case IDEN:
         case TYPEDEF_NAME:
@@ -166,9 +169,6 @@ void pre_shift_token(const char* parse_text, int token_num) {
         line_break();
         break;
     }
-
-    /*set token object.*/
-    yylval.tk = tk;
 }
 
 void enter_parse_stage(int stage) {

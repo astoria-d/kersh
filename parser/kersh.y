@@ -25,9 +25,9 @@ void yyerror (char const *s);
 %}
 
 %token
-AUTO BREAK CASE CHAR CONST CONTINUE DEFAULT DO ELSE ENUM EXTERN
-FOR GOTO IF INLINE INT LONG REGISTER RETURN SHORT SIGNED SIZEOF STATIC STRUCT
-SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE
+BREAK CASE CONTINUE DEFAULT DO ELSE ENUM
+FOR GOTO IF RETURN SIZEOF STRUCT
+SWITCH UNION WHILE
 INVALID
 TYPEDEF_NAME
 
@@ -45,6 +45,7 @@ ATTRIBUTE
     struct token_list*      tk;
     struct expression*      exp;
     struct statement*       stm;
+    struct type_specifier*  ts;
     struct declaration*     dcl;
     struct block_item*      blk;
 }
@@ -52,9 +53,11 @@ ATTRIBUTE
 %token <tk> IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT C_CHAR S_CHAR
             '=' ASTR_EQ DASH_EQ PERC_EQ PLUS_EQ MINUS_EQ LSHIFT_EQ RSHIFT_EQ AMP_EQ HAT_EQ OR_EQ
             '&' '*' '+' '-' '~' '!'
+            TYPEDEF EXTERN STATIC AUTO REGISTER CONST VOLATILE INLINE
+            VOID CHAR SHORT INT LONG SIGNED UNSIGNED
 
 %type <tk>  identifier constant integer_constant emumeration_constant character_constant string_literal
-            unary_operator assignment_operator
+            unary_operator assignment_operator storage_class_specifier type_qualifier function_speficier
 
 %type <exp> primary_expression argument_expression_list assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
@@ -65,7 +68,9 @@ ATTRIBUTE
 %type <stm> statement labeled_statement compound_statement
             expression_statement selection_statement iteration_statement jump_statement
 
-%type <dcl> declaration declarator direct_declarator init_declarator init_declarator_list
+%type <ts> type_specifier
+
+%type <dcl> declaration declaration_specifiers declarator direct_declarator init_declarator init_declarator_list
 
 %type <blk> block_item block_item_list
 
@@ -228,17 +233,17 @@ constant_expression :   conditional_expression                                  
 
  /*A2.2 Declarations*/
 declaration     :   declaration_specifiers ';'                                                                                      {POST_REDUCE(indx_declaration_0) }
-                |   declaration_specifiers init_declarator_list ';'                                                                 {$$ = $2; POST_REDUCE(indx_declaration_1) }
+                |   declaration_specifiers init_declarator_list ';'                                                                 {$$ = declare($1, $2); POST_REDUCE(indx_declaration_1) }
                 ;
 
-declaration_specifiers  :   storage_class_specifier                                                                                 {POST_REDUCE(indx_declaration_specifiers_0) }
-                        |   storage_class_specifier declaration_specifiers                                                          {POST_REDUCE(indx_declaration_specifiers_1) }
-                        |   type_specifier                                                                                          {POST_REDUCE(indx_declaration_specifiers_2) }
-                        |   type_specifier declaration_specifiers                                                                   {POST_REDUCE(indx_declaration_specifiers_3) }
-                        |   type_qualifier                                                                                          {POST_REDUCE(indx_declaration_specifiers_4) }
-                        |   type_qualifier declaration_specifiers                                                                   {POST_REDUCE(indx_declaration_specifiers_5) }
-                        |   function_speficier                                                                                      {POST_REDUCE(indx_declaration_specifiers_6) }
-                        |   function_speficier declaration_specifiers                                                               {POST_REDUCE(indx_declaration_specifiers_7) }
+declaration_specifiers  :   storage_class_specifier                                                                                 {$$ = alloc_decl_spec($1);          POST_REDUCE(indx_declaration_specifiers_0) }
+                        |   storage_class_specifier declaration_specifiers                                                          {$$ = add_decl_spec($2, $1);        POST_REDUCE(indx_declaration_specifiers_1) }
+                        |   type_specifier                                                                                          {$$ = alloc_decl_spec_from_ts($1);  POST_REDUCE(indx_declaration_specifiers_2) }
+                        |   type_specifier declaration_specifiers                                                                   {$$ = add_type_spec($2, $1);        POST_REDUCE(indx_declaration_specifiers_3) }
+                        |   type_qualifier                                                                                          {$$ = alloc_decl_spec($1);          POST_REDUCE(indx_declaration_specifiers_4) }
+                        |   type_qualifier declaration_specifiers                                                                   {$$ = add_decl_spec($2, $1);        POST_REDUCE(indx_declaration_specifiers_5) }
+                        |   function_speficier                                                                                      {$$ = alloc_decl_spec($1);          POST_REDUCE(indx_declaration_specifiers_6) }
+                        |   function_speficier declaration_specifiers                                                               {$$ = add_decl_spec($2, $1);        POST_REDUCE(indx_declaration_specifiers_7) }
                         ;
 
  /* not supported...
@@ -251,23 +256,23 @@ init_declarator_list    :   init_declarator                                     
                         ;
 
 init_declarator         :   declarator                                                                                              {$$= $1; POST_REDUCE(indx_init_declarator_0) }
-                        |   declarator '=' initializer                                                                              {POST_REDUCE(indx_init_declarator_1) }
+                        |   declarator '=' initializer                                                                              {$$= $1; POST_REDUCE(indx_init_declarator_1) }
                         ;
 
-storage_class_specifier     :   TYPEDEF                                                                                             {POST_REDUCE(indx_storage_class_specifier_0) }
-                            |   EXTERN                                                                                              {POST_REDUCE(indx_storage_class_specifier_1) }
-                            |   STATIC                                                                                              {POST_REDUCE(indx_storage_class_specifier_2) }
-                            |   AUTO                                                                                                {POST_REDUCE(indx_storage_class_specifier_3) }
-                            |   REGISTER                                                                                            {POST_REDUCE(indx_storage_class_specifier_4) }
+storage_class_specifier     :   TYPEDEF                                                                                             {$$= $1; POST_REDUCE(indx_storage_class_specifier_0) }
+                            |   EXTERN                                                                                              {$$= $1; POST_REDUCE(indx_storage_class_specifier_1) }
+                            |   STATIC                                                                                              {$$= $1; POST_REDUCE(indx_storage_class_specifier_2) }
+                            |   AUTO                                                                                                {$$= $1; POST_REDUCE(indx_storage_class_specifier_3) }
+                            |   REGISTER                                                                                            {$$= $1; POST_REDUCE(indx_storage_class_specifier_4) }
                             ;
 
-type_specifier  :   VOID                                                                                                            {POST_REDUCE(indx_type_specifier_0) }
-                |   CHAR                                                                                                            {POST_REDUCE(indx_type_specifier_1) }
-                |   SHORT                                                                                                           {POST_REDUCE(indx_type_specifier_2) }
-                |   INT                                                                                                             {POST_REDUCE(indx_type_specifier_3) }
-                |   LONG                                                                                                            {POST_REDUCE(indx_type_specifier_4) }
-                |   SIGNED                                                                                                          {POST_REDUCE(indx_type_specifier_5) }
-                |   UNSIGNED                                                                                                        {POST_REDUCE(indx_type_specifier_6) }
+type_specifier  :   VOID                                                                                                            {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_0) }
+                |   CHAR                                                                                                            {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_1) }
+                |   SHORT                                                                                                           {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_2) }
+                |   INT                                                                                                             {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_3) }
+                |   LONG                                                                                                            {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_4) }
+                |   SIGNED                                                                                                          {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_5) }
+                |   UNSIGNED                                                                                                        {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_6) }
                 |   struct_or_union_specifier                                                                                       {POST_REDUCE(indx_type_specifier_7) }
                 |   enum_specifier                                                                                                  {POST_REDUCE(indx_type_specifier_8) }
                 |   typedef_name                                                                                                    {POST_REDUCE(indx_type_specifier_9) }
@@ -321,8 +326,8 @@ emumerator      :   emumeration_constant                                        
                 |   emumeration_constant '=' constant_expression                                                                    {POST_REDUCE(indx_emumerator_1) }
                 ;
 
-type_qualifier      :   CONST                                                                                                       {POST_REDUCE(indx_type_qualifier_0) }
-                    |   VOLATILE                                                                                                    {POST_REDUCE(indx_type_qualifier_1) }
+type_qualifier      :   CONST                                                                                                       {$$= $1; POST_REDUCE(indx_type_qualifier_0) }
+                    |   VOLATILE                                                                                                    {$$= $1; POST_REDUCE(indx_type_qualifier_1) }
                     ;
 
  /* gcc function attributes...*/
@@ -336,7 +341,7 @@ attribute_list          :   ATTRIBUTE '(' '(' ')' ')'                           
                         |   ATTRIBUTE '(' '(' IDEN ','  attribute_param_list ')' ')'                                                {POST_REDUCE(indx_attribute_list_2) }
                         ;
 
-function_speficier  :   INLINE                                                                                                      {POST_REDUCE(indx_function_speficier_0) }
+function_speficier  :   INLINE                                                                                                      {$$= $1; POST_REDUCE(indx_function_speficier_0) }
                     |   attribute_list                                                                                              {POST_REDUCE(indx_function_speficier_1) }
                     ;
 
