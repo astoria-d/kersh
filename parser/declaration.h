@@ -27,7 +27,7 @@ struct declaration {
 
     union {
         struct declaration *        decl_spec;  /* enum/struct/union specifier */
-        struct declaration*         ref;        /* typedef org */
+        struct declaration*         ref;        /* pointer to typedef org */
     };
 
     struct token_list*          name;
@@ -52,6 +52,8 @@ struct declaration {
 };
 
 struct declaration* alloc_declarator(struct token_list* tk);
+
+void dump_declaration(struct declaration* decl);
 
 #endif /*__declaration_h__*/
 

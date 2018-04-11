@@ -14,3 +14,7 @@ struct declaration* alloc_declarator(struct token_list* tk) {
 //    printf("alloc_declarator st: %x, exp: %x\n", dcr, tk);
     return dcr;
 }
+
+void dump_declaration(struct declaration* decl) {
+    printf("declaration\n");
+}
