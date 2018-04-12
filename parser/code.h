@@ -4,9 +4,11 @@
 
 #include "declaration.h"
 
-void init_code(void);
-
 struct declaration* set_root_decl_node(struct declaration* decl);
+
+void dump_ir(void);
+
+void init_code(void);
 
 #endif /*__code_h__*/
 
