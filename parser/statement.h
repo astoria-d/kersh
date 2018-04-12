@@ -93,7 +93,7 @@ struct block_item* alloc_stm_block(struct statement* stm);
 struct block_item* append_block_item(struct block_item* bl1, struct block_item* bl2);
 struct statement* alloc_cmp_statement(struct block_item* blk);
 
-void dump_statement(struct statement* stm);
+void dump_statement(struct statement* stm, int indent);
 
 #endif /*__statement_h__*/
 

@@ -8,6 +8,8 @@
 static int alloc_cnt;
 static int free_cnt;
 
+#define INDENT_SPACE " "
+
 void init_utils(void) {
     alloc_cnt = 0;
     free_cnt = 0;
@@ -40,3 +42,9 @@ char *ker_strdup(const char *s) {
     return strdup(s);
 }
 
+void print_indent(int indent) {
+    int i;
+    for (i = 0; i < indent; i++) {
+         printf(INDENT_SPACE);
+    }
+}

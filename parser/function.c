@@ -38,6 +38,6 @@ void dump_function(struct function* fc) {
     }
 
     printf("%s %s {\n", ts, fc->name->identifer->strval);
-    dump_statement(fc->body);
+    dump_statement(fc->body, 1);
     printf("}\n");
 }

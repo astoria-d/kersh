@@ -9,5 +9,7 @@ char *ker_strdup(const char *s);
 void init_utils(void);
 void exit_utils(void);
 
+void print_indent(int indent);
+
 #endif /*__util_h__*/
 

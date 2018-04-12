@@ -15,7 +15,7 @@ struct declaration* set_root_decl_node(struct declaration* decl) {
 /*IR: intermediate representation is an abstract syntax tree.
  * dump all elements under root_decl_node recursively.
  *  */
-void dump_ir(void) {
+void dump_ir(int indent) {
     printf("dump Intermediate Representation of parsed tree...\n");
     struct declaration* d;
     LL_FOREACH(root_decl_node, d) {
@@ -23,7 +23,7 @@ void dump_ir(void) {
             dump_function(d->func);
         }
         else {
-            dump_declaration(d);
+            dump_declaration(d, indent);
         }
     }
 }

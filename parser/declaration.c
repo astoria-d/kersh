@@ -118,7 +118,7 @@ struct declaration* alloc_dec_from_func(struct function* func) {
     return decl;
 }
 
-void dump_declaration(struct declaration* decl) {
+void dump_declaration(struct declaration* decl, int indent) {
     struct declaration* d;
     LL_FOREACH(decl, d) {
         const char* p;
@@ -140,6 +140,7 @@ void dump_declaration(struct declaration* decl) {
             p = "long";
             break;
         }
-        printf("declaration %s %s\n", p, d->identifer->strval);
+        print_indent(indent);
+        printf("%s %s ;\n", p, d->identifer->strval);
     }
 }

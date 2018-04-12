@@ -82,7 +82,7 @@ struct declaration* append_declarator(struct declaration* d1, struct declaration
 
 struct declaration* alloc_dec_from_func(struct function* func);
 
-void dump_declaration(struct declaration* decl);
+void dump_declaration(struct declaration* decl, int indent);
 
 #endif /*__declaration_h__*/
 

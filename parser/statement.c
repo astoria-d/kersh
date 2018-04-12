@@ -56,15 +56,15 @@ struct statement* alloc_cmp_statement(struct block_item* blk) {
     return stm;
 }
 
-void dump_statement(struct statement* stm) {
+void dump_statement(struct statement* stm, int indent) {
     if(stm->type == ST_COMPOUND) {
         struct block_item *b;
         LL_FOREACH(stm->blk, b) {
             if (b->type == BI_DECLARATION) {
-                dump_declaration(b->decl);
+                dump_declaration(b->decl, indent + 1);
             }
             else {
-                dump_statement(b->stm);
+                dump_statement(b->stm, indent + 1);
             }
         }
     }
@@ -90,6 +90,7 @@ void dump_statement(struct statement* stm) {
         CASE_BREAK(ST_JP_BREAK)
         CASE_BREAK(ST_JP_RETURN)
         }
+        print_indent(indent);
         printf("%s\n", p);
     }
 }
