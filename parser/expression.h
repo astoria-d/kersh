@@ -95,9 +95,9 @@ struct expression {
 
         /*non terminal node*/
         struct {
-            struct expression * operand1;
-            struct expression * operand2;
-            struct expression * operand3;
+            struct expression * ope1;
+            struct expression * ope2;
+            struct expression * ope3;
         };
     };
 };
@@ -106,6 +106,6 @@ struct expression* alloc_term_exp(struct token_list* tk);
 struct expression* alloc_nested_exp(struct expression* exp);
 struct expression* alloc_2op_exp(enum OP_TYPE ot, struct expression* op1, struct expression* op2);
 
-void print_exp(struct expression* exp);
+void dump_expression(struct expression* exp, int indent);
 
 #endif /*__expression_h__*/

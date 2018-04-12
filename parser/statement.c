@@ -81,7 +81,11 @@ void dump_statement(struct statement* stm, int indent) {
         CASE_BREAK(ST_LB_SIMPLE)
         CASE_BREAK(ST_LB_CASE)
         CASE_BREAK(ST_LB_DEFAULT)
-        CASE_BREAK(ST_EXPRESSION)
+        case ST_EXPRESSION:
+            dump_expression(stm->exp, 0);
+            printf(" ;\n");
+            break;
+
         CASE_BREAK(ST_SL_IF)
         CASE_BREAK(ST_SL_IFELSE)
         CASE_BREAK(ST_SL_SWITCH)
@@ -94,7 +98,8 @@ void dump_statement(struct statement* stm, int indent) {
         case ST_JP_RETURN:
             if (stm->jp.exp) {
                 printf("return ");
-                printf("exp ;\n");
+                dump_expression(stm->jp.exp, 1);
+                printf(" ;\n");
             }
             else {
                 printf("return ;\n");
