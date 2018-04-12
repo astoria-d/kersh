@@ -469,7 +469,7 @@ labeled_statement   :   identifier ':' statement                                
                     |   DEFAULT ':' statement                                                                                       {POST_REDUCE(indx_labeled_statement_2) }
                     ;
 
-compound_statement  :   '{' '}'                                                                                                     {POST_REDUCE(indx_compound_statement_0) }
+compound_statement  :   '{' '}'                                                                                                     {$$ = alloc_cmp_statement(NULL); POST_REDUCE(indx_compound_statement_0) }
                     |   '{' block_item_list '}'                                                                                     {$$ = alloc_cmp_statement($2); POST_REDUCE(indx_compound_statement_1) }
                     ;
 
@@ -481,7 +481,7 @@ block_item      :   declaration                                                 
                 |   statement                                                                                                       {$$ = alloc_stm_block($1); POST_REDUCE(indx_block_item_1) }
                 ;
 
-expression_statement    :   ';'                                                                                                     {POST_REDUCE(indx_expression_statement_0) }
+expression_statement    :   ';'                                                                                                     {$$ = alloc_exp_statement(NULL); POST_REDUCE(indx_expression_statement_0) }
                         |   expression ';'                                                                                          {$$ = alloc_exp_statement($1); POST_REDUCE(indx_expression_statement_1) }
                         ;
 
@@ -535,41 +535,11 @@ declaration_list        :   declaration                                         
 %%
 
 
-/*main func...*/
-
 static unsigned int line_num;
 
-int main(int argc, char* argv[]) {
-    int ret;
-    int need_close;
-    extern FILE* yyin;
-
-    if (argc < 2) {
-        yyin = stdin;
-        need_close = 0;
-    }
-    else {
-        yyin = fopen (argv[1], "r");
-        need_close = 1;
-    }
-
-    if (yyin == NULL) {
-        printf("failed to open input file [%s].\n", argv[1]);
-        return 100;
-    }
-
-    printf("%s start parser...\n", argv[0]);
+void init_parser_internal(void) {
+    yydebug = 0;
     line_num = 1;
-    init_parser();
-    ret = yyparse();
-    printf("\nparse finished.\n==========================\n");
-    exit_parser();
-    printf("parser exit.\n");
-
-    if (need_close) {
-        fclose(yyin);
-    }
-    return ret;
 }
 
 void line_inc(void) {

@@ -5,7 +5,6 @@
 #include "parser.h"
 #include "symbol.h"
 #include "utlist.h"
-#include "util.h"
 
 static void print_token(const char* parse_text);
 static struct token_list* alloc_token(void);
@@ -244,11 +243,12 @@ static void dbg_print_token(struct token_list* tl) {
 }
 
 void init_parser(void) {
-    extern int yydebug;
-    yydebug = 0;
+    extern void init_parser_internal(void);
+
     token_list_head = NULL;
     pr_indent = 0;
     pr_newline = 0;
+    init_parser_internal();
     init_utils();
     init_symbols();
 }
