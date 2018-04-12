@@ -3,7 +3,7 @@
 #define __parser_h__
 
 #include "kersh.tab.h"
-#include "expressions.h"
+#include "expression.h"
 
 #define     LBRACKET    '['
 #define     RBRACKET    ']'

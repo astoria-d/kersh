@@ -7,7 +7,7 @@
 #include "kersh.tab.h"
 #include "idtbl.h"
 #include "reduce.h"
-#include "statements.h"
+#include "statement.h"
 #include "declaration.h"
 
 #define SEM_OK 0

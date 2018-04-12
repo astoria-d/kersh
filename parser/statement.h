@@ -1,8 +1,8 @@
 
-#ifndef __statements_h__
-#define __statements_h__
+#ifndef __statement_h__
+#define __statement_h__
 
-#include "expressions.h"
+#include "expression.h"
 #include "declaration.h"
 
 enum ST_TYPE {
@@ -95,5 +95,5 @@ struct statement* alloc_cmp_statement(struct block_item* blk);
 
 void dump_statement(struct statement* stm);
 
-#endif /*__statements_h__*/
+#endif /*__statement_h__*/
 

@@ -1,6 +1,6 @@
 
-#ifndef __symbols_h__
-#define __symbols_h__
+#ifndef __symbol_h__
+#define __symbol_h__
 
 #include "uthash.h"
 
@@ -30,5 +30,5 @@ void print_symtable(struct symbol* sym);
 struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name);
 void free_symtable(struct symbol **head);
 
-#endif /*__symbols_h__*/
+#endif /*__symbol_h__*/
 

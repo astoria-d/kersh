@@ -1,6 +1,6 @@
 
-#ifndef __expressions_h__
-#define __expressions_h__
+#ifndef __expression_h__
+#define __expression_h__
 
 #include "parser.h"
 
@@ -108,4 +108,4 @@ struct expression* alloc_2op_exp(enum OP_TYPE ot, struct expression* op1, struct
 
 void print_exp(struct expression* exp);
 
-#endif /*__expressions_h__*/
+#endif /*__expression_h__*/

@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "util.h"
-#include "expressions.h"
+#include "expression.h"
 #include "utlist.h"
 
 

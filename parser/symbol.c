@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "symbols.h"
+#include "symbol.h"
 #include "parser.h"
 #include "util.h"
 

@@ -3,7 +3,7 @@
 #include "kersh.tab.h"
 #include "util.h"
 #include "parser.h"
-#include "symbols.h"
+#include "symbol.h"
 #include "utlist.h"
 #include "util.h"
 
