@@ -74,6 +74,9 @@ void dump_statement(struct statement* stm, int indent) {
 #define CASE_BREAK(type)\
     case type:                      p = #type; break;
 
+        print_indent(indent);
+
+        p = NULL;
         switch (stm->type) {
         CASE_BREAK(ST_LB_SIMPLE)
         CASE_BREAK(ST_LB_CASE)
@@ -88,9 +91,17 @@ void dump_statement(struct statement* stm, int indent) {
         CASE_BREAK(ST_JP_GOTO)
         CASE_BREAK(ST_JP_CONTINUE)
         CASE_BREAK(ST_JP_BREAK)
-        CASE_BREAK(ST_JP_RETURN)
+        case ST_JP_RETURN:
+            if (stm->jp.exp) {
+                printf("return ");
+                printf("exp ;\n");
+            }
+            else {
+                printf("return ;\n");
+            }
         }
-        print_indent(indent);
-        printf("%s\n", p);
+        if (p) {
+            printf("%s ;\n", p);
+        }
     }
 }

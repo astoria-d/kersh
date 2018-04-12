@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     init_parser();
     ret = yyparse();
     printf("\nparse finished.\n==========================\n");
-    dump_ir(0);
+    dump_ir();
     exit_parser();
     printf("parser exit.\n");
 

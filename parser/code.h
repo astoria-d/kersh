@@ -6,7 +6,7 @@
 
 struct declaration* set_root_decl_node(struct declaration* decl);
 
-void dump_ir(int indent);
+void dump_ir(void);
 
 void init_code(void);
 
