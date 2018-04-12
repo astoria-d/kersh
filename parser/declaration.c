@@ -109,6 +109,15 @@ struct declaration* append_declarator(struct declaration* d1, struct declaration
     return d1;
 }
 
+struct declaration* alloc_dec_from_func(struct function* func) {
+    struct declaration* decl;
+    decl = ker_malloc(sizeof(struct declaration));
+    decl->is_func = 1;
+    decl->func = func;
+//    printf("alloc_declarator st: %x, exp: %x\n", dcr, tk);
+    return decl;
+}
+
 void dump_declaration(struct declaration* decl) {
     struct declaration* d;
     LL_FOREACH(decl, d) {

@@ -3,6 +3,7 @@
 #define __declaration_h__
 
 #include "parser.h"
+#include "function.h"
 
 enum TS_TYPE {
     TS_INVALID = 0  , /*invalid type...*/
@@ -28,9 +29,17 @@ struct type_specifier {
 
 struct declaration {
 
-    /*declaration type and identifier*/
-    struct type_specifier*      type_spec;
-    struct token_list*          identifer;
+    /*declaration or function.*/
+    unsigned char           is_func;
+    union {
+        /*case declaration. declaration has type and identifier*/
+        struct {
+            struct type_specifier*      type_spec;
+            struct token_list*          identifer;
+        };
+        /*case function definition.*/
+        struct function* func;
+    };
 
     unsigned int                size;
     long                        value;          /*enum value*/
@@ -68,6 +77,10 @@ struct declaration* add_decl_spec(struct declaration* dc, struct token_list* tk)
 
 struct declaration* alloc_declarator(struct token_list* tk);
 struct declaration* append_declarator(struct declaration* d1, struct declaration* d2);
+
+#define append_declaration append_declarator
+
+struct declaration* alloc_dec_from_func(struct function* func);
 
 void dump_declaration(struct declaration* decl);
 

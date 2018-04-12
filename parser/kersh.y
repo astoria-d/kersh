@@ -9,6 +9,7 @@
 #include "reduce.h"
 #include "statement.h"
 #include "declaration.h"
+#include "code.h"
 
 #define SEM_OK 0
 #define SEM_NG 1
@@ -47,6 +48,7 @@ ATTRIBUTE
     struct type_specifier*  ts;
     struct declaration*     dcl;
     struct block_item*      blk;
+    struct function*        fnc;
 }
 
 %token <tk> IDEN DECIMAL_CONSTANT OCTAL_CONSTANT HEX_CONSTANT ENUM_CONSTANT C_CHAR S_CHAR
@@ -72,8 +74,11 @@ ATTRIBUTE
 %type <ts> type_specifier
 
 %type <dcl> declaration declaration_specifiers declarator direct_declarator init_declarator init_declarator_list
+            external_declaration translation_unit
 
 %type <blk> block_item block_item_list
+
+%type <fnc> function_definition
 
 %start translation_unit
 
@@ -510,15 +515,15 @@ jump_statement      :   GOTO identifier ';'                                     
 
 
  /*A2.4 External definitions*/
-translation_unit    :   external_declaration                                                                                        {POST_REDUCE(indx_translation_unit_0) }
-                    |   translation_unit external_declaration                                                                       {POST_REDUCE(indx_translation_unit_1) }
+translation_unit    :   external_declaration                                                                                        {$$ = set_root_decl_node($1); POST_REDUCE(indx_translation_unit_0) }
+                    |   translation_unit external_declaration                                                                       {$$ = append_declaration($1, $2); POST_REDUCE(indx_translation_unit_1) }
                     ;
 
-external_declaration    :   function_definition                                                                                     {POST_REDUCE(indx_external_declaration_0) }
-                        |   declaration                                                                                             {POST_REDUCE(indx_external_declaration_1) }
+external_declaration    :   function_definition                                                                                     {$$ = alloc_dec_from_func($1); POST_REDUCE(indx_external_declaration_0) }
+                        |   declaration                                                                                             {$$ = $1; POST_REDUCE(indx_external_declaration_1) }
                         ;
 
-function_definition     :   declaration_specifiers declarator compound_statement                                                    {dump_statement($3); POST_REDUCE(indx_function_definition_0) }
+function_definition     :   declaration_specifiers declarator compound_statement                                                    {$$ = alloc_function($1, $2, $3); POST_REDUCE(indx_function_definition_0) }
                         |   declaration_specifiers declarator declaration_list compound_statement                                   {POST_REDUCE(indx_function_definition_1) }
                         ;
 
