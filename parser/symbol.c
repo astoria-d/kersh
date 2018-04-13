@@ -11,7 +11,7 @@ static unsigned int sym_cnt;
 
 static struct symbol *alloc_sym(void);
 
-struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name) {
+struct symbol* add_sym_entry(struct symbol **head, int sym_type, const char* sym_name) {
     struct symbol *sym;
 
     //printf(">>sym add[%s]....\n", sym_name);

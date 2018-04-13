@@ -4,6 +4,8 @@
 #include "util.h"
 #include "parser.h"
 #include "utlist.h"
+#include "symbol.h"
+#include "code.h"
 
 static void line_break(void);
 static void indent_inc(void);
@@ -22,6 +24,11 @@ static struct ctoken* token_list_head;
 
 /*check input token is identifier or enum constant or typedef name*/
 int check_token_type(const char* parse_text) {
+    struct symbol* sym;
+
+    sym = lookup_symbol(parse_text);
+    if (sym == NULL) return IDEN;
+    if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF_NAME;
     return IDEN;
 }
 

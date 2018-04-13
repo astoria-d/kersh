@@ -5,7 +5,7 @@
 #include "statement.h"
 #include "utlist.h"
 #include "symbol.h"
-
+#include "code.h"
 
 struct statement* alloc_exp_statement(struct expression* exp) {
     struct statement* stm;
@@ -113,12 +113,14 @@ void dump_statement(struct statement* stm, int indent) {
 }
 
 
-void compound_statement_1(struct statement* c_stm) {
-    struct block_item *b;
-    LL_FOREACH(c_stm->cp.blk, b) {
-        if (b->type == BI_DECLARATION) {
-            add_symbol(&c_stm->cp.sym, SYM_INSTANCE, b->decl->identifer->strval);
-        }
+void block_item_list_0(struct block_item* blk) {
+    enter_block(blk);
+    if (blk->type == BI_DECLARATION) {
+        add_symbol(blk->decl);
     }
+}
+
+void compound_statement_1(struct statement* c_stm) {
+    exit_block();
 }
 

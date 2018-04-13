@@ -27,7 +27,7 @@ void init_symbols(void);
 
 void print_symtable(struct symbol* sym);
 
-struct symbol* add_symbol(struct symbol **head, int sym_type, const char* sym_name);
+struct symbol* add_sym_entry(struct symbol **head, int sym_type, const char* sym_name);
 void free_symtable(struct symbol **head);
 
 #endif /*__symbol_h__*/
