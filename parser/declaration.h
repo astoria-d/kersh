@@ -92,7 +92,7 @@ struct declaration* append_declarator(struct declaration* d1, struct declaration
 struct declaration* alloc_dec_from_func(struct function* func);
 
 void dump_typespec(struct type_specifier* ts);
-void dump_declaration(struct declaration* decl, int indent);
+void dump_declaration(struct declaration* decl, int indent, int iterate);
 
 #endif /*__declaration_h__*/
 

@@ -156,12 +156,14 @@ void dump_typespec(struct type_specifier* ts) {
     }
 }
 
-void dump_declaration(struct declaration* decl, int indent) {
+void dump_declaration(struct declaration* decl, int indent, int iterate) {
     struct declaration* d;
     LL_FOREACH(decl, d) {
+        if (d->is_func) continue;
         print_indent(indent);
         dump_typespec(d->type_spec);
         printf(" ");
         printf("%s ;\n", d->identifer->strval);
+        if (!iterate) break;
     }
 }

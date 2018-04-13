@@ -23,7 +23,7 @@ void dump_ir(void) {
             dump_function(d->func);
         }
         else {
-            dump_declaration(d, 0);
+            dump_declaration(d, 0, 0);
         }
     }
 }

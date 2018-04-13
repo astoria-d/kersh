@@ -61,7 +61,7 @@ void dump_statement(struct statement* stm, int indent) {
         struct block_item *b;
         LL_FOREACH(stm->blk, b) {
             if (b->type == BI_DECLARATION) {
-                dump_declaration(b->decl, indent + 1);
+                dump_declaration(b->decl, indent + 1, 1);
             }
             else {
                 dump_statement(b->stm, indent + 1);
