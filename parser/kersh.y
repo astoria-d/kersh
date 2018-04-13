@@ -62,7 +62,7 @@ ATTRIBUTE
             unary_operator assignment_operator storage_class_specifier type_qualifier function_speficier
             struct_or_union
 
-%type <exp> primary_expression argument_expression_list assignment_expression postfix_expression
+%type <exp> primary_expression assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
             shift_expression relational_expression equality_expression AND_expression
             exclusive_OR_expression inclusive_OR_expression logical_AND_expression
@@ -136,7 +136,7 @@ postfix_expression  :   primary_expression                                      
                     |   '(' type_name ')' '{' initializer_list ',' '}'                                                              {POST_REDUCE(indx_postfix_expression_9) }
                     ;
 
-argument_expression_list    :   assignment_expression                                                                               {$$ = $1; POST_REDUCE(indx_argument_expression_list_0) }
+argument_expression_list    :   assignment_expression                                                                               {POST_REDUCE(indx_argument_expression_list_0) }
                             |   argument_expression_list ',' assignment_expression                                                  {POST_REDUCE(indx_argument_expression_list_1) }
                             ;
 
