@@ -1,7 +1,10 @@
 
 #include <stdio.h>
+#include "util.h"
 #include "parser.h"
 #include "code.h"
+#include "utlist.h"
+#include "symbol.h"
 
 /*main func...*/
  
@@ -24,13 +27,19 @@ int main(int argc, char* argv[]) {
         return 100;
     }
 
+    init_utils();
+    init_code();
+    init_symbols();
+
     printf("%s start parser...\n", argv[0]);
     init_parser();
     ret = yyparse();
-    printf("\nparse finished.\n==========================\n");
-    dump_ir();
-    exit_parser();
     printf("parser exit.\n");
+    exit_parser();
+
+    dump_ir();
+    exit_code();
+    exit_utils();
 
     if (need_close) {
         fclose(yyin);
