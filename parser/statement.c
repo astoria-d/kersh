@@ -60,6 +60,8 @@ struct statement* alloc_cmp_statement(struct block_item* blk) {
 void dump_statement(struct statement* stm, int indent) {
     if(stm->type == ST_COMPOUND) {
         struct block_item *b;
+        print_indent(indent);
+        printf("{\n");
         LL_FOREACH(stm->cp.blk, b) {
             if (b->type == BI_DECLARATION) {
                 dump_declaration(b->decl, indent + 1, 1);
@@ -68,6 +70,8 @@ void dump_statement(struct statement* stm, int indent) {
                 dump_statement(b->stm, indent + 1);
             }
         }
+        print_indent(indent);
+        printf("}\n");
     }
     else {
         const char* p;

@@ -37,7 +37,6 @@ void dump_function(struct function* fc) {
         break;
     }
 
-    printf("%s %s {\n", ts, fc->name->identifer->strval);
-    dump_statement(fc->body, 1);
-    printf("}\n");
+    printf("%s %s ", ts, fc->name->identifer->strval);
+    dump_statement(fc->body, 0);
 }

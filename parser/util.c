@@ -8,7 +8,7 @@
 static int alloc_cnt;
 static int free_cnt;
 
-#define INDENT_SPACE " "
+#define INDENT_SPACE "  "
 
 void init_utils(void) {
     alloc_cnt = 0;
