@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
     printf("%s start parser...\n", argv[0]);
     init_parser();
     ret = yyparse();
-    printf("\nparser exit.\n");
+    printf("parser exit.\n");
     exit_parser();
 
     dump_ir();

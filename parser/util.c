@@ -3,25 +3,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include "util.h"
+#include "parser.h"
 
 
 static int alloc_cnt;
 static int free_cnt;
 
+static unsigned int pr_indent;
+static unsigned int pr_newline;
+
+static unsigned int disable_pr_tkn;
+
+
 #define INDENT_SPACE "  "
-
-void init_utils(void) {
-    alloc_cnt = 0;
-    free_cnt = 0;
-    //printf("init_utils\n");
-}
-
-
-void exit_utils(void) {
-    //printf("exit_utils\n");
-    printf("allocation check...\n");
-    printf("    allocation cnt: %d, free cnt: %d\n", alloc_cnt, free_cnt);
-}
 
 void *ker_malloc(size_t size) {
     void *ret;
@@ -48,3 +42,48 @@ void print_indent(int indent) {
          printf(INDENT_SPACE);
     }
 }
+
+/* print utilities....*/
+
+void indent_inc(void) {
+    pr_indent++;
+}
+
+void indent_dec(void) {
+    pr_indent--;
+}
+
+void line_break(void) {
+    if (disable_pr_tkn) return;
+    printf("\n");
+    pr_newline = 1;
+}
+
+void print_token(const char* parse_text) {
+    if (disable_pr_tkn) return;
+    if (pr_newline) {
+        int i;
+        for (i = 0; i < pr_indent; i++) {
+             printf("  ");
+        }
+    }
+    pr_newline = 0;
+    printf("%s ", parse_text);
+}
+
+void init_utils(void) {
+    alloc_cnt = 0;
+    free_cnt = 0;
+    //printf("init_utils\n");
+    pr_indent = 0;
+    pr_newline = 0;
+    disable_pr_tkn = 1;
+}
+
+
+void exit_utils(void) {
+    //printf("exit_utils\n");
+    printf("allocation check...\n");
+    printf("    allocation cnt: %d, free cnt: %d\n", alloc_cnt, free_cnt);
+}
+

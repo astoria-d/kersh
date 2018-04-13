@@ -11,5 +11,11 @@ void exit_utils(void);
 
 void print_indent(int indent);
 
+void line_break(void);
+void indent_inc(void);
+void indent_dec(void);
+void print_token(const char* parse_text);
+void set_pr_token(int disable);
+
 #endif /*__util_h__*/
 

@@ -7,17 +7,9 @@
 #include "symbol.h"
 #include "code.h"
 
-static void line_break(void);
-static void indent_inc(void);
-static void indent_dec(void);
-static void print_token(const char* parse_text);
 static struct ctoken* alloc_token(void);
-static void dbg_print_token(struct ctoken* tl);
 
-static unsigned int pr_indent;
-static unsigned int pr_newline;
 static unsigned int enum_index;
-
 static struct ctoken* token_list_head;
 
 /*kersh implementations...*/
@@ -38,20 +30,19 @@ void remove_token(struct ctoken* tk) {
 
 void pre_shift_token(const char* parse_text, int token_num) {
     unsigned long const_int_val;
-    int create_block;
-
-    if (token_num == '}') {
-        indent_dec(); 
-    }
-    print_token(parse_text);
-
     struct ctoken* tk;
+
     tk = alloc_token();
     tk->token = token_num;
     LL_APPEND(token_list_head, tk);
 
     /*set token object.*/
     yylval.tk = tk;
+
+    if (token_num == '}') {
+        indent_dec();
+    }
+    print_token(parse_text);
 
     switch (token_num) {
         case IDEN:
@@ -128,37 +119,10 @@ void free_token(struct ctoken* tkn) {
     ker_free(tkn);
 }
 
-
-/* print utilities....*/
-
-static void indent_inc(void) {
-    pr_indent++;
-}
-
-static void indent_dec(void) {
-    pr_indent--;
-}
-
-static void line_break(void) {
-    printf("\n");
-    pr_newline = 1;
-}
-
-static void print_token(const char* parse_text) {
-    if (pr_newline) {
-        int i;
-        for (i = 0; i < pr_indent; i++) {
-             printf("  ");
-        }
-    }
-    pr_newline = 0;
-    printf("%s ", parse_text);
-}
-
 #define CASE_BREAK(token)\
     case token:                      p = #token; break;
 
-static void dbg_print_token(struct ctoken* tl) {
+static void print_err_token(struct ctoken* tl) {
     char* p;
     switch (tl->token) {
     CASE_BREAK(AUTO)
@@ -252,16 +216,27 @@ static void dbg_print_token(struct ctoken* tl) {
 
     CASE_BREAK(ATTRIBUTE)
     }
-    printf("token = [%s]\n", (tl->token == IDEN || tl->token == ENUM_CONSTANT) ? tl->strval : p);
+    fprintf (stderr, "token = [%s]\n", (tl->token == IDEN || tl->token == ENUM_CONSTANT) ? tl->strval : p);
 
+}
+
+void yyerror (char const *s) {
+    struct ctoken* tk;
+
+    tk = token_list_head;
+    while (tk->next) {
+        tk = tk->next;
+    }
+
+    fprintf (stderr, "line: %d ", get_line_num());
+    print_err_token(tk);
+    fprintf (stderr, "message: %s\n", s);
 }
 
 void init_parser(void) {
     extern void init_parser_internal(void);
 
     token_list_head = NULL;
-    pr_indent = 0;
-    pr_newline = 0;
     init_parser_internal();
 }
 

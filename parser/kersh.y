@@ -551,10 +551,6 @@ unsigned int get_line_num(void) {
 
 /*bison required functions...*/
 
-void yyerror (char const *s) {
-    fprintf (stderr, "line: %d,\n   %s\n", line_num, s);
-}
-
 int yywrap (void ) {
     return 1;
 }
