@@ -27,6 +27,12 @@ struct type_specifier* alloc_type_spec(struct ctoken* tk) {
         ts->type = TS_LONG;
         break;
 
+    case TYPEDEF_NAME:
+        ts->type = TS_TDEFNAME;
+        ts->identifer = tk;
+        remove_token(tk);
+        break;
+
     case SIGNED:
         ts->is_unsigned = 0;
         break;
@@ -149,6 +155,9 @@ void dump_typespec(struct type_specifier* ts) {
     case TS_LONG:
         p = "long";
         break;
+    case TS_TDEFNAME:
+        p = ts->identifer->strval;
+        break;
     }
     if (p) printf("%s", p);
 
@@ -206,7 +215,7 @@ void declaration_1(struct declaration* dcl) {
 
 /*register symbol table.*/
 void translation_unit_0(struct declaration* dcl) {
-    add_sym_root(dcl);
+    add_symbol(dcl);
 }
 
 void translation_unit_1(struct declaration* dcl) {
@@ -214,5 +223,5 @@ void translation_unit_1(struct declaration* dcl) {
     LL_FOREACH(dcl, d) {
         last = d;
     }
-    add_sym_root(last);
+    add_symbol(last);
 }

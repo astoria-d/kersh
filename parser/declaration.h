@@ -15,7 +15,7 @@ enum TS_TYPE {
     TS_STRUCT_SPEC  ,
     TS_UNION_SPEC   ,
     TS_ENUM_SPEC    ,
-    TS_TDEF_SPEC    ,
+    TS_TDEFNAME     ,
 };
 
 struct declaration;

@@ -29,7 +29,6 @@ void yyerror (char const *s);
 BREAK CASE CONTINUE DEFAULT DO ELSE ENUM
 FOR GOTO IF RETURN SIZEOF SWITCH WHILE
 INVALID
-TYPEDEF_NAME
 
 %nonassoc LOWER_THAN_ELSE
 %nonassoc ELSE
@@ -56,11 +55,11 @@ ATTRIBUTE
             '&' '*' '+' '-' '~' '!'
             TYPEDEF EXTERN STATIC AUTO REGISTER CONST VOLATILE INLINE
             VOID CHAR SHORT INT LONG SIGNED UNSIGNED
-            STRUCT UNION
+            STRUCT UNION TYPEDEF_NAME
 
 %type <tk>  identifier constant integer_constant emumeration_constant character_constant string_literal
             unary_operator assignment_operator storage_class_specifier type_qualifier function_speficier
-            struct_or_union
+            struct_or_union typedef_name
 
 %type <exp> primary_expression assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
@@ -281,7 +280,7 @@ type_specifier  :   VOID                                                        
                 |   UNSIGNED                                                                                                        {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_6) }
                 |   struct_or_union_specifier                                                                                       {POST_REDUCE(indx_type_specifier_7) }
                 |   enum_specifier                                                                                                  {POST_REDUCE(indx_type_specifier_8) }
-                |   typedef_name                                                                                                    {POST_REDUCE(indx_type_specifier_9) }
+                |   typedef_name                                                                                                    {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_9) }
                 ;
 
 
@@ -431,7 +430,7 @@ direct_abstract_declarator      :   '(' abstract_declarator ')'                 
                                 ;
 
  /*kersh original. can't solve the conflicts.*/
-typedef_name    :   TYPEDEF_NAME                                                                                                    {POST_REDUCE(indx_typedef_name_0) }
+typedef_name    :   TYPEDEF_NAME                                                                                                    {$$ = $1; POST_REDUCE(indx_typedef_name_0) }
                 ;
 
 initializer     :   assignment_expression                                                                                           {POST_REDUCE(indx_initializer_0) }
