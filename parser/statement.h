@@ -99,5 +99,7 @@ struct statement* alloc_cmp_statement(struct block_item* blk);
 
 void dump_statement(struct statement* stm, int indent);
 
+void compound_statement_1(struct statement* c_stm);
+
 #endif /*__statement_h__*/
 
