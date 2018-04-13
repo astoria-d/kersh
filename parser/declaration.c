@@ -5,8 +5,9 @@
 #include "util.h"
 #include "declaration.h"
 #include "utlist.h"
+#include "code.h"
 
-struct type_specifier* alloc_type_spec(struct token_list* tk) {
+struct type_specifier* alloc_type_spec(struct ctoken* tk) {
     struct type_specifier* ts;
     ts = ker_malloc(sizeof(struct type_specifier));
     switch (tk->token) {
@@ -58,7 +59,7 @@ struct declaration* alloc_decl_spec_from_ts(struct type_specifier* ts) {
     return dspec;
 }
 
-struct declaration* alloc_decl_spec(struct token_list* tk) {
+struct declaration* alloc_decl_spec(struct ctoken* tk) {
     struct declaration* dspec;
     dspec = ker_malloc(sizeof(struct declaration));
     add_decl_spec(dspec, tk);
@@ -71,7 +72,7 @@ struct declaration* add_type_spec(struct declaration* dc, struct type_specifier*
     return dc;
 }
 
-struct declaration* add_decl_spec(struct declaration* dc, struct token_list* tk) {
+struct declaration* add_decl_spec(struct declaration* dc, struct ctoken* tk) {
     switch (tk->token) {
     case TYPEDEF:
         dc->dc.is_typedef = 1;
@@ -101,10 +102,11 @@ struct declaration* add_decl_spec(struct declaration* dc, struct token_list* tk)
     return dc;
 }
 
-struct declaration* alloc_declarator(struct token_list* tk) {
+struct declaration* alloc_declarator(struct ctoken* tk) {
     struct declaration* dcr;
     dcr = ker_malloc(sizeof(struct declaration));
     dcr->identifer = tk;
+    remove_token(tk);
 //    printf("alloc_declarator st: %x, exp: %x\n", dcr, tk);
     return dcr;
 }
@@ -194,8 +196,23 @@ void dump_declaration(struct declaration* decl, int indent, int iterate) {
     }
 }
 
-/*declaration semantics chec.*/
+/*declaration semantics check.*/
 void declaration_1(struct declaration* dcl) {
-    printf("declaration semantics chec\n");
+    //printf("declaration semantics chec\n");
+    if (dcl->dc.is_typedef) {
+        /*register the typedef_name.*/
+    }
 }
 
+/*register symbol table.*/
+void translation_unit_0(struct declaration* dcl) {
+    add_sym_root(dcl);
+}
+
+void translation_unit_1(struct declaration* dcl) {
+    struct declaration *d, *last;
+    LL_FOREACH(dcl, d) {
+        last = d;
+    }
+    add_sym_root(last);
+}

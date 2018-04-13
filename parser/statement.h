@@ -4,6 +4,7 @@
 
 #include "expression.h"
 #include "declaration.h"
+#include "symbol.h"
 
 enum ST_TYPE {
     ST_INVALID = 0  , /*invalid type...*/
@@ -55,13 +56,16 @@ struct statement {
 
     union {
         struct {
-            struct token_list*      tk;     /*for simple label statement*/
+            struct ctoken*          tk;     /*for simple label statement*/
             struct statement*       exp;    /*for case label statement*/
             struct statement*       stm;
         } lb;
 
         /*for compound statement*/
-        struct block_item*          blk;
+        struct {
+            struct block_item*          blk;
+            struct symbol*              sym;
+        } cp;
 
         /*for expression statement*/
         struct expression*          exp;
@@ -79,14 +83,14 @@ struct statement {
         } it;
 
         struct {
-            struct token_list*      tk;     /*goto identifier*/
+            struct ctoken*          tk;     /*goto identifier*/
             struct expression*      exp;
         } jp;
     };
 };
 
 struct statement* alloc_exp_statement(struct expression* exp);
-struct statement* alloc_jmp_statement(enum ST_TYPE tp, struct expression* exp, struct token_list* tk);
+struct statement* alloc_jmp_statement(enum ST_TYPE tp, struct expression* exp, struct ctoken* tk);
 
 struct block_item* alloc_decl_block(struct declaration* decl);
 struct block_item* alloc_stm_block(struct statement* stm);

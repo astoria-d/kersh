@@ -22,7 +22,7 @@ struct declaration;
 
 struct type_specifier {
     enum TS_TYPE            type;
-    struct token_list*      identifer;
+    struct ctoken*          identifer;
     unsigned char           is_unsigned;
     struct declaration*     members;
 
@@ -43,7 +43,7 @@ struct declaration {
         /*case declaration. declaration has type and identifier*/
         struct {
             struct type_specifier*      type_spec;
-            struct token_list*          identifer;
+            struct ctoken*              identifer;
         };
         /*case function definition.*/
         struct function* func;
@@ -74,27 +74,30 @@ struct declaration {
     struct declaration*         next;
 };
 
-struct type_specifier* alloc_type_spec(struct token_list* tk);
+struct type_specifier* alloc_type_spec(struct ctoken* tk);
 struct type_specifier* append_type_spec(struct type_specifier* ts1, struct type_specifier* ts2);
 
 struct declaration* declare(struct declaration* dclspec, struct declaration* declarator);
 
-struct declaration* alloc_decl_spec(struct token_list* tk);
+struct declaration* alloc_decl_spec(struct ctoken* tk);
 struct declaration* alloc_decl_spec_from_ts(struct type_specifier* ts);
 struct declaration* add_type_spec(struct declaration* dc, struct type_specifier* ts);
-struct declaration* add_decl_spec(struct declaration* dc, struct token_list* tk);
+struct declaration* add_decl_spec(struct declaration* dc, struct ctoken* tk);
 
-struct declaration* alloc_declarator(struct token_list* tk);
+struct declaration* alloc_declarator(struct ctoken* tk);
 struct declaration* append_declarator(struct declaration* d1, struct declaration* d2);
 
 #define append_declaration append_declarator
 
 struct declaration* alloc_dec_from_func(struct function* func);
 
-void declaration_1(struct declaration* dcl);
-
 void dump_typespec(struct type_specifier* ts);
 void dump_declaration(struct declaration* decl, int indent, int iterate);
+
+void declaration_1(struct declaration* dcl);
+void translation_unit_0(struct declaration* dcl);
+void translation_unit_1(struct declaration* dcl);
+
 
 #endif /*__declaration_h__*/
 

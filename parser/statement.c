@@ -15,7 +15,7 @@ struct statement* alloc_exp_statement(struct expression* exp) {
     return stm;
 }
 
-struct statement* alloc_jmp_statement(enum ST_TYPE tp, struct expression* exp, struct token_list* tk) {
+struct statement* alloc_jmp_statement(enum ST_TYPE tp, struct expression* exp, struct ctoken* tk) {
     struct statement* stm;
     stm = ker_malloc(sizeof(struct statement));
     stm->type = tp;
@@ -51,7 +51,7 @@ struct statement* alloc_cmp_statement(struct block_item* blk) {
     struct statement* stm;
     stm = ker_malloc(sizeof(struct statement));
     stm->type = ST_COMPOUND;
-    stm->blk = blk;
+    stm->cp.blk = blk;
 //    printf("alloc_cmp_statement stm: %x, blk: %x\n", stm, blk);
     return stm;
 }
@@ -59,7 +59,7 @@ struct statement* alloc_cmp_statement(struct block_item* blk) {
 void dump_statement(struct statement* stm, int indent) {
     if(stm->type == ST_COMPOUND) {
         struct block_item *b;
-        LL_FOREACH(stm->blk, b) {
+        LL_FOREACH(stm->cp.blk, b) {
             if (b->type == BI_DECLARATION) {
                 dump_declaration(b->decl, indent + 1, 1);
             }

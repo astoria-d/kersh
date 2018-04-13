@@ -124,19 +124,20 @@ tk_enum(ATTRIBUTE)
 
 #define START_TOKEN 0
 
-struct token_list {
-    enum TK_TYPE token;
+struct ctoken {
+    enum TK_TYPE        token;
     union {
         unsigned long   lval;
         char*           strval;
     };
-    struct token_list *next;
+    struct ctoken*      next;
 };
 
 void pre_shift_token(const char* parse_text, int token_num);
 int check_token_type(const char* parse_text);
+void remove_token(struct ctoken* tk);
 
-enum OP_TYPE get_exp_op(struct token_list* tk);
+enum OP_TYPE get_exp_op(struct ctoken* tk);
 
 void line_inc(void);
 unsigned int get_line_num();

@@ -90,7 +90,7 @@ struct expression {
     union {
         /*terminal node*/
         struct {
-            struct token_list * tk;
+            struct ctoken * tk;
         };
 
         /*non terminal node*/
@@ -105,7 +105,7 @@ struct expression {
     };
 };
 
-struct expression* alloc_term_exp(struct token_list* tk);
+struct expression* alloc_term_exp(struct ctoken* tk);
 struct expression* alloc_nested_exp(struct expression* exp);
 struct expression* alloc_2op_exp(enum OP_TYPE ot, struct expression* op1, struct expression* op2);
 struct expression* alloc_cast_exp(struct type_specifier* cast, struct expression* exp);

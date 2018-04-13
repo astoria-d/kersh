@@ -42,7 +42,7 @@ ARROW INC DEC LSHIFT RSHIFT LE GE EQEQ NE L_AND L_OR DOT3
 ATTRIBUTE
 
 %union {
-    struct token_list*      tk;
+    struct ctoken*          tk;
     struct expression*      exp;
     struct statement*       stm;
     struct type_specifier*  ts;

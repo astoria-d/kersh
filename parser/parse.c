@@ -3,27 +3,30 @@
 #include "kersh.tab.h"
 #include "util.h"
 #include "parser.h"
-#include "symbol.h"
 #include "utlist.h"
 
 static void line_break(void);
 static void indent_inc(void);
 static void indent_dec(void);
 static void print_token(const char* parse_text);
-static struct token_list* alloc_token(void);
-static void dbg_print_token(struct token_list* tl);
+static struct ctoken* alloc_token(void);
+static void dbg_print_token(struct ctoken* tl);
 
 static unsigned int pr_indent;
 static unsigned int pr_newline;
 static unsigned int enum_index;
 
-static struct token_list* token_list_head;
+static struct ctoken* token_list_head;
 
 /*kersh implementations...*/
 
 /*check input token is identifier or enum constant or typedef name*/
 int check_token_type(const char* parse_text) {
     return IDEN;
+}
+
+void remove_token(struct ctoken* tk) {
+    LL_DELETE(token_list_head, tk);
 }
 
 void pre_shift_token(const char* parse_text, int token_num) {
@@ -35,7 +38,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
     }
     print_token(parse_text);
 
-    struct token_list* tk;
+    struct ctoken* tk;
     tk = alloc_token();
     tk->token = token_num;
     LL_APPEND(token_list_head, tk);
@@ -86,7 +89,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
     }
 }
 
-enum OP_TYPE get_exp_op(struct token_list* tk) {
+enum OP_TYPE get_exp_op(struct ctoken* tk) {
     switch (tk->token) {
     case '='        : return OP_EQ         ;
     case ASTR_EQ    : return OP_ASTR_EQ    ;
@@ -103,13 +106,13 @@ enum OP_TYPE get_exp_op(struct token_list* tk) {
     }
 }
 
-static struct token_list* alloc_token(void) {
-    struct token_list* tk;
-    tk = ker_malloc(sizeof(struct token_list));
+static struct ctoken* alloc_token(void) {
+    struct ctoken* tk;
+    tk = ker_malloc(sizeof(struct ctoken));
     return tk;
 }
 
-void free_token(struct token_list* tkn) {
+void free_token(struct ctoken* tkn) {
     //printf("delete token ");
     //dbg_print_token(tkn);
     if (tkn->token == IDEN || tkn->token == ENUM_CONSTANT || tkn->token == TYPEDEF_NAME) {
@@ -148,7 +151,7 @@ static void print_token(const char* parse_text) {
 #define CASE_BREAK(token)\
     case token:                      p = #token; break;
 
-static void dbg_print_token(struct token_list* tl) {
+static void dbg_print_token(struct ctoken* tl) {
     char* p;
     switch (tl->token) {
     CASE_BREAK(AUTO)
@@ -253,12 +256,10 @@ void init_parser(void) {
     pr_indent = 0;
     pr_newline = 0;
     init_parser_internal();
-    init_utils();
-    init_symbols();
 }
 
 void exit_parser(void) {
-    struct token_list *tk, *tmp2;
+    struct ctoken *tk, *tmp2;
 
     printf("clean up remaining tokens.\n");
     LL_FOREACH_SAFE(token_list_head, tk, tmp2) {
@@ -267,5 +268,4 @@ void exit_parser(void) {
         if (tk) free_token(tk);
     }
     printf("\n");
-    exit_utils();
 }

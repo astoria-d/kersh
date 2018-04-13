@@ -8,12 +8,13 @@
 #include "utlist.h"
 
 
-struct expression* alloc_term_exp(struct token_list* tk) {
+struct expression* alloc_term_exp(struct ctoken* tk) {
     struct expression* e;
 
     e = ker_malloc(sizeof(struct expression));
     e->type = OP_TERMINAL;
     e->tk = tk;
+    remove_token(tk);
 //    printf("alloc_term_exp e: %x\n", e);
     return e;
 }
@@ -82,7 +83,7 @@ static char * asign_op[] = {
         "|="
 };
 
-static void dump_tk(struct token_list* tk) {
+static void dump_tk(struct ctoken* tk) {
     if (tk->token == IDEN) {
         printf("%s", tk->strval);
     }
