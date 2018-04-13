@@ -6,6 +6,9 @@
 #include "symbol.h"
 #include "utlist.h"
 
+static void line_break(void);
+static void indent_inc(void);
+static void indent_dec(void);
 static void print_token(const char* parse_text);
 static struct token_list* alloc_token(void);
 static void dbg_print_token(struct token_list* tl);
@@ -35,7 +38,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
     struct token_list* tk;
     tk = alloc_token();
     tk->token = token_num;
-    DL_APPEND(token_list_head, tk);
+    LL_APPEND(token_list_head, tk);
 
     /*set token object.*/
     yylval.tk = tk;
@@ -82,6 +85,7 @@ void pre_shift_token(const char* parse_text, int token_num) {
         break;
     }
 }
+
 enum OP_TYPE get_exp_op(struct token_list* tk) {
     switch (tk->token) {
     case '='        : return OP_EQ         ;
@@ -117,15 +121,15 @@ void free_token(struct token_list* tkn) {
 
 /* print utilities....*/
 
-void indent_inc(void) {
+static void indent_inc(void) {
     pr_indent++;
 }
 
-void indent_dec(void) {
+static void indent_dec(void) {
     pr_indent--;
 }
 
-void line_break(void) {
+static void line_break(void) {
     printf("\n");
     pr_newline = 1;
 }
@@ -257,9 +261,9 @@ void exit_parser(void) {
     struct token_list *tk, *tmp2;
 
     printf("clean up remaining tokens.\n");
-    DL_FOREACH_SAFE(token_list_head, tk, tmp2) {
+    LL_FOREACH_SAFE(token_list_head, tk, tmp2) {
         printf("*");
-        DL_DELETE(token_list_head, tk);
+        LL_DELETE(token_list_head, tk);
         if (tk) free_token(tk);
     }
     printf("\n");

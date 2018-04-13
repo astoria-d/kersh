@@ -130,7 +130,6 @@ struct token_list {
         unsigned long   lval;
         char*           strval;
     };
-    struct token_list *prev;
     struct token_list *next;
 };
 
@@ -139,9 +138,6 @@ int check_token_type(const char* parse_text);
 
 enum OP_TYPE get_exp_op(struct token_list* tk);
 
-void line_break(void);
-void indent_inc(void);
-void indent_dec(void);
 void line_inc(void);
 unsigned int get_line_num();
 
