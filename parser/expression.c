@@ -4,6 +4,7 @@
 
 #include "util.h"
 #include "expression.h"
+#include "declaration.h"
 #include "utlist.h"
 
 
@@ -33,6 +34,16 @@ struct expression* alloc_2op_exp (enum OP_TYPE ot, struct expression* op1, struc
     ret_e->ope1 = op1;
     ret_e->ope2 = op2;
 //    printf("alloc_2op_exp ret_e: %x, op1: %x, op2: %x\n", ret_e, op1, op2);
+    return ret_e;
+}
+
+struct expression* alloc_cast_exp(struct type_specifier* cast, struct expression* exp) {
+    struct expression* ret_e;
+    ret_e = ker_malloc(sizeof(struct expression));
+    ret_e->type = OP_CAST;
+    ret_e->ope1 = exp;
+    ret_e->cast = cast;
+    //printf("alloc_cast_exp: cast:%x\n", cast);
     return ret_e;
 }
 
@@ -87,6 +98,18 @@ void dump_expression(struct expression* exp, int indent) {
     switch (exp->type) {
     case OP_TERMINAL:
         dump_tk(exp->tk);
+        break;
+
+    case OP_COMPOUND:
+        dump_expression(exp->ope1, indent + 1);
+        break;
+
+    case OP_CAST:
+        //printf("cast:%x\n", exp->cast);
+        printf("( ");
+        dump_typespec(exp->cast);
+        printf(" ) ");
+        dump_expression(exp->ope1, indent + 1);
         break;
 
     case OP_MUL:

@@ -25,15 +25,20 @@ struct type_specifier* alloc_type_spec(struct token_list* tk) {
     case LONG:
         ts->type = TS_LONG;
         break;
-/*
+
     case SIGNED:
         ts->is_unsigned = 0;
         break;
     case UNSIGNED:
         ts->is_unsigned = 1;
-        break;*/
+        break;
     }
     return ts;
+}
+
+struct type_specifier* append_type_spec(struct type_specifier* ts1, struct type_specifier* ts2) {
+    LL_APPEND(ts1, ts2);
+    return ts1;
 }
 
 struct declaration* declare(struct declaration* dclspec, struct declaration* declarator) {
@@ -49,7 +54,7 @@ struct declaration* alloc_decl_spec_from_ts(struct type_specifier* ts) {
     struct declaration* dspec;
     dspec = ker_malloc(sizeof(struct declaration));
     dspec->type_spec = ts;
-//    printf("alloc_declarator st: %x, exp: %x\n", dcr, tk);
+//    printf("alloc_decl_spec_from_ts dspec: %x, ts: %x\n", dspec, ts);
     return dspec;
 }
 
@@ -118,29 +123,45 @@ struct declaration* alloc_dec_from_func(struct function* func) {
     return decl;
 }
 
+void dump_typespec(struct type_specifier* ts) {
+    const char* p;
+
+    if (ts->is_unsigned) {
+        printf("unsigned");
+    }
+
+    p = NULL;
+    switch (ts->type) {
+    case TS_VOID:
+        p = "void";
+        break;
+    case TS_CHAR:
+        p = "char";
+        break;
+    case TS_SHORT:
+        p = "short";
+        break;
+    case TS_INT:
+        p = "int";
+        break;
+    case TS_LONG:
+        p = "long";
+        break;
+    }
+    if (p) printf("%s", p);
+
+    if (ts->next) {
+        printf(" ");
+        dump_typespec(ts->next);
+    }
+}
+
 void dump_declaration(struct declaration* decl, int indent) {
     struct declaration* d;
     LL_FOREACH(decl, d) {
-        const char* p;
-        p = NULL;
-        switch (d->type_spec->type) {
-        case TS_VOID:
-            p = "void";
-            break;
-        case TS_CHAR:
-            p = "char";
-            break;
-        case TS_SHORT:
-            p = "short";
-            break;
-        case TS_INT:
-            p = "int";
-            break;
-        case TS_LONG:
-            p = "long";
-            break;
-        }
         print_indent(indent);
-        printf("%s %s ;\n", p, d->identifer->strval);
+        dump_typespec(d->type_spec);
+        printf(" ");
+        printf("%s ;\n", d->identifer->strval);
     }
 }

@@ -25,6 +25,14 @@ struct type_specifier {
     struct token_list*      identifer;
     unsigned char           is_unsigned;
     struct declaration*     members;
+
+    /*type qualifier*/
+    struct {
+        unsigned char       is_const        : 1;
+        unsigned char       is_volatile     : 1;
+    } ql;
+
+    struct type_specifier*  next;
 };
 
 struct declaration {
@@ -67,6 +75,7 @@ struct declaration {
 };
 
 struct type_specifier* alloc_type_spec(struct token_list* tk);
+struct type_specifier* append_type_spec(struct type_specifier* ts1, struct type_specifier* ts2);
 
 struct declaration* declare(struct declaration* dclspec, struct declaration* declarator);
 
@@ -82,6 +91,7 @@ struct declaration* append_declarator(struct declaration* d1, struct declaration
 
 struct declaration* alloc_dec_from_func(struct function* func);
 
+void dump_typespec(struct type_specifier* ts);
 void dump_declaration(struct declaration* decl, int indent);
 
 #endif /*__declaration_h__*/

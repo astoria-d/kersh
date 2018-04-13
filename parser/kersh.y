@@ -71,7 +71,7 @@ ATTRIBUTE
 %type <stm> statement labeled_statement compound_statement
             expression_statement selection_statement iteration_statement jump_statement
 
-%type <ts> type_specifier
+%type <ts> type_specifier type_name specifier_qualifier_list
 
 %type <dcl> declaration declaration_specifiers declarator direct_declarator init_declarator init_declarator_list
             external_declaration translation_unit
@@ -157,7 +157,7 @@ unary_operator      :   '&'                                                     
                     ;
 
 cast_expression     :   unary_expression                                                                                            {$$ = $1; POST_REDUCE(indx_cast_expression_0) }
-                    |   '(' type_name ')' cast_expression                                                                           {POST_REDUCE(indx_cast_expression_1) }
+                    |   '(' type_name ')' cast_expression                                                                           {$$ = alloc_cast_exp($2, $4); POST_REDUCE(indx_cast_expression_1) }
                     ;
 
 multipricative_expression   :   cast_expression                                                                                     {$$ = $1; POST_REDUCE(indx_multipricative_expression_0) }
@@ -302,8 +302,8 @@ struct_declaration      :   specifier_qualifier_list ';'                        
                         |   specifier_qualifier_list struct_declarator_list ';'                                                     {POST_REDUCE(indx_struct_declaration_1) }
                         ;
 
-specifier_qualifier_list    :   type_specifier                                                                                      {POST_REDUCE(indx_specifier_qualifier_list_0) }
-                            |   type_specifier specifier_qualifier_list                                                             {POST_REDUCE(indx_specifier_qualifier_list_1) }
+specifier_qualifier_list    :   type_specifier                                                                                      {$$ = $1; POST_REDUCE(indx_specifier_qualifier_list_0) }
+                            |   type_specifier specifier_qualifier_list                                                             {$$ = append_type_spec($1, $2); POST_REDUCE(indx_specifier_qualifier_list_1) }
                             |   type_qualifier                                                                                      {POST_REDUCE(indx_specifier_qualifier_list_2) }
                             |   type_qualifier specifier_qualifier_list                                                             {POST_REDUCE(indx_specifier_qualifier_list_3) }
                             ;
@@ -398,7 +398,7 @@ identifier_list     :   identifier                                              
                     |   identifier_list ',' identifier                                                                              {POST_REDUCE(indx_identifier_list_1) }
                     ;
 
-type_name       :   specifier_qualifier_list                                                                                        {POST_REDUCE(indx_type_name_0) }
+type_name       :   specifier_qualifier_list                                                                                        {$$ = $1; POST_REDUCE(indx_type_name_0) }
                 |   specifier_qualifier_list abstract_declarator                                                                    {POST_REDUCE(indx_type_name_1) }
                 ;
 
