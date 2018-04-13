@@ -161,9 +161,41 @@ void dump_declaration(struct declaration* decl, int indent, int iterate) {
     LL_FOREACH(decl, d) {
         if (d->is_func) continue;
         print_indent(indent);
+
+        if (d->dc.is_typedef) {
+            printf("typedef ");
+        }
+        if (d->dc.is_extern) {
+            printf("extern ");
+        }
+        if (d->dc.is_static) {
+            printf("static ");
+        }
+        if (d->dc.is_auto) {
+            printf("auto ");
+        }
+        if (d->dc.is_register) {
+            printf("register ");
+        }
+        if (d->dc.is_const) {
+            printf("const ");
+        }
+        if (d->dc.is_volatile) {
+            printf("volatile ");
+        }
+        if (d->dc.is_inline) {
+            printf("inline ");
+        }
+
         dump_typespec(d->type_spec);
         printf(" ");
         printf("%s ;\n", d->identifer->strval);
         if (!iterate) break;
     }
 }
+
+/*declaration semantics chec.*/
+void declaration_1(struct declaration* dcl) {
+    printf("declaration semantics chec\n");
+}
+

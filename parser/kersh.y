@@ -17,7 +17,7 @@ static unsigned int semantic_check;
 
 #define     dprint(msg)    printf("  << %s...\n", msg)
 
-#define     POST_REDUCE(rule_id)   post_reduce_action(rule_id);\
+#define     POST_REDUCE(rule_id)   post_reduce_action(rule_id, yyval);\
                                    if (semantic_check == SEM_NG) YYABORT;
 
 int yylex (void);
