@@ -9,6 +9,7 @@
 
 static struct ctoken* alloc_token(void);
 
+static unsigned int enum_decl_follow;
 static unsigned int enum_index;
 static struct ctoken* token_list_head;
 
@@ -18,6 +19,8 @@ static struct ctoken* token_list_head;
 int check_token_type(const char* parse_text) {
     struct symbol* sym;
 
+    /*case "enum" and "{" comes,*/
+    if (enum_decl_follow == 2) return ENUM_CONSTANT;
     sym = lookup_symbol(parse_text);
     if (sym == NULL) return IDEN;
     if (sym->symbol_type == SYM_TYPEDEF) return TYPEDEF_NAME;
@@ -74,15 +77,21 @@ void pre_shift_token(const char* parse_text, int token_num) {
         tk->lval = const_int_val;
         break;
 
+        case ENUM:
+        enum_decl_follow++;
+        break;
+
         case '{':
+        enum_decl_follow++;
         line_break();
         indent_inc(); 
         break;
 
         case '}':
         case ';':
+            enum_decl_follow = 0;
         case ':':
-        line_break();
+            line_break();
         break;
     }
 }
@@ -236,6 +245,7 @@ void yyerror (char const *s) {
 void init_parser(void) {
     extern void init_parser_internal(void);
 
+    enum_decl_follow = 0;
     token_list_head = NULL;
     init_parser_internal();
 }

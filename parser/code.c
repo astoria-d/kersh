@@ -61,7 +61,16 @@ void add_symbol(struct declaration* decl) {
         add_sym_entry(sym_tbl, SYM_TYPEDEF, decl->identifer->strval);
     }
     else {
-        add_sym_entry(sym_tbl, SYM_INSTANCE, decl->identifer->strval);
+        if (decl->identifer) {
+            add_sym_entry(sym_tbl, SYM_INSTANCE, decl->identifer->strval);
+        }
+        else if (decl->type_spec->type == TS_ENUM_SPEC) {
+            struct declaration* enum_elm;
+            add_sym_entry(sym_tbl, SYM_ENUM, decl->type_spec->identifer->strval);
+            LL_FOREACH(decl->type_spec->members, enum_elm) {
+                add_sym_entry(sym_tbl, SYM_ENUM, enum_elm->identifer->strval);
+            }
+        }
     }
 }
 

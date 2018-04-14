@@ -131,6 +131,28 @@ struct declaration* alloc_dec_from_func(struct function* func) {
     return decl;
 }
 
+struct type_specifier* alloc_enum_spec(struct ctoken* tk, struct declaration* enumerators) {
+    struct type_specifier* tspec;
+
+    tspec = ker_malloc(sizeof(struct type_specifier));
+    tspec->type = TS_ENUM_SPEC;
+    tspec->members = enumerators;
+    tspec->identifer = tk;
+    remove_token(tk);
+    return tspec;
+}
+
+struct declaration* alloc_enumerator(struct ctoken* tk, struct expression* exp) {
+    struct declaration* decl;
+    //printf("enum...\n");
+    decl = ker_malloc(sizeof(struct declaration));
+    decl->is_enum = 1;
+    decl->identifer = tk;
+    decl->init_exp = exp;
+    remove_token(tk);
+    return decl;
+}
+
 void dump_typespec(struct type_specifier* ts) {
     const char* p;
 
@@ -157,6 +179,14 @@ void dump_typespec(struct type_specifier* ts) {
         break;
     case TS_TDEFNAME:
         p = ts->identifer->strval;
+        break;
+    case TS_ENUM_SPEC:
+        printf("enum %s", ts->identifer->strval);
+        if (ts->members) {
+            printf(" { ");
+            dump_declaration(ts->members, 0, 1);
+            printf("}");
+        }
         break;
     }
     if (p) printf("%s", p);
@@ -198,9 +228,21 @@ void dump_declaration(struct declaration* decl, int indent, int iterate) {
             printf("inline ");
         }
 
-        dump_typespec(d->type_spec);
-        printf(" ");
-        printf("%s ;\n", d->identifer->strval);
+        if (!d->is_enum) {
+            /*enumerator doesn't have the typespec.*/
+            dump_typespec(d->type_spec);
+            printf(" ");
+            if (d->identifer) {
+                printf("%s ;\n", d->identifer->strval);
+            }
+            else {
+                printf(";\n");
+            }
+        }
+        else {
+            printf("%s, ", d->identifer->strval);
+        }
+
         if (!iterate) break;
     }
 }

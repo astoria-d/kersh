@@ -4,6 +4,7 @@
 
 #include "parser.h"
 #include "function.h"
+#include "expression.h"
 
 enum TS_TYPE {
     TS_INVALID = 0  , /*invalid type...*/
@@ -37,8 +38,10 @@ struct type_specifier {
 
 struct declaration {
 
-    /*declaration or function.*/
+    /*declaration or function or enumerator .*/
     unsigned char           is_func;
+    unsigned char           is_enum;
+
     union {
         /*case declaration. declaration has type and identifier*/
         struct {
@@ -63,6 +66,9 @@ struct declaration {
         unsigned char       is_volatile     : 1;
         unsigned char       is_inline       : 1;
     } dc;
+
+    /*enum elm init values.*/
+    struct expression*      init_exp;
 
     struct attribute {
         unsigned char       is_pointer      : 1;
@@ -90,6 +96,10 @@ struct declaration* append_declarator(struct declaration* d1, struct declaration
 #define append_declaration append_declarator
 
 struct declaration* alloc_dec_from_func(struct function* func);
+
+struct type_specifier* alloc_enum_spec(struct ctoken* tk, struct declaration* enumerators);
+struct declaration* alloc_enumerator(struct ctoken* tk, struct expression* exp);
+
 
 void dump_typespec(struct type_specifier* ts);
 void dump_declaration(struct declaration* decl, int indent, int iterate);

@@ -70,10 +70,10 @@ ATTRIBUTE
 %type <stm> statement labeled_statement compound_statement
             expression_statement selection_statement iteration_statement jump_statement
 
-%type <ts> type_specifier type_name specifier_qualifier_list
+%type <ts> type_specifier type_name specifier_qualifier_list enum_specifier
 
 %type <dcl> declaration declaration_specifiers declarator direct_declarator init_declarator init_declarator_list
-            external_declaration translation_unit
+            external_declaration translation_unit emumerator emumerator_list
 
 %type <blk> block_item block_item_list
 
@@ -279,7 +279,7 @@ type_specifier  :   VOID                                                        
                 |   SIGNED                                                                                                          {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_5) }
                 |   UNSIGNED                                                                                                        {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_6) }
                 |   struct_or_union_specifier                                                                                       {POST_REDUCE(indx_type_specifier_7) }
-                |   enum_specifier                                                                                                  {POST_REDUCE(indx_type_specifier_8) }
+                |   enum_specifier                                                                                                  {$$ = $1; POST_REDUCE(indx_type_specifier_8) }
                 |   typedef_name                                                                                                    {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_9) }
                 ;
 
@@ -316,19 +316,19 @@ struct_declarator   :   declarator                                              
                     |   declarator ':' constant_expression                                                                          {POST_REDUCE(indx_struct_declarator_2) }
                     ;
 
-enum_specifier      :   ENUM '{' emumerator_list '}'                                                                                {POST_REDUCE(indx_enum_specifier_0) }
-                    |   ENUM identifier '{' emumerator_list '}'                                                                     {POST_REDUCE(indx_enum_specifier_1) }
-                    |   ENUM '{' emumerator_list ',' '}'                                                                            {POST_REDUCE(indx_enum_specifier_2) }
-                    |   ENUM identifier '{' emumerator_list ',' '}'                                                                 {POST_REDUCE(indx_enum_specifier_3) }
-                    |   ENUM identifier                                                                                             {POST_REDUCE(indx_enum_specifier_4) }
+enum_specifier      :   ENUM '{' emumerator_list '}'                                                                                {$$ = alloc_enum_spec(NULL, $3);    POST_REDUCE(indx_enum_specifier_0) }
+                    |   ENUM identifier '{' emumerator_list '}'                                                                     {$$ = alloc_enum_spec($2, $4);      POST_REDUCE(indx_enum_specifier_1) }
+                    |   ENUM '{' emumerator_list ',' '}'                                                                            {$$ = alloc_enum_spec(NULL, $3);    POST_REDUCE(indx_enum_specifier_2) }
+                    |   ENUM identifier '{' emumerator_list ',' '}'                                                                 {$$ = alloc_enum_spec($2, $4);      POST_REDUCE(indx_enum_specifier_3) }
+                    |   ENUM identifier                                                                                             {$$ = alloc_enum_spec($2, NULL);    POST_REDUCE(indx_enum_specifier_4) }
                     ;
 
-emumerator_list     :   emumerator                                                                                                  {POST_REDUCE(indx_emumerator_list_0) }
-                    |   emumerator_list ',' emumerator                                                                              {POST_REDUCE(indx_emumerator_list_1) }
+emumerator_list     :   emumerator                                                                                                  {$$ = $1; POST_REDUCE(indx_emumerator_list_0) }
+                    |   emumerator_list ',' emumerator                                                                              {$$ = append_declarator($1, $3); POST_REDUCE(indx_emumerator_list_1) }
                     ;
 
-emumerator      :   emumeration_constant                                                                                            {POST_REDUCE(indx_emumerator_0) }
-                |   emumeration_constant '=' constant_expression                                                                    {POST_REDUCE(indx_emumerator_1) }
+emumerator      :   emumeration_constant                                                                                            {$$= alloc_enumerator($1, NULL); POST_REDUCE(indx_emumerator_0) }
+                |   emumeration_constant '=' constant_expression                                                                    {$$= alloc_enumerator($1, $3); POST_REDUCE(indx_emumerator_1) }
                 ;
 
 type_qualifier      :   CONST                                                                                                       {$$= $1; POST_REDUCE(indx_type_qualifier_0) }
