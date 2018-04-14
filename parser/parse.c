@@ -9,6 +9,7 @@
 
 static struct ctoken* alloc_token(void);
 
+static unsigned int line_num;
 static unsigned int enum_decl_follow;
 static unsigned int enum_index;
 static struct ctoken* token_list_head;
@@ -229,6 +230,11 @@ static void print_err_token(struct ctoken* tl) {
 
 }
 
+/*bison required functions...*/
+int yywrap (void ) {
+    return 1;
+}
+
 void yyerror (char const *s) {
     struct ctoken* tk;
 
@@ -237,17 +243,20 @@ void yyerror (char const *s) {
         tk = tk->next;
     }
 
-    fprintf (stderr, "line: %d ", get_line_num());
+    fprintf (stderr, "line: %d ", line_num);
     print_err_token(tk);
     fprintf (stderr, "message: %s\n", s);
 }
 
-void init_parser(void) {
-    extern void init_parser_internal(void);
+void line_inc(void) {
+    line_num++;
+}
 
+void init_parser(void) {
+    yydebug = 0;
+    line_num = 1;
     enum_decl_follow = 0;
     token_list_head = NULL;
-    init_parser_internal();
 }
 
 void exit_parser(void) {

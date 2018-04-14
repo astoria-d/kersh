@@ -533,28 +533,6 @@ declaration_list        :   declaration                                         
 
 %%
 
-
-static unsigned int line_num;
-
-void init_parser_internal(void) {
-    yydebug = 0;
-    line_num = 1;
-}
-
-void line_inc(void) {
-    line_num++;
-}
-
-unsigned int get_line_num(void) {
-    return line_num;
-}
-
-/*bison required functions...*/
-
-int yywrap (void ) {
-    return 1;
-}
-
 void init_semantic_check(void) {
     semantic_check = SEM_OK;
 }
