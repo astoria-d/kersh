@@ -237,7 +237,7 @@ constant_expression :   conditional_expression                                  
 
 
  /*A2.2 Declarations*/
-declaration     :   declaration_specifiers ';'                                                                                      {POST_REDUCE(indx_declaration_0) }
+declaration     :   declaration_specifiers ';'                                                                                      {$$ = $1; POST_REDUCE(indx_declaration_0) }
                 |   declaration_specifiers init_declarator_list ';'                                                                 {$$ = declare($1, $2); POST_REDUCE(indx_declaration_1) }
                 ;
 
