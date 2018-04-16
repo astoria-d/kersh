@@ -249,7 +249,7 @@ reduce_hander reduce_hander_array [] = {
 /* 231 indx_compound_statement_0                */ (reduce_hander) NULL,
 /* 232 indx_compound_statement_1                */ (reduce_hander) compound_statement_1,
 /* 233 indx_block_item_list_0                   */ (reduce_hander) block_item_list_0,
-/* 234 indx_block_item_list_1                   */ (reduce_hander) NULL,
+/* 234 indx_block_item_list_1                   */ (reduce_hander) block_item_list_1,
 /* 235 indx_block_item_0                        */ (reduce_hander) NULL,
 /* 236 indx_block_item_1                        */ (reduce_hander) NULL,
 /* 237 indx_expression_statement_0              */ (reduce_hander) NULL,

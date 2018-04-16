@@ -93,6 +93,10 @@ static void dump_tk(struct ctoken* tk) {
 }
 
 void dump_expression(struct expression* exp, int indent) {
+    if (!exp) {
+        printf("()");
+        return ;
+    }
 
     if (indent > 0) printf("( ");
 

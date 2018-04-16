@@ -118,9 +118,25 @@ void dump_statement(struct statement* stm, int indent) {
 
 
 void block_item_list_0(struct block_item* blk) {
+    struct declaration *dc;
+
     enter_block(blk);
     if (blk->type == BI_DECLARATION) {
-        add_symbol(blk->decl);
+        LL_FOREACH(blk->decl, dc) {
+            add_symbol(dc);
+        }
+    }
+}
+
+void block_item_list_1(struct block_item* blk) {
+    struct block_item *b, *last;
+
+    /*get the last block item*/
+    LL_FOREACH(blk, b) {
+        last = b;
+    }
+    if (last->type == BI_DECLARATION) {
+        add_symbol(last->decl);
     }
 }
 
