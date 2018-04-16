@@ -240,7 +240,12 @@ void dump_declaration(struct declaration* decl, int indent, int iterate) {
             }
         }
         else {
-            printf("%s, ", d->identifer->strval);
+            printf("%s", d->identifer->strval);
+            if (d->init_exp) {
+                printf(" = ");
+                dump_expression(d->init_exp, 0);
+            }
+            printf(", ");
         }
 
         if (!iterate) break;
