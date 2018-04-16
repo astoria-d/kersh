@@ -41,6 +41,8 @@ struct declaration {
     /*declaration or function or enumerator .*/
     unsigned char           is_func;
     unsigned char           is_enum;
+    unsigned char           is_struct;
+    unsigned char           is_union;
 
     union {
         /*case declaration. declaration has type and identifier*/
@@ -100,8 +102,9 @@ struct declaration* alloc_dec_from_func(struct function* func);
 struct type_specifier* alloc_enum_spec(struct ctoken* tk, struct declaration* enumerators);
 struct declaration* alloc_enumerator(struct ctoken* tk, struct expression* exp);
 
+struct type_specifier* alloc_struct_spec(struct ctoken* tk, struct ctoken* iden, struct declaration* str_decl);
 
-void dump_typespec(struct type_specifier* ts);
+void dump_typespec(struct type_specifier* ts, int indent);
 void dump_declaration(struct declaration* decl, int indent, int iterate);
 
 void declaration_1(struct declaration* dcl);

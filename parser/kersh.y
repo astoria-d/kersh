@@ -70,10 +70,12 @@ ATTRIBUTE
 %type <stm> statement labeled_statement compound_statement
             expression_statement selection_statement iteration_statement jump_statement
 
-%type <ts> type_specifier type_name specifier_qualifier_list enum_specifier
+%type <ts> type_specifier type_name specifier_qualifier_list enum_specifier struct_or_union_specifier
+           
 
 %type <dcl> declaration declaration_specifiers declarator direct_declarator init_declarator init_declarator_list
-            external_declaration translation_unit emumerator emumerator_list
+            external_declaration translation_unit emumerator emumerator_list struct_declaration_list
+            struct_declaration struct_declarator_list struct_declarator
 
 %type <blk> block_item block_item_list
 
@@ -278,40 +280,40 @@ type_specifier  :   VOID                                                        
                 |   LONG                                                                                                            {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_4) }
                 |   SIGNED                                                                                                          {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_5) }
                 |   UNSIGNED                                                                                                        {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_6) }
-                |   struct_or_union_specifier                                                                                       {POST_REDUCE(indx_type_specifier_7) }
+                |   struct_or_union_specifier                                                                                       {$$ = $1; POST_REDUCE(indx_type_specifier_7) }
                 |   enum_specifier                                                                                                  {$$ = $1; POST_REDUCE(indx_type_specifier_8) }
                 |   typedef_name                                                                                                    {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_9) }
                 ;
 
 
-struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}'                                                     {POST_REDUCE(indx_struct_or_union_specifier_0) }
-                            |   struct_or_union identifier '{' struct_declaration_list '}'                                          {POST_REDUCE(indx_struct_or_union_specifier_1) }
-                            |   struct_or_union identifier                                                                          {POST_REDUCE(indx_struct_or_union_specifier_2) }
+struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}'                                                     {$$ = alloc_struct_spec($1, NULL, $3);  POST_REDUCE(indx_struct_or_union_specifier_0) }
+                            |   struct_or_union identifier '{' struct_declaration_list '}'                                          {$$ = alloc_struct_spec($1, $2, $4);    POST_REDUCE(indx_struct_or_union_specifier_1) }
+                            |   struct_or_union identifier                                                                          {$$ = alloc_struct_spec($1, $2, NULL);  POST_REDUCE(indx_struct_or_union_specifier_2) }
                             ;
 
 struct_or_union     :   STRUCT                                                                                                      {$$= $1; POST_REDUCE(indx_struct_or_union_0) }
                     |   UNION                                                                                                       {$$= $1; POST_REDUCE(indx_struct_or_union_1) }
                     ;
 
-struct_declaration_list     :   struct_declaration                                                                                  {POST_REDUCE(indx_struct_declaration_list_0) }
-                            |   struct_declaration_list struct_declaration                                                          {POST_REDUCE(indx_struct_declaration_list_1) }
+struct_declaration_list     :   struct_declaration                                                                                  {$$ = $1; POST_REDUCE(indx_struct_declaration_list_0) }
+                            |   struct_declaration_list struct_declaration                                                          {$$ = append_declarator($1, $2); POST_REDUCE(indx_struct_declaration_list_1) }
                             ;
 
-struct_declaration      :   specifier_qualifier_list ';'                                                                            {POST_REDUCE(indx_struct_declaration_0) }
-                        |   specifier_qualifier_list struct_declarator_list ';'                                                     {POST_REDUCE(indx_struct_declaration_1) }
+struct_declaration      :   specifier_qualifier_list ';'                                                                            {$$ = alloc_decl_spec_from_ts($1); POST_REDUCE(indx_struct_declaration_0) }
+                        |   specifier_qualifier_list struct_declarator_list ';'                                                     {$$ = add_type_spec($2, $1); POST_REDUCE(indx_struct_declaration_1) }
                         ;
 
 specifier_qualifier_list    :   type_specifier                                                                                      {$$ = $1; POST_REDUCE(indx_specifier_qualifier_list_0) }
                             |   type_specifier specifier_qualifier_list                                                             {$$ = append_type_spec($1, $2); POST_REDUCE(indx_specifier_qualifier_list_1) }
-                            |   type_qualifier                                                                                      {POST_REDUCE(indx_specifier_qualifier_list_2) }
-                            |   type_qualifier specifier_qualifier_list                                                             {POST_REDUCE(indx_specifier_qualifier_list_3) }
+                            |   type_qualifier                                                                                      {$$ = alloc_type_spec($1); POST_REDUCE(indx_specifier_qualifier_list_2) }
+                            |   type_qualifier specifier_qualifier_list                                                             {struct type_specifier* ts; ts = alloc_type_spec($1); $$ = append_type_spec($2, ts); POST_REDUCE(indx_specifier_qualifier_list_3) }
                             ;
 
-struct_declarator_list      :   struct_declarator                                                                                   {POST_REDUCE(indx_struct_declarator_list_0) }
-                            |   struct_declarator_list ',' struct_declarator                                                        {POST_REDUCE(indx_struct_declarator_list_1) }
+struct_declarator_list      :   struct_declarator                                                                                   {$$ = $1; POST_REDUCE(indx_struct_declarator_list_0) }
+                            |   struct_declarator_list ',' struct_declarator                                                        {$$ = append_declarator($1, $3); POST_REDUCE(indx_struct_declarator_list_1) }
                             ;
 
-struct_declarator   :   declarator                                                                                                  {POST_REDUCE(indx_struct_declarator_0) }
+struct_declarator   :   declarator                                                                                                  {$$ = $1; POST_REDUCE(indx_struct_declarator_0) }
                     |   ':' constant_expression                                                                                     {POST_REDUCE(indx_struct_declarator_1) }
                     |   declarator ':' constant_expression                                                                          {POST_REDUCE(indx_struct_declarator_2) }
                     ;

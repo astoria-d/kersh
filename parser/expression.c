@@ -112,7 +112,7 @@ void dump_expression(struct expression* exp, int indent) {
     case OP_CAST:
         //printf("cast:%x\n", exp->cast);
         printf("( ");
-        dump_typespec(exp->cast);
+        dump_typespec(exp->cast, 0);
         printf(" ) ");
         dump_expression(exp->ope1, indent + 1);
         break;

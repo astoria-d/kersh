@@ -39,6 +39,13 @@ struct type_specifier* alloc_type_spec(struct ctoken* tk) {
     case UNSIGNED:
         ts->is_unsigned = 1;
         break;
+
+    case CONST:
+        ts->ql.is_const = 1;
+        break;
+    case VOLATILE:
+        ts->ql.is_volatile = 1;
+        break;
     }
     return ts;
 }
@@ -75,6 +82,8 @@ struct declaration* alloc_decl_spec(struct ctoken* tk) {
 
 struct declaration* add_type_spec(struct declaration* dc, struct type_specifier* ts) {
     dc->type_spec = ts;
+    if (ts->type == TS_STRUCT_SPEC) dc->is_struct = 1;
+    if (ts->type == TS_UNION_SPEC) dc->is_union = 1;
     return dc;
 }
 
@@ -153,8 +162,26 @@ struct declaration* alloc_enumerator(struct ctoken* tk, struct expression* exp) 
     return decl;
 }
 
-void dump_typespec(struct type_specifier* ts) {
+struct type_specifier* alloc_struct_spec(struct ctoken* tk, struct ctoken* iden, struct declaration* str_decl) {
+    struct type_specifier* tspec;
+
+    tspec = ker_malloc(sizeof(struct type_specifier));
+    if (tk->token == TK_STRUCT) {
+        tspec->type = TS_STRUCT_SPEC;
+    }
+    else {
+        tspec->type = TS_UNION_SPEC;
+    }
+    tspec->members = str_decl;
+    tspec->identifer = iden;
+    remove_token(tk);
+    remove_token(iden);
+    return tspec;
+}
+
+void dump_typespec(struct type_specifier* ts, int indent) {
     const char* p;
+    print_indent(indent);
 
     if (ts->is_unsigned) {
         printf("unsigned");
@@ -181,10 +208,43 @@ void dump_typespec(struct type_specifier* ts) {
         p = ts->identifer->strval;
         break;
     case TS_ENUM_SPEC:
-        printf("enum %s", ts->identifer->strval);
+        if (ts->identifer) {
+            printf("enum %s", ts->identifer->strval);
+        }
+        else {
+            printf("enum");
+        }
         if (ts->members) {
             printf(" { ");
-            dump_declaration(ts->members, 0, 1);
+            dump_declaration(ts->members, 0, 0);
+            printf("}");
+        }
+        break;
+    case TS_STRUCT_SPEC:
+    case TS_UNION_SPEC:
+        if (ts->type == TS_STRUCT_SPEC) {
+            printf("struct");
+        }
+        else {
+            printf("union");
+        }
+        if (ts->identifer->strval) {
+            printf(" %s ", ts->identifer->strval);
+        }
+        if (ts->members) {
+            struct declaration* fld;
+            printf("{\n");
+            LL_FOREACH(ts->members, fld) {
+                //print_indent(indent);
+                if (fld->is_struct || fld->is_union) {
+                    dump_typespec(fld->type_spec, indent + 1);
+                    printf(" %s ;\n", fld->identifer->strval);
+                }
+                else {
+                    dump_declaration(fld, indent + 1, 0);
+                }
+            }
+            print_indent(indent);
             printf("}");
         }
         break;
@@ -193,7 +253,7 @@ void dump_typespec(struct type_specifier* ts) {
 
     if (ts->next) {
         printf(" ");
-        dump_typespec(ts->next);
+        dump_typespec(ts->next, 0);
     }
 }
 
@@ -230,7 +290,7 @@ void dump_declaration(struct declaration* decl, int indent, int iterate) {
 
         if (!d->is_enum) {
             /*enumerator doesn't have the typespec.*/
-            dump_typespec(d->type_spec);
+            dump_typespec(d->type_spec, 0);
             printf(" ");
             if (d->identifer) {
                 printf("%s ;\n", d->identifer->strval);
