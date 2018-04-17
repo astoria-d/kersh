@@ -228,8 +228,11 @@ void dump_typespec(struct type_specifier* ts, int indent) {
         else {
             printf("union");
         }
-        if (ts->identifer->strval) {
+        if (ts->identifer && ts->identifer->strval) {
             printf(" %s ", ts->identifer->strval);
+        }
+        else {
+            printf(" ");
         }
         if (ts->members) {
             struct declaration* fld;

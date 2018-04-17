@@ -88,6 +88,8 @@ void pre_shift_token(const char* parse_text, int token_num) {
         indent_inc(); 
         break;
 
+        case STRUCT:
+        case UNION:
         case '}':
         case ';':
             enum_decl_follow = 0;
