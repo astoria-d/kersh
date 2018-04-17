@@ -41,8 +41,6 @@ struct declaration {
     /*declaration or function or enumerator .*/
     unsigned char           is_func;
     unsigned char           is_enum;
-    unsigned char           is_struct;
-    unsigned char           is_union;
 
     union {
         /*case declaration. declaration has type and identifier*/

@@ -82,8 +82,6 @@ struct declaration* alloc_decl_spec(struct ctoken* tk) {
 
 struct declaration* add_type_spec(struct declaration* dc, struct type_specifier* ts) {
     dc->type_spec = ts;
-    if (ts->type == TS_STRUCT_SPEC) dc->is_struct = 1;
-    if (ts->type == TS_UNION_SPEC) dc->is_union = 1;
     return dc;
 }
 
@@ -239,9 +237,14 @@ void dump_typespec(struct type_specifier* ts, int indent) {
             printf("{\n");
             LL_FOREACH(ts->members, fld) {
                 //print_indent(indent);
-                if (fld->is_struct || fld->is_union) {
+                if (fld->type_spec->type == TS_STRUCT_SPEC || fld->type_spec->type == TS_UNION_SPEC) {
                     dump_typespec(fld->type_spec, indent + 1);
-                    printf(" %s ;\n", fld->identifer->strval);
+                    if (fld->identifer) {
+                        printf(" %s ;\n", fld->identifer->strval);
+                    }
+                    else {
+                        printf(" ;\n");
+                    }
                 }
                 else {
                     dump_declaration(fld, indent + 1, 0);
