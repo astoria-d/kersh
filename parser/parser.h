@@ -138,6 +138,7 @@ int check_token_type(const char* parse_text);
 void remove_token(struct ctoken* tk);
 
 enum OP_TYPE get_exp_op(struct ctoken* tk);
+struct ctoken* alloc_null_attr(void);
 
 void line_inc(void);
 unsigned int get_line_num();

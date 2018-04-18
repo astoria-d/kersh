@@ -62,10 +62,12 @@ ATTRIBUTE
             TYPEDEF EXTERN STATIC AUTO REGISTER CONST VOLATILE INLINE
             VOID CHAR SHORT INT LONG SIGNED UNSIGNED
             STRUCT UNION TYPEDEF_NAME
+            NULL_ATTR
 
 %type <tk>  identifier constant integer_constant emumeration_constant character_constant string_literal
             unary_operator assignment_operator storage_class_specifier type_qualifier function_speficier
             struct_or_union typedef_name
+            attribute_list attribute_param_list
 
 %type <exp> primary_expression assignment_expression postfix_expression
             unary_expression cast_expression multipricative_expression additive_expression
@@ -268,15 +270,15 @@ init_declarator_list    :   init_declarator                                     
                         |   init_declarator_list ',' init_declarator                                                                {$$ = append_declarator($1, $3); POST_REDUCE(indx_init_declarator_list_1); }
                         ;
 
-init_declarator         :   declarator                                                                                              {$$= $1; POST_REDUCE(indx_init_declarator_0); }
-                        |   declarator '=' initializer                                                                              {$$= $1; POST_REDUCE(indx_init_declarator_1); }
+init_declarator         :   declarator                                                                                              {$$ = $1; POST_REDUCE(indx_init_declarator_0); }
+                        |   declarator '=' initializer                                                                              {$$ = $1; POST_REDUCE(indx_init_declarator_1); }
                         ;
 
-storage_class_specifier     :   TYPEDEF                                                                                             {$$= $1; POST_REDUCE(indx_storage_class_specifier_0); }
-                            |   EXTERN                                                                                              {$$= $1; POST_REDUCE(indx_storage_class_specifier_1); }
-                            |   STATIC                                                                                              {$$= $1; POST_REDUCE(indx_storage_class_specifier_2); }
-                            |   AUTO                                                                                                {$$= $1; POST_REDUCE(indx_storage_class_specifier_3); }
-                            |   REGISTER                                                                                            {$$= $1; POST_REDUCE(indx_storage_class_specifier_4); }
+storage_class_specifier     :   TYPEDEF                                                                                             {$$ = $1; POST_REDUCE(indx_storage_class_specifier_0); }
+                            |   EXTERN                                                                                              {$$ = $1; POST_REDUCE(indx_storage_class_specifier_1); }
+                            |   STATIC                                                                                              {$$ = $1; POST_REDUCE(indx_storage_class_specifier_2); }
+                            |   AUTO                                                                                                {$$ = $1; POST_REDUCE(indx_storage_class_specifier_3); }
+                            |   REGISTER                                                                                            {$$ = $1; POST_REDUCE(indx_storage_class_specifier_4); }
                             ;
 
 type_specifier  :   VOID                                                                                                            {$$ = alloc_type_spec($1); POST_REDUCE(indx_type_specifier_0); }
@@ -297,8 +299,8 @@ struct_or_union_specifier   :   struct_or_union '{' struct_declaration_list '}' 
                             |   struct_or_union identifier                                                                          {$$ = alloc_struct_spec($1, $2, NULL);  POST_REDUCE(indx_struct_or_union_specifier_2); }
                             ;
 
-struct_or_union     :   STRUCT                                                                                                      {$$= $1; POST_REDUCE(indx_struct_or_union_0); }
-                    |   UNION                                                                                                       {$$= $1; POST_REDUCE(indx_struct_or_union_1); }
+struct_or_union     :   STRUCT                                                                                                      {$$ = $1; POST_REDUCE(indx_struct_or_union_0); }
+                    |   UNION                                                                                                       {$$ = $1; POST_REDUCE(indx_struct_or_union_1); }
                     ;
 
 struct_declaration_list     :   struct_declaration                                                                                  {$$ = $1; POST_REDUCE(indx_struct_declaration_list_0); }
@@ -335,27 +337,27 @@ emumerator_list     :   emumerator                                              
                     |   emumerator_list ',' emumerator                                                                              {$$ = append_declarator($1, $3); POST_REDUCE(indx_emumerator_list_1); }
                     ;
 
-emumerator      :   emumeration_constant                                                                                            {$$= alloc_enumerator($1, NULL); POST_REDUCE(indx_emumerator_0); }
-                |   emumeration_constant '=' constant_expression                                                                    {$$= alloc_enumerator($1, $3); POST_REDUCE(indx_emumerator_1); }
+emumerator      :   emumeration_constant                                                                                            {$$ = alloc_enumerator($1, NULL); POST_REDUCE(indx_emumerator_0); }
+                |   emumeration_constant '=' constant_expression                                                                    {$$ = alloc_enumerator($1, $3); POST_REDUCE(indx_emumerator_1); }
                 ;
 
-type_qualifier      :   CONST                                                                                                       {$$= $1; POST_REDUCE(indx_type_qualifier_0); }
-                    |   VOLATILE                                                                                                    {$$= $1; POST_REDUCE(indx_type_qualifier_1); }
+type_qualifier      :   CONST                                                                                                       {$$ = $1; POST_REDUCE(indx_type_qualifier_0); }
+                    |   VOLATILE                                                                                                    {$$ = $1; POST_REDUCE(indx_type_qualifier_1); }
                     ;
 
  /* gcc function attributes...*/
 
-attribute_param_list    :   identifier                                                                                              {POST_REDUCE(indx_attribute_param_list_0); }
-                        |   attribute_param_list ',' identifier                                                                     {POST_REDUCE(indx_attribute_param_list_1); }
+attribute_param_list    :   identifier                                                                                              {$$ = alloc_null_attr(); POST_REDUCE(indx_attribute_param_list_0); }
+                        |   attribute_param_list ',' identifier                                                                     {$$ = $1; POST_REDUCE(indx_attribute_param_list_1); }
                         ;
 
-attribute_list          :   ATTRIBUTE '(' '(' ')' ')'                                                                               {POST_REDUCE(indx_attribute_list_0); }
-                        |   ATTRIBUTE '(' '(' IDEN ')' ')'                                                                          {POST_REDUCE(indx_attribute_list_1); }
-                        |   ATTRIBUTE '(' '(' IDEN ','  attribute_param_list ')' ')'                                                {POST_REDUCE(indx_attribute_list_2); }
+attribute_list          :   ATTRIBUTE '(' '(' ')' ')'                                                                               {$$ = alloc_null_attr(); POST_REDUCE(indx_attribute_list_0); }
+                        |   ATTRIBUTE '(' '(' IDEN ')' ')'                                                                          {$$ = alloc_null_attr(); POST_REDUCE(indx_attribute_list_1); }
+                        |   ATTRIBUTE '(' '(' IDEN ','  attribute_param_list ')' ')'                                                {$$ = alloc_null_attr(); POST_REDUCE(indx_attribute_list_2); }
                         ;
 
-function_speficier  :   INLINE                                                                                                      {$$= $1; POST_REDUCE(indx_function_speficier_0); }
-                    |   attribute_list                                                                                              {POST_REDUCE(indx_function_speficier_1); }
+function_speficier  :   INLINE                                                                                                      {$$ = $1; POST_REDUCE(indx_function_speficier_0); }
+                    |   attribute_list                                                                                              {$$ = $1; POST_REDUCE(indx_function_speficier_1); }
                     ;
 
 declarator      :   direct_declarator                                                                                               {$$ = $1; POST_REDUCE(indx_declarator_0); }

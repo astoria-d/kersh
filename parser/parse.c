@@ -122,6 +122,13 @@ static struct ctoken* alloc_token(void) {
     return tk;
 }
 
+struct ctoken* alloc_null_attr(void) {
+    struct ctoken* tk;
+    tk = ker_malloc(sizeof(struct ctoken));
+    tk->token = NULL_ATTR;
+    return tk;
+}
+
 void free_token(struct ctoken* tkn) {
     //printf("delete token ");
     //dbg_print_token(tkn);
