@@ -17,26 +17,9 @@ struct function* alloc_function(struct declaration* decl_spec,
 }
 
 void dump_function(struct function* fc) {
-    const char* ts;
-    ts = NULL;
-    switch (fc->ret_type->type_spec->type) {
-    case TS_VOID:
-        ts = "void";
-        break;
-    case TS_CHAR:
-        ts = "char";
-        break;
-    case TS_SHORT:
-        ts = "short";
-        break;
-    case TS_INT:
-        ts = "int";
-        break;
-    case TS_LONG:
-        ts = "long";
-        break;
-    }
-
-    printf("%s %s ", ts, fc->name->identifer->strval);
+    dump_typespec(fc->ret_type->type_spec, 0);
+    printf(" %s ", fc->name->identifer->strval);
+    printf("( ");
+    printf(") ");
     dump_statement(fc->body, 0);
 }

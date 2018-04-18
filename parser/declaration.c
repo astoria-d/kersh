@@ -294,8 +294,17 @@ void dump_declaration(struct declaration* decl, int indent, int iterate) {
             printf("inline ");
         }
 
-        if (!d->is_enum) {
+        if (d->is_enum) {
             /*enumerator doesn't have the typespec.*/
+            printf("%s", d->identifer->strval);
+            if (d->init_exp) {
+                printf(" = ");
+                dump_expression(d->init_exp, 0);
+            }
+            printf(", ");
+        }
+        else {
+            /*normal declaration [type] [iden];*/
             dump_typespec(d->type_spec, 0);
             printf(" ");
             if (d->identifer) {
@@ -304,14 +313,6 @@ void dump_declaration(struct declaration* decl, int indent, int iterate) {
             else {
                 printf(";\n");
             }
-        }
-        else {
-            printf("%s", d->identifer->strval);
-            if (d->init_exp) {
-                printf(" = ");
-                dump_expression(d->init_exp, 0);
-            }
-            printf(", ");
         }
 
         if (!iterate) break;
