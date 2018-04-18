@@ -38,6 +38,16 @@ struct expression* alloc_2op_exp (enum OP_TYPE ot, struct expression* op1, struc
     return ret_e;
 }
 
+struct expression* alloc_3op_exp(enum OP_TYPE ot, struct expression* op1, struct expression* op2, struct expression* op3) {
+    struct expression* ret_e;
+    ret_e = ker_malloc(sizeof(struct expression));
+    ret_e->type = ot;
+    ret_e->ope1 = op1;
+    ret_e->ope2 = op2;
+    ret_e->ope3 = op3;
+    return ret_e;
+}
+
 struct expression* alloc_cast_exp(struct type_specifier* cast, struct expression* exp) {
     struct expression* ret_e;
     ret_e = ker_malloc(sizeof(struct expression));
@@ -173,6 +183,34 @@ void dump_expression(struct expression* exp, int indent) {
         else {
             dump_expression(exp->ope2, indent + 1);
         }
+        break;
+
+    case OP_3COND:
+        if (exp->ope1->type == OP_TERMINAL) {
+            dump_tk(exp->ope1->tk);
+        }
+        else {
+            dump_expression(exp->ope1, indent + 1);
+        }
+
+        printf(" ? ");
+
+        if (exp->ope2->type == OP_TERMINAL) {
+            dump_tk(exp->ope2->tk);
+        }
+        else {
+            dump_expression(exp->ope2, indent + 1);
+        }
+
+        printf(" : ");
+
+        if (exp->ope3->type == OP_TERMINAL) {
+            dump_tk(exp->ope3->tk);
+        }
+        else {
+            dump_expression(exp->ope3, indent + 1);
+        }
+
         break;
 
     default:

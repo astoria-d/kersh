@@ -108,6 +108,7 @@ struct expression {
 struct expression* alloc_term_exp(struct ctoken* tk);
 struct expression* alloc_nested_exp(struct expression* exp);
 struct expression* alloc_2op_exp(enum OP_TYPE ot, struct expression* op1, struct expression* op2);
+struct expression* alloc_3op_exp(enum OP_TYPE ot, struct expression* op1, struct expression* op2, struct expression* op3);
 struct expression* alloc_cast_exp(struct type_specifier* cast, struct expression* exp);
 
 void dump_expression(struct expression* exp, int indent);

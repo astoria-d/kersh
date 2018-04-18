@@ -216,7 +216,7 @@ logical_OR_expression       :   logical_AND_expression                          
                             ;
 
 conditional_expression      :   logical_OR_expression                                                                               {$$ = $1; POST_REDUCE(indx_conditional_expression_0); }
-                            |   logical_OR_expression '?' expression ':' conditional_expression                                     {POST_REDUCE(indx_conditional_expression_1); }
+                            |   logical_OR_expression '?' expression ':' conditional_expression                                     {$$ = alloc_3op_exp(OP_3COND, $1, $3, $5); POST_REDUCE(indx_conditional_expression_1); }
                             ;
 
 assignment_expression       :   conditional_expression                                                                              {$$ = $1; POST_REDUCE(indx_assignment_expression_0); }
