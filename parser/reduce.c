@@ -8,10 +8,6 @@
 
 
 
-static void not_supported_syntax(YYSTYPE left_ast) {
-    semantic_err("this syntax is not supported.\n");
-}
-
 typedef void (*reduce_hander)(YYSTYPE left_sym);
 
 reduce_hander reduce_hander_array [] = {
@@ -281,7 +277,7 @@ reduce_hander reduce_hander_array [] = {
 /* 263 indx_external_declaration_0              */ (reduce_hander) NULL,
 /* 264 indx_external_declaration_1              */ (reduce_hander) NULL,
 /* 265 indx_function_definition_0               */ (reduce_hander) NULL,
-/* 266 indx_function_definition_1               */ (reduce_hander) not_supported_syntax, /*legacy C style function definition not supported...*/
+/* 266 indx_function_definition_1               */ (reduce_hander) NULL,
 /* 267 indx_declaration_list_0                  */ (reduce_hander) NULL,
 /* 268 indx_declaration_list_1                  */ (reduce_hander) NULL
 };
