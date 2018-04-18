@@ -16,5 +16,7 @@ struct function* alloc_function(struct declaration* decl_spec,
 
 void dump_function(struct function* fc);
 
+void function_definition_0(struct function* fnc);
+
 #endif /*__function_h__*/
 

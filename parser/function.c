@@ -34,3 +34,9 @@ void dump_function(struct function* fc) {
     printf(") ");
     dump_statement(fc->body, 0);
 }
+
+void function_definition_0(struct function* fnc) {
+    if (!fnc->name->is_func) {
+        semantic_err("invalid function definition.\n");
+    }
+}

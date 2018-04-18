@@ -374,7 +374,7 @@ direct_declarator   :   identifier                                              
                     |   direct_declarator '[' '*' ']'                                                                               {POST_REDUCE(indx_direct_declarator_9); }
                     |   direct_declarator '[' type_qualifier '*' ']'                                                                {POST_REDUCE(indx_direct_declarator_10); }
                     |   direct_declarator '(' parameter_type_list ')'                                                               {$$ = add_param($1, $3); POST_REDUCE(indx_direct_declarator_11); }
-                    |   direct_declarator '(' ')'                                                                                   {POST_REDUCE(indx_direct_declarator_12); }
+                    |   direct_declarator '(' ')'                                                                                   {$$ = add_param($1, NULL); POST_REDUCE(indx_direct_declarator_12); }
                     |   direct_declarator '(' identifier_list ')'                                                                   {NOT_SUPPORTED(LEGACY_C_NG); POST_REDUCE(indx_direct_declarator_13); }
                     ;
 

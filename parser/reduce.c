@@ -276,7 +276,7 @@ reduce_hander reduce_hander_array [] = {
 /* 262 indx_translation_unit_1                  */ (reduce_hander) translation_unit_1,
 /* 263 indx_external_declaration_0              */ (reduce_hander) NULL,
 /* 264 indx_external_declaration_1              */ (reduce_hander) NULL,
-/* 265 indx_function_definition_0               */ (reduce_hander) NULL,
+/* 265 indx_function_definition_0               */ (reduce_hander) function_definition_0,
 /* 266 indx_function_definition_1               */ (reduce_hander) NULL,
 /* 267 indx_declaration_list_0                  */ (reduce_hander) NULL,
 /* 268 indx_declaration_list_1                  */ (reduce_hander) NULL

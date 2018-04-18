@@ -140,6 +140,7 @@ struct declaration* alloc_dec_from_func(struct function* func) {
 
 struct declaration* add_param(struct declaration* func_name, struct declaration* param) {
     func_name->param = param;
+    func_name->is_func = 1;
     return func_name;
 }
 
@@ -271,7 +272,6 @@ void dump_typespec(struct type_specifier* ts, int indent) {
 void dump_declaration(struct declaration* decl, int indent, int iterate) {
     struct declaration* d;
     LL_FOREACH(decl, d) {
-        if (d->is_func) continue;
         print_indent(indent);
 
         if (d->dc.is_typedef) {
