@@ -17,9 +17,20 @@ struct function* alloc_function(struct declaration* decl_spec,
 }
 
 void dump_function(struct function* fc) {
+    struct declaration* pm;
+    int i;
+
     dump_typespec(fc->ret_type->type_spec, 0);
     printf(" %s ", fc->name->identifer->strval);
     printf("( ");
+    i = 0;
+    LL_FOREACH(fc->name->param, pm) {
+        if (i++ > 0) printf(", ");
+        dump_typespec(pm->type_spec, 0);
+        if (pm->identifer) {
+            printf(" %s ", pm->identifer->strval);
+        }
+    }
     printf(") ");
     dump_statement(fc->body, 0);
 }

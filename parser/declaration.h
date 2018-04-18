@@ -49,7 +49,7 @@ struct declaration {
             struct ctoken*              identifer;
         };
         /*case function definition.*/
-        struct function* func;
+        struct function*                func;
     };
 
     unsigned int                size;
@@ -69,6 +69,9 @@ struct declaration {
 
     /*enum elm init values.*/
     struct expression*      init_exp;
+
+    /*function parameters.*/
+    struct declaration*     param;
 
     struct attribute {
         unsigned char       is_pointer      : 1;
@@ -96,6 +99,8 @@ struct declaration* append_declarator(struct declaration* d1, struct declaration
 #define append_declaration append_declarator
 
 struct declaration* alloc_dec_from_func(struct function* func);
+struct declaration* add_param(struct declaration* func_name, struct declaration* param);
+
 
 struct type_specifier* alloc_enum_spec(struct ctoken* tk, struct declaration* enumerators);
 struct declaration* alloc_enumerator(struct ctoken* tk, struct expression* exp);

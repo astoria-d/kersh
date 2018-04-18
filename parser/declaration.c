@@ -138,6 +138,11 @@ struct declaration* alloc_dec_from_func(struct function* func) {
     return decl;
 }
 
+struct declaration* add_param(struct declaration* func_name, struct declaration* param) {
+    func_name->param = param;
+    return func_name;
+}
+
 struct type_specifier* alloc_enum_spec(struct ctoken* tk, struct declaration* enumerators) {
     struct type_specifier* tspec;
 
